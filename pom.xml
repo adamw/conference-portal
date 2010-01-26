@@ -6,12 +6,12 @@
 
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.liftworkshop</groupId>
-    <artifactId>todo</artifactId>
+    <groupId>pl.softwaremill</groupId>
+    <artifactId>conference-portal</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>todo Project</name>
-    <inceptionYear>2009</inceptionYear>
+    <name>Conference portal</name>
+    <inceptionYear>2010</inceptionYear>
     <properties>
         <scala.version>2.7.7</scala.version>
     </properties>
