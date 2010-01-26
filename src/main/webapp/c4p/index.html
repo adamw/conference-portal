@@ -1,0 +1,23 @@
+<lift:surround with="default" at="content">
+    <h2><lift:Menu.title /></h2>
+
+    <lift:C4P.newLink><lift:loc>paper.submit_new</lift:loc></lift:C4P.newLink>
+
+    <h3><lift:loc>papers.submitted</lift:loc></h3>
+
+    <table>
+        <tr>
+            <th><lift:loc>paper.title</lift:loc></th>
+            <th><lift:loc>paper.conference</lift:loc></th>
+            <th><lift:loc>paper.operations</lift:loc></th>
+        </tr>
+        <lift:C4P.list>
+            <tr>
+                <td><paper:title /></td>
+                <td><paper:conference /></td>
+                <td><paper:view /> <paper:edit /> <paper:delete /></td>
+            </tr>
+        </lift:C4P.list>
+    </table>
+</lift:surround>
+        

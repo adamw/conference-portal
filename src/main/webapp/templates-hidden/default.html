@@ -1,0 +1,80 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:lift="http://liftweb.net/">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+
+    <title><lift:Menu.title /></title>
+
+    <link rel="stylesheet" type="text/css" media="screen" href="http://www.javarsovia.pl/stylesheet.php?cssid=32&amp;mediatype=screen" />
+    <link rel="stylesheet" type="text/css" media="screen" href="http://www.javarsovia.pl/stylesheet.php?cssid=42&amp;mediatype=screen" />
+    <link rel="stylesheet" type="text/css" media="screen" href="http://www.javarsovia.pl/stylesheet.php?cssid=35&amp;mediatype=screen" />
+    <link rel="stylesheet" type="text/css" media="handheld" href="http://www.javarsovia.pl/stylesheet.php?cssid=41&amp;mediatype=handheld" />
+    <link rel="stylesheet" type="text/css" media="print" href="http://www.javarsovia.pl/stylesheet.php?cssid=30&amp;mediatype=print" />
+    <link rel="stylesheet" type="text/css" media="screen" href="http://www.javarsovia.pl/stylesheet.php?cssid=31&amp;mediatype=screen" />
+    <link rel="stylesheet" type="text/css" media="screen" href="http://www.javarsovia.pl/stylesheet.php?cssid=46&amp;mediatype=screen" />
+
+    <script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>
+    <script id="json" src="/classpath/json.js" type="text/javascript"/>
+    <script src="/scripts/jquery.blockUI.js" type="text/javascript"/>
+
+    <style type="text/css">
+        /* <![CDATA[ */
+        #menu_vert li.menuactive span {
+            color:#18507C;
+            display:block;
+            min-height:1em;
+            padding:0.8em 0.3em 0.5em 1.5em;
+            text-decoration:none;
+            background-color:inherit;
+        }
+        /* ]]> */
+    </style>
+</head>
+<body>
+<div id="pagewrapper">
+    <div id="header">
+        <h2 class="headright">
+            <img alt="" id="ajax-loader" style="display:none; margin-bottom: 0px; margin-left: 5px" src="/images/ajax-loader.gif"/>
+            Javarsovia
+        </h2>
+
+        <h1><a href="http://www.javarsovia.pl/" title="Konferencja" >Javarsovia</a></h1>
+
+        <hr class="accessibility" />
+    </div>
+
+    <div id="content">
+        <div id="sidebar">
+            <div id="sidebara">
+
+                <div id="menu_vert">
+                    <lift:Menu.builder li_item:class="menuactive" />
+                    <div>
+                        <lift:Msgs showAll="true"/>
+                        <hr class="space" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="back">
+            <div id="main">
+                <lift:bind name="content" />
+            </div>
+        </div>
+    </div>
+
+    <div class="footback">
+        <div id="footer">
+            <div id="fooleft">
+            </div>
+            <div id="footrt">
+                <p>&copy; 2010 <a href="http://softwaremill.eu"><i>SoftwareMill</i></a>(c) 2010.</p>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

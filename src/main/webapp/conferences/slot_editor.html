@@ -1,0 +1,32 @@
+<lift:surround with="default" at="content">
+    <h2><lift:Menu.title /></h2>
+
+    <h3><lift:loc>slots.choose_spans</lift:loc></h3>
+
+    <span id="slot_times">
+        <lift:slotEditor.slotsTimes form="post">
+            <table>
+                <tr>
+                    <th><lift:loc>slot.from</lift:loc></th>
+                    <th><lift:loc>slot.to</lift:loc></th>
+                    <th>&nbsp;</th>
+                </tr>
+                <times:list>
+                    <tr>
+                        <td><time:from /></td>
+                        <td><time:to /></td>
+                        <td><time:delete /></td>
+                    </tr>
+                </times:list>
+            </table>
+
+            <times:addSpan /> <times:generate /> <times:delete /> <times:save /> <times:cancel />
+        </lift:slotEditor.slotsTimes>
+    </span>
+
+    <h3><lift:loc>slots.current_grid</lift:loc></h3>
+
+    <span id="slot_grid">
+        <lift:slotEditor.slotGrid />
+    </span>
+</lift:surround>        

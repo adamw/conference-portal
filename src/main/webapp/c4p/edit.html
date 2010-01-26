@@ -1,0 +1,26 @@
+<lift:surround with="default" at="content">
+    <h2><lift:currentPaper.title><lift:loc>paper.submit_new</lift:loc></lift:currentPaper.title></h2>
+
+    <span id="paper_edit">
+        <lift:C4P.edit form="post">
+            <table>
+                <tr>
+                    <td><lift:loc>paper.title</lift:loc>:</td>
+                    <td><paper:title /></td>
+                </tr>
+                <tr>
+                    <td><lift:loc>paper.conference</lift:loc>:</td>
+                    <td><paper:conference /></td>
+                </tr>
+                <tr>
+                    <td><lift:loc>paper.short_description</lift:loc>:</td>
+                    <td><paper:shortDescription /></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><paper:save /> <paper:cancel /></td>
+                </tr>
+            </table>
+        </lift:C4P.edit>
+    </span>
+</lift:surround>

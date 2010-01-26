@@ -1,0 +1,55 @@
+<lift:surround with="default" at="content">
+    <h2><lift:Menu.title /></h2>
+
+    <span id="conf_edit">
+        <lift:manageConferences.edit form="post">
+            <table>
+                <tr>
+                    <td><lift:loc>conference.name</lift:loc>:</td>
+                    <td><conf:name /></td>
+                </tr>
+                <tr>
+                    <td><lift:loc>conference.date_start</lift:loc>:</td>
+                    <td><conf:dateStart /></td>
+                </tr>
+                <tr>
+                    <td><lift:loc>conference.date_end</lift:loc>:</td>
+                    <td><conf:dateEnd /></td>
+                </tr>
+                <tr>
+                    <td><lift:loc>conference.description</lift:loc>:</td>
+                    <td><conf:desc /></td>
+                </tr>
+                <tr>
+                    <td><lift:loc>conference.rooms</lift:loc>:</td>
+                    <td>
+                        <ul>
+                            <conf:rooms>
+                                <li><room:name /> <room:moveUp /> <room:moveDown /> <room:delete /></li>
+                            </conf:rooms>
+
+                            <conf:addRoom />
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><conf:save /> <conf:cancel /></td>
+                </tr>
+            </table>
+        </lift:manageConferences.edit>
+    </span>
+        
+    <span id="conf_list">
+        <lift:manageConferences.list>
+            <ul>
+                <conf:item>
+                    <li>
+                        <conf:name /> (<conf:dateStart />-<conf:dateEnd />) <br />
+                        <conf:edit /> | <conf:delete /> | <conf:editSlots /> <br /> <br />
+                    </li>
+                </conf:item>
+            </ul>
+        </lift:manageConferences.list>
+    </span>
+</lift:surround>        
