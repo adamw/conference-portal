@@ -71,13 +71,9 @@ class Boot {
   }
 
   private def c4pMenu: Menu = {
-    val editPaper = Menu(Loc("C4PEdit", "c4p" :: "edit" :: Nil, ?("menu.c4p.edit"), Hidden, loggedIn))
-    val main = Menu(Loc("C4PList", "c4p" :: "index" :: Nil, ?("menu.c4p.my"), loggedIn), editPaper)
+    val editPaper = Menu(Loc("C4PEdit", "c4p" :: "edit" :: Nil, ?("menu.c4p.edit"), Hidden, User.loginFirst))
+    val main = Menu(Loc("C4PList", "c4p" :: "index" :: Nil, ?("menu.c4p.my"), LocTools.showRequireLogin), editPaper)
     main
-  }
-
-  private def loggedIn = {
-    If(() => User.loggedIn_?, () => RedirectResponse(LocTools.linkForLoc("Login")))
   }
 
   private def currentUserLocale: Box[Locale] = {
