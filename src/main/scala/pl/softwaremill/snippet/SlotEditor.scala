@@ -68,7 +68,7 @@ class SlotEditor {
         }),
         "delete" -> ajaxSubmit(?("slots.delete"), () => { CurrentConference.slots.clear; reDraw }),
         "save" -> ajaxSubmit(?("slots.save"), () => { checkAndSave; reDraw }),
-        "cancel" -> refreshButton(?("common.cancel"))
+        "cancel" -> redirectButton(?("common.cancel"), "index.html")
         ))
   }
 
