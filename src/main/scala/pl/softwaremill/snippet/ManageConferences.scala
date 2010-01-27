@@ -14,8 +14,7 @@ import xml._
 
 import pl.softwaremill.services.ConferenceService
 import pl.softwaremill.lib.D
-import pl.softwaremill.loc.SlotEditorLoc
-
+import pl.softwaremill.loc.{AcceptRejectLoc, SlotEditorLoc}
 import SnippetTools._
 
 /**
@@ -74,6 +73,12 @@ class ManageConferences  {
   }
 
   def list(listTemplate: NodeSeq) = {
+    def acceptReject(conf: Conference)(separator: NodeSeq): NodeSeq = {
+      if (conf.state == ConferenceState.Accept) {
+        separator ++ anchor(AcceptRejectLoc.link.createPath(conf), ?("conference.accept_reject"))
+      } else NodeSeq.Empty
+    }
+    
     def doList(itemTemplate: NodeSeq): NodeSeq = {
       conferenceService.allConferences.flatMap { conf: Conference =>
         bind("conf", itemTemplate,
@@ -82,7 +87,8 @@ class ManageConferences  {
           "dateEnd" -> conf.dateEnd,
           "edit" -> a(() => { CurrentConference(conf); reDrawForm }, Text(?("common.edit"))),
           "delete" -> confirmLink("", () => conf.delete_!, ?("common.delete"), ?("conference.confirm_delete", conf.name)),
-          "editSlots" -> anchor(SlotEditorLoc.link.createPath(conf), ?("conference.edit_slots"))
+          "editSlots" -> anchor(SlotEditorLoc.link.createPath(conf), ?("conference.edit_slots")),
+          "acceptReject" -> acceptReject(conf) _
           )
       }
     }

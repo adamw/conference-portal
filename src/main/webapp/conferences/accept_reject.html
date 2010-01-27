@@ -1,0 +1,18 @@
+<lift:surround with="default" at="content">
+    <h2><lift:Menu.title /></h2>
+
+    <table>
+        <tr>
+            <th><lift:loc>paper.title</lift:loc></th>
+            <th><lift:loc>paper.description</lift:loc></th>
+            <th><lift:loc>paper.operations</lift:loc></th>
+        </tr>
+        <lift:AcceptRejectPapers.list>
+            <tr>
+                <td><paper:title /></td>
+                <td><paper:desc /></td>
+                <td><paper:accept /> <paper:reject /></td>
+            </tr>
+        </lift:AcceptRejectPapers.list>
+    </table>
+</lift:surround>        

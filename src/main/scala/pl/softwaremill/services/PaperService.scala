@@ -10,12 +10,18 @@ import pl.softwaremill.model._
  */
 trait PaperService {
   def userPapers(user: User): List[Paper]
+  def conferencePapers(conf: Conference): List[Paper]
   def find(id: String): Box[Paper]
 }
 
 class PaperServiceImpl extends PaperService {
   def userPapers(user: User): List[Paper] = {
     Paper.findAll(By(Paper.user, user),
+      OrderBy(Paper.title, Ascending))
+  }
+
+  def conferencePapers(conf: Conference): List[Paper] = {
+    Paper.findAll(By(Paper.conference, conf),
       OrderBy(Paper.title, Ascending))
   }
 

@@ -11,12 +11,12 @@ import pl.softwaremill.model.Conference
 /**
  * @author Adam Warski (adam at warski dot org)
  */
-object SlotEditorLoc extends ConferenceAwareLoc {
-  protected val PathList = "conferences" :: "slot_editor" :: Nil
+object AcceptRejectLoc extends ConferenceAwareLoc {
+  protected val PathList = "conferences" :: "accept_reject" :: Nil
 
-  def name = "SlotEditor"
+  def name = "AcceptReject"
 
-  def text = new LinkText((conf: Conference) => Text(?("menu.slot_editor", conf.name)))
+  def text = new LinkText((conf: Conference) => Text(?("menu.accept_reject", conf.name)))
 
   def params = List(Hidden)
 }

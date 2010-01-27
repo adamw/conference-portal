@@ -4,13 +4,12 @@ import _root_.net.liftweb.util._
 import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
 import S._
-import _root_.net.liftweb.http.provider._
 import _root_.net.liftweb.sitemap._
 import _root_.net.liftweb.sitemap.Loc._
 import _root_.net.liftweb.mapper.{DB, Schemifier, DefaultConnectionIdentifier, StandardDBVendor}
 import _root_.pl.softwaremill.model._
 import java.util.Locale
-import pl.softwaremill.loc.{LocTools, ViewPaperLoc, SlotEditorLoc}
+import pl.softwaremill.loc.{AcceptRejectLoc, LocTools, ViewPaperLoc, SlotEditorLoc}
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -66,7 +65,8 @@ class Boot {
 
   private def conferencesMenu: Menu = {
     val slotEditor = Menu(SlotEditorLoc)
-    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences")), slotEditor)
+    val acceptReject = Menu(AcceptRejectLoc)
+    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences")), slotEditor, acceptReject)
     main
   }
 
