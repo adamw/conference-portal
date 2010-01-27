@@ -35,6 +35,11 @@ class Conference extends LongKeyedMapper[Conference] with IdPK with OneToMany[Lo
   object slots extends MappedOneToMany(Slot, Slot.conference)
     with Owned[Slot] with Cascade[Slot]
 
+  object mappedState extends MappedInt(this) {
+    override def defaultValue = ConferenceState.C4P.id
+    override def dbColumnName = "state"
+  }
+
   /* Managing rooms */
 
   def addRoom = {
@@ -123,6 +128,10 @@ class Conference extends LongKeyedMapper[Conference] with IdPK with OneToMany[Lo
 
     checkPositions(rooms, 0)
   }
+
+  def state = ConferenceState(mappedState.is)
+
+  def state(newState: ConferenceState.Value) = mappedState(newState.id)
 }
 
 object Conference extends Conference with LongKeyedMetaMapper[Conference] {
@@ -135,4 +144,11 @@ object Conference extends Conference with LongKeyedMetaMapper[Conference] {
             conf.validateSlots(slotsOverlap _) ++
             conf.validateRooms).toList)
   }
+}
+
+object ConferenceState extends Enumeration {
+  val C4P = Value("conference_state.c4p")
+  val Accept = Value("conference_state.accept")
+  val Schedule = Value("conference_state.schedule")
+  val Finalize = Value("conference_state.finalize")
 }

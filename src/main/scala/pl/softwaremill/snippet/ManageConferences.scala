@@ -2,8 +2,11 @@ package pl.softwaremill.snippet
 
 import net.liftweb.util.Helpers._
 import net.liftweb.http._
+import pl.softwaremill.model.{ConferenceState, Room, Conference}
+import net.liftweb.common._
 import SHtml._
 import S._
+import Box._
 
 import net.liftweb.http.js.JsCmds._
 
@@ -11,7 +14,6 @@ import xml._
 
 import pl.softwaremill.services.ConferenceService
 import pl.softwaremill.lib.D
-import pl.softwaremill.model.{Room, Conference}
 import pl.softwaremill.loc.SlotEditorLoc
 
 import SnippetTools._
@@ -52,12 +54,18 @@ class ManageConferences  {
       }
     }
 
+    def stateForm = {
+      val options = ConferenceState.map { state => (state, ?(state.toString)) }
+      selectObj[ConferenceState.Value](options.toList, Full(conf.state), conf.state(_))
+    }
+
     ajaxForm(
       bind("conf", conferenceTemplate,
         "name" -> conf.name.toForm,
         "dateStart" -> conf.dateStart.toForm,
         "dateEnd" -> conf.dateEnd.toForm,
         "desc" -> conf.desc.toForm,
+        "state" -> stateForm,
         "rooms" -> editRoom _,
         "addRoom" -> ajaxSubmit(?("conference.rooms.add"), () => { conf.addRoom; reDrawForm }),
         "save" -> ajaxSubmit(if (conf.saved_?) ?("common.save") else ?("common.add"), () => { checkAndSave; reDraw }),

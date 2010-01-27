@@ -27,14 +27,16 @@ class Paper extends LongKeyedMapper[Paper] with IdPK {
 
   object conference extends LongMappedMapper[Paper, Conference](this, Conference) {
     override def _toForm = {
-      val allConferences = D.inject_![ConferenceService].allConferences
-      val options = allConferences.map { conf => (conf, conf.name.is) }
+      val conferences = D.inject_![ConferenceService].conferencesInState(ConferenceState.C4P)
+      val options = conferences.map { conf => (conf, conf.name.is) }
       val defaultSelection: Box[Conference] = conference.obj match {
         case f @ Full(_) => f
-        case _ => allConferences.firstOption
+        case _ => conferences.firstOption
       }
       Full(selectObj[Conference](options, defaultSelection, conference(_)))
     }
+
+    override def validations = ModelTools.valNotNull("paper.conference_required", this) _ :: super.validations
   }
 }
 

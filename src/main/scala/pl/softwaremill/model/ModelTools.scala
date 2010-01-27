@@ -3,6 +3,7 @@ package pl.softwaremill.model
 import net.liftweb.http.S
 import xml.Text
 import net.liftweb.util.{FieldIdentifier, FieldError}
+import net.liftweb.mapper.LongMappedForeignMapper
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -26,5 +27,9 @@ object ModelTools {
   private def valOperator(operator: (Int, Int) => Boolean, bound: Int, errorKey: String, field: FieldIdentifier, value: Int) = {
     if (operator(value, bound)) List(FieldError(field, Text(S.?(errorKey))))
     else Nil
+  }
+
+  def valNotNull(errorKey: String, field: LongMappedForeignMapper[_,_])(value: Long) = {
+    field.valHasObj(value) map { ignore => FieldError(field, Text(S.?(errorKey))) }
   }
 }
