@@ -10,7 +10,7 @@ import _root_.net.liftweb.sitemap.Loc._
 import _root_.net.liftweb.mapper.{DB, Schemifier, DefaultConnectionIdentifier, StandardDBVendor}
 import _root_.pl.softwaremill.model._
 import java.util.Locale
-import pl.softwaremill.loc.{ViewPaperLoc, SlotEditorLoc}
+import pl.softwaremill.loc.{LocTools, ViewPaperLoc, SlotEditorLoc}
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -77,10 +77,7 @@ class Boot {
   }
 
   private def loggedIn = {
-    //val loc = SiteMap.findLoc("Login").open_!
-    //val link = loc.link.createPath(loc.currentValue.open_!)
-
-    If(() => User.loggedIn_?, () => RedirectResponse("/user_mgt/login"))
+    If(() => User.loggedIn_?, () => RedirectResponse(LocTools.linkForLoc("Login")))
   }
 
   private def currentUserLocale: Box[Locale] = {
