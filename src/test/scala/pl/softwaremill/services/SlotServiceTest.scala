@@ -1,6 +1,7 @@
 package pl.softwaremill.services
 
 import org.specs.Specification
+import org.specs.runner.JUnit4
 
 import bootstrap.liftweb.Boot
 
@@ -89,3 +90,5 @@ object SlotServiceTest extends Specification {
     }
   }
 }
+
+class SlotServiceJUnitTest extends JUnit4(SlotServiceTest)

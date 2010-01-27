@@ -3,6 +3,7 @@ package pl.softwaremill.lib
 import org.specs.Specification
 
 import CollectionTools._
+import org.specs.runner.JUnit4
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -42,3 +43,5 @@ object CollectionToolsTest extends Specification {
     }
   }
 }
+
+class CollectionToolsJUnitTest extends JUnit4(CollectionToolsTest)

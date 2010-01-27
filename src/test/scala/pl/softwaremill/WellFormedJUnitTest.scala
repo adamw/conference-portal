@@ -7,28 +7,10 @@ import _root_.scala.xml.XML
 import _root_.net.liftweb.util._
 import _root_.net.liftweb.common._
 
-object AppTest {
-  def suite: Test = {
-    val suite = new TestSuite(classOf[AppTest])
-    suite
-  }
-
-  def main(args : Array[String]) {
-    _root_.junit.textui.TestRunner.run(suite)
-  }
-}
-
 /**
  * Unit test for simple App.
  */
-class AppTest extends TestCase("app") {
-
-  /**
-   * Rigourous Tests :-)
-   */
-  def testOK() = assertTrue(true)
-  // def testKO() = assertTrue(false);
-
+class WellFormedJUnitTest extends TestCase("wellFormed") {
   /**
    * Tests to make sure the project's XML files are well-formed.
    *

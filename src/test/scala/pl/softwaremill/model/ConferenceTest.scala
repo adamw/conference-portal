@@ -1,6 +1,7 @@
 package pl.softwaremill.model
 
 import org.specs.Specification
+import org.specs.runner.JUnit4
 import bootstrap.liftweb.Boot
 
 import TestModelTools._
@@ -246,3 +247,5 @@ object ConferenceTest extends Specification {
     }
   }
 }
+
+class ConferenceJUnitTest extends JUnit4(ConferenceTest)
