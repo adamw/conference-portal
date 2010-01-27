@@ -4,14 +4,20 @@
     <table>
         <tr>
             <th><lift:loc>paper.title</lift:loc></th>
-            <th><lift:loc>paper.description</lift:loc></th>
+            <th><lift:loc>paper.author</lift:loc></th>
+            <th><lift:loc>paper.status</lift:loc></th>
+            <th><lift:loc>paper.short_description</lift:loc></th>
             <th><lift:loc>paper.operations</lift:loc></th>
         </tr>
         <lift:AcceptRejectPapers.list>
-            <tr>
-                <td><paper:title /></td>
-                <td><paper:desc /></td>
-                <td><paper:accept /> <paper:reject /></td>
+            <tr paper:rowId="">
+                <paper:cells>
+                    <td><cell:title /></td>
+                    <td><cell:author /></td>
+                    <td><cell:status /></td>
+                    <td><cell:desc /></td>
+                    <td><cell:view /> | <cell:accept /> | <cell:reject /></td>
+                </paper:cells>
             </tr>
         </lift:AcceptRejectPapers.list>
     </table>

@@ -38,6 +38,23 @@ class Paper extends LongKeyedMapper[Paper] with IdPK {
 
     override def validations = ModelTools.valNotNull("paper.conference_required", this) _ :: super.validations
   }
+
+  object mappedStatus extends MappedInt(this) {
+    override def defaultValue = PaperStatus.Pending.id
+    override def dbColumnName = "status"
+  }
+
+  def status = PaperStatus(mappedStatus.is)
+
+  def status(newStatus: PaperStatus.Value) = mappedStatus(newStatus.id)
+
+  def author = user.obj.map { usr: User => usr.shortName } openOr ?("paper.no_author")
 }
 
 object Paper extends Paper with LongKeyedMetaMapper[Paper]
+
+object PaperStatus extends Enumeration {
+  val Pending = Value("paper_status.pending")
+  val Accepted = Value("paper_status.accepted")
+  val Rejected = Value("paper_status.rejected")
+}
