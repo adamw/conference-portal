@@ -4,27 +4,23 @@
     <p id="selections_left"><lift:AcceptRejectPapers.selectionsLeft /></p>
 
     <span id="paper_list">
-        <lift:AcceptRejectPapers.list>
-            <table>
-                <tr>
+        <lift:AcceptRejectPapers.list eager_eval="true">
+            <lift:surround with="papers_select_table">
+                <lift:bind-at name="headers">
                     <th><lift:loc>paper.title</lift:loc></th>
                     <th><lift:loc>paper.author</lift:loc></th>
                     <th><lift:loc>paper.status</lift:loc></th>
                     <th><lift:loc>paper.short_description</lift:loc></th>
                     <th><lift:loc>paper.operations</lift:loc></th>
-                </tr>
-                <list:row>
-                    <tr paper:rowId="">
-                        <paper:cells>
-                            <td><cell:title /></td>
-                            <td><cell:author /></td>
-                            <td><cell:status /></td>
-                            <td><cell:desc /></td>
-                            <td><cell:view /> | <cell:select /></td>
-                        </paper:cells>
-                    </tr>
-                </list:row>
-            </table>
+                </lift:bind-at>
+                <lift:bind-at name="cells">
+                    <td><cell:title /></td>
+                    <td><cell:author /></td>
+                    <td><cell:status /></td>
+                    <td><cell:desc /></td>
+                    <td><cell:view /> | <cell:select /></td>
+                </lift:bind-at>
+            </lift:surround>
         </lift:AcceptRejectPapers.list>
     </span>
 </lift:surround>        
