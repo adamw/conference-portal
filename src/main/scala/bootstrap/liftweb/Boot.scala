@@ -9,7 +9,7 @@ import _root_.net.liftweb.sitemap.Loc._
 import _root_.net.liftweb.mapper.{DB, Schemifier, DefaultConnectionIdentifier, StandardDBVendor}
 import _root_.pl.softwaremill.model._
 import java.util.Locale
-import pl.softwaremill.loc.{AcceptRejectLoc, LocTools, ViewPaperLoc, SlotEditorLoc}
+import pl.softwaremill.loc._
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -39,6 +39,8 @@ class Boot {
             conferencesMenu ::
             // C4P
             c4pMenu ::
+            // Schedule preferences
+            Menu(SchedulePreferencesLoc) ::
             // View papers
             Menu(ViewPaperLoc) ::
             // User controls
