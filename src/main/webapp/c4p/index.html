@@ -1,11 +1,11 @@
 <lift:surround with="default" at="content">
     <h2><lift:Menu.title /></h2>
 
-    <lift:C4P.newLink><lift:loc>paper.submit_new</lift:loc></lift:C4P.newLink>
+    <p><lift:C4P.newLink><lift:loc>paper.submit_new</lift:loc></lift:C4P.newLink></p>
 
     <h3><lift:loc>papers.submitted</lift:loc></h3>
 
-    <table>
+    <table style="width: 100%">
         <tr>
             <th><lift:loc>paper.title</lift:loc></th>
             <th><lift:loc>paper.conference</lift:loc></th>
@@ -14,8 +14,8 @@
         <lift:C4P.list>
             <tr>
                 <td><paper:title /></td>
-                <td><paper:conference /></td>
-                <td><paper:view /> <paper:edit /> <paper:delete /></td>
+                <td style="width: 150px"><paper:conference /></td>
+                <td style="width: 150px"><paper:view /> <paper:edit /> <paper:delete /></td>
             </tr>
         </lift:C4P.list>
     </table>

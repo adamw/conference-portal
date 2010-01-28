@@ -1,0 +1,17 @@
+table {
+    border-spacing: 0;
+}
+
+table tr {
+}
+
+table th {
+    background-color: #ff6666;
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+}
+
+table td {
+    padding: 5px;
+}

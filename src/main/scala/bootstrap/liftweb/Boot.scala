@@ -36,8 +36,7 @@ class Boot {
             // Misc hidden
             Menu(Loc("Error", List("error"), "Error", Hidden)) ::
             // Home
-            Menu(Loc("Home", List("index"), "Home")) ::
-            Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content")) ::
+            Menu(Loc("Home", List("index"), ?("menu.home"))) ::
             // Conferences
             conferencesMenu ::
             // View conference

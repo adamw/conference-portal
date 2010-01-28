@@ -44,7 +44,7 @@ class CurrentPaper {
     val paper = CurrentPaper.is
     bind("paper", viewTemplate,
       "title" -> paper.title,
-      "shortDescription" -> paper.shortDescription,
+      "shortDescription" -> Text(paper.shortDescription),
       "author" -> paper.author
       )
   }

@@ -1,5 +1,6 @@
 package pl.softwaremill.model
 
+import net.liftweb.util.Helpers._
 import net.liftweb.mapper._
 import net.liftweb.http.S._
 import net.liftweb.http.SHtml._
@@ -17,10 +18,13 @@ class Paper extends LongKeyedMapper[Paper] with IdPK {
 
   object title extends MappedPoliteString(this, 256) {
     override def validations = valMinLen(3, ?("paper.title.invalid_length")) _ :: super.validations
+    override def _toForm = super._toForm.map(elem => elem % ("size" -> "80"))
   }
 
   object shortDescription extends MappedTextarea(this, 3000) {
     override def validations = valMinLen(100, ?("paper.short_description.invalid_length")) _ :: super.validations
+    override def textareaRows = 30
+    override def textareaCols = 80
   }
 
   object user extends LongMappedMapper[Paper, User](this, User)
