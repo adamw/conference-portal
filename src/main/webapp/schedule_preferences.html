@@ -5,22 +5,26 @@
 
     <p id="selections_left"><lift:SchedulePreferences.selectionsLeft /></p>
 
-    <table>
-        <tr>
-            <th><lift:loc>paper.title</lift:loc></th>
-            <th><lift:loc>paper.author</lift:loc></th>
-            <th><lift:loc>paper.short_description</lift:loc></th>
-            <th>&nbsp;</th>
-        </tr>
+    <span id="paper_list">
         <lift:SchedulePreferences.list>
-            <tr paper:rowId="">
-                <paper:cells>
-                    <td><cell:title /></td>
-                    <td><cell:author /></td>
-                    <td><cell:desc /></td>
-                    <td><cell:select /></td>
-                </paper:cells>
-            </tr>
+            <table>
+                <tr>
+                    <th><lift:loc>paper.title</lift:loc></th>
+                    <th><lift:loc>paper.author</lift:loc></th>
+                    <th><lift:loc>paper.short_description</lift:loc></th>
+                    <th>&nbsp;</th>
+                </tr>
+                <list:row>
+                    <tr paper:rowId="">
+                        <paper:cells>
+                            <td><cell:title /></td>
+                            <td><cell:author /></td>
+                            <td><cell:desc /></td>
+                            <td><cell:view /> | <cell:select /></td>
+                        </paper:cells>
+                    </tr>
+                </list:row>
+            </table>
         </lift:SchedulePreferences.list>
-    </table>
+    </span>
 </lift:surround>
