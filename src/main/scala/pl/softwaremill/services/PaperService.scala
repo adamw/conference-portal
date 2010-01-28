@@ -12,6 +12,8 @@ trait PaperService {
   def userPapers(user: User): List[Paper]
   def conferencePapers(conf: Conference): List[Paper]
   def find(id: String): Box[Paper]
+  def interestingPapersForUser(user: User): List[Paper]
+  def updateUserInterestedInPaper(user: User, paper: Paper, interested: Boolean)
 }
 
 class PaperServiceImpl extends PaperService {
@@ -27,5 +29,26 @@ class PaperServiceImpl extends PaperService {
 
   def find(id: String): Box[Paper] = {
     Paper.find(id)
+  }
+
+  def interestingPapersForUser(user: User): List[Paper] = {
+    UserInterested.findMap(By(UserInterested.user, user))(_.paper.obj)
+  }
+
+  def updateUserInterestedInPaper(user: User, paper: Paper, interested: Boolean) {
+    val current = UserInterested.find(By(UserInterested.user, user), By(UserInterested.paper, paper))
+    if (interested) {
+      if (!current.isDefined) {
+        val ui = new UserInterested
+        ui.user(user)
+        ui.paper(paper)
+        ui.save
+      } else {
+        // Do nothing - the user is already interested.
+      }
+    } else {
+      // Delete the entity if it's there
+      current.map { _.delete_! }
+    }
   }
 }

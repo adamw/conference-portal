@@ -58,3 +58,16 @@ object PaperStatus extends Enumeration {
   val Accepted = Value("paper_status.accepted")
   val Rejected = Value("paper_status.rejected")
 }
+
+/**
+ * A join-entity between papers and users. Specifies which users are interested in which papers.
+ */
+class UserInterested extends LongKeyedMapper[UserInterested] with IdPK {
+  def getSingleton = UserInterested
+
+  object user extends LongMappedMapper[UserInterested, User](this, User)
+
+  object paper extends LongMappedMapper[UserInterested, Paper](this, Paper)
+}
+
+object UserInterested extends UserInterested with LongKeyedMetaMapper[UserInterested]

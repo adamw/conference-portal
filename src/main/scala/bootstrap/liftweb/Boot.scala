@@ -23,7 +23,7 @@ class Boot {
           Props.get("db.url") openOr "jdbc:mysql://localhost/conference?user=root",
           Props.get("db.user"), Props.get("db.password")))
 
-    Schemifier.schemify(true, Log.infoF _, User, Conference, Room, Slot, Paper)
+    Schemifier.schemify(true, Log.infoF _, User, Conference, Room, Slot, Paper, UserInterested)
 
     // where to search snippet
     LiftRules.addToPackages("pl.softwaremill")
