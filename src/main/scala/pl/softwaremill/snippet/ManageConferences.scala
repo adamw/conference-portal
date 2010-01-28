@@ -29,7 +29,7 @@ class ManageConferences  {
 
   def reDrawForm = SetHtml("conf_edit", edit(conferenceTemplate))
   def reDrawList = SetHtml("conf_list", list(listTemplate))
-  def reDrawActive = SetHtml("active_conf", list(activeTemplate))
+  def reDrawActive = SetHtml("active_conf", active(activeTemplate))
   def reDraw = CmdPair(CmdPair(reDrawForm, reDrawList), reDrawActive)
 
   def edit(conferenceTemplate: NodeSeq): NodeSeq = {
@@ -101,7 +101,7 @@ class ManageConferences  {
       )
   }
 
-  def active(activeTemplate: NodeSeq) = {
+  def active(activeTemplate: NodeSeq): NodeSeq = {
     val configuration = Configuration.is
 
     def confSelect = {
