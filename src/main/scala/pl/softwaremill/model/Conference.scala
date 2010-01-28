@@ -36,7 +36,7 @@ class Conference extends LongKeyedMapper[Conference] with IdPK with OneToMany[Lo
     with Owned[Slot] with Cascade[Slot]
 
   object mappedState extends MappedInt(this) {
-    override def defaultValue = ConferenceState.C4P.id
+    override def defaultValue = ConferenceState.Prepare.id
     override def dbColumnName = "state"
   }
 
@@ -147,6 +147,7 @@ object Conference extends Conference with LongKeyedMetaMapper[Conference] {
 }
 
 object ConferenceState extends Enumeration {
+  val Prepare = Value("conference_state.prepare")
   val C4P = Value("conference_state.c4p")
   val Accept = Value("conference_state.accept")
   val Schedule = Value("conference_state.schedule")
