@@ -15,6 +15,7 @@ import pl.softwaremill.snippet.CurrentConference
 import LocTools._
 
 /**
+ * A location where the current conference is set using an url parameter.
  * @author Adam Warski (adam at warski dot org)
  */
 trait ConferenceAwareLoc extends Loc[Conference] {

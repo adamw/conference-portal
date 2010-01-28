@@ -10,6 +10,7 @@ import _root_.net.liftweb.mapper.{DB, Schemifier, DefaultConnectionIdentifier, S
 import _root_.pl.softwaremill.model._
 import java.util.Locale
 import pl.softwaremill.loc._
+import xml.Text
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -40,7 +41,7 @@ class Boot {
             // C4P
             c4pMenu ::
             // Schedule preferences
-            Menu(SchedulePreferencesLoc) ::
+            Menu(schedulePreferencesLoc) ::
             // View papers
             Menu(ViewPaperLoc) ::
             // User controls
@@ -77,6 +78,12 @@ class Boot {
     val main = Menu(Loc("C4PList", "c4p" :: "index" :: Nil, ?("menu.c4p.my"), LocTools.showRequireLogin), editPaper)
     main
   }
+
+  def schedulePreferencesLoc =
+    ActiveConferenceLoc("schedule_preferences" :: Nil,
+      "SchedulePreferences",
+      new LinkText(ignore => Text(?("menu.schedule_preferences"))),
+      _.state == ConferenceState.Schedule)
 
   private def currentUserLocale: Box[Locale] = {
     User.currentUser.map { user: User =>
