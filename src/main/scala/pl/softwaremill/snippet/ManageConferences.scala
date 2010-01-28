@@ -2,7 +2,6 @@ package pl.softwaremill.snippet
 
 import net.liftweb.util.Helpers._
 import net.liftweb.http._
-import pl.softwaremill.model.{ConferenceState, Room, Conference}
 import net.liftweb.common._
 import SHtml._
 import S._
@@ -16,19 +15,22 @@ import pl.softwaremill.services.ConferenceService
 import pl.softwaremill.lib.D
 import pl.softwaremill.loc.{AcceptRejectLoc, SlotEditorLoc}
 import SnippetTools._
+import pl.softwaremill.model.{Configuration, ConferenceState, Room, Conference}
 
 /**
  * @author Adam Warski (adam at warski dot org)
  */
 class ManageConferences  {
-  lazy val conferenceService = D.inject[ConferenceService].open_!
+  lazy val conferenceService = D.inject_![ConferenceService]
 
   var listTemplate: NodeSeq = _
   var conferenceTemplate: NodeSeq = _
+  var activeTemplate: NodeSeq = _
 
   def reDrawForm = SetHtml("conf_edit", edit(conferenceTemplate))
   def reDrawList = SetHtml("conf_list", list(listTemplate))
-  def reDraw = CmdPair(reDrawForm, reDrawList)
+  def reDrawActive = SetHtml("active_conf", list(activeTemplate))
+  def reDraw = CmdPair(CmdPair(reDrawForm, reDrawList), reDrawActive)
 
   def edit(conferenceTemplate: NodeSeq): NodeSeq = {
     val conf = CurrentConference.is
@@ -93,9 +95,25 @@ class ManageConferences  {
       }
     }
 
-    this.listTemplate = listTemplate;
+    this.listTemplate = listTemplate
     bind("conf", listTemplate,
       "item" -> doList _
+      )
+  }
+
+  def active(activeTemplate: NodeSeq) = {
+    val configuration = Configuration.is
+
+    def confSelect = {
+      val conferences = conferenceService.allConferences
+      val options = (Empty, ?("conference.active.none")) :: conferences.map { conf => (Full(conf), conf.name.is) }
+      Full(selectObj[Box[Conference]](options, Full(configuration.activeConference), configuration.activeConference(_)))
+    }
+
+    this.activeTemplate = activeTemplate
+    bind("active", activeTemplate,
+      "confSelect" -> confSelect,
+      "save" -> ajaxSubmit(?("common.save"), () => { configuration.save; reDraw })
       )
   }
 }
