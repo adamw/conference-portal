@@ -4,7 +4,7 @@ import xml._
 
 import net.liftweb.util.Helpers._
 import net.liftweb.http._
-import js.JsCmds.SetHtml
+import net.liftweb.common._
 import SHtml._
 import S._
 
@@ -27,30 +27,18 @@ class AcceptRejectPapers {
       paper.save
     }
 
-    def row(paper: Paper, idx: Int) = {
-      val rowId = "row" + idx
+    val papers = paperService.conferencePapers(CurrentConference.is)
 
-      def cells(cellsTemplate: NodeSeq): NodeSeq = {                
-        def reDraw = SetHtml(rowId, cells(cellsTemplate))
-
-        bind("cell", cellsTemplate,
+    paperListWithSingleRowRerender(rowTemplate, papers, Empty, (paper, cellsTemplate, reDraw) => {
+      bind("cell", cellsTemplate,
           "title" -> paper.title,
           "author" -> paper.author,
           "status" -> ?(paper.status.toString),
           "desc" -> paper.shortDescription,
           "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view")),
-          "accept" -> a(() => { updatePaperStatus(paper, PaperStatus.Accepted); reDraw }, Text(?("paper.accept"))),
-          "reject" -> a(() => { updatePaperStatus(paper, PaperStatus.Rejected); reDraw }, Text(?("paper.reject")))
+          "accept" -> a(() => { updatePaperStatus(paper, PaperStatus.Accepted); reDraw() }, Text(?("paper.accept"))),
+          "reject" -> a(() => { updatePaperStatus(paper, PaperStatus.Rejected); reDraw() }, Text(?("paper.reject")))
           )
-      }
-
-      bind("paper", rowTemplate,
-        AttrBindParam("rowId", Text(rowId), "id"),
-        "cells" -> cells _
-        )
-    }
-
-    val papers = paperService.conferencePapers(CurrentConference.is)
-    papers.zipWithIndex.flatMap { case (paper: Paper, idx: Int) => row(paper, idx) }
+    })
   }
 }

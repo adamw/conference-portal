@@ -1,3 +1,26 @@
 <lift:surround with="default" at="content">
-    Tralala
+    <h2><lift:Menu.title /></h2>
+
+    <p><lift:loc>schedule.explanation</lift:loc></p>
+
+    <p id="selections_left"><lift:SchedulePreferences.selectionsLeft /></p>
+
+    <table>
+        <tr>
+            <th><lift:loc>paper.title</lift:loc></th>
+            <th><lift:loc>paper.author</lift:loc></th>
+            <th><lift:loc>paper.short_description</lift:loc></th>
+            <th>&nbsp;</th>
+        </tr>
+        <lift:SchedulePreferences.list>
+            <tr paper:rowId="">
+                <paper:cells>
+                    <td><cell:title /></td>
+                    <td><cell:author /></td>
+                    <td><cell:desc /></td>
+                    <td><cell:select /></td>
+                </paper:cells>
+            </tr>
+        </lift:SchedulePreferences.list>
+    </table>
 </lift:surround>
