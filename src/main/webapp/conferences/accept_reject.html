@@ -1,24 +1,30 @@
 <lift:surround with="default" at="content">
     <h2><lift:Menu.title /></h2>
 
-    <table>
-        <tr>
-            <th><lift:loc>paper.title</lift:loc></th>
-            <th><lift:loc>paper.author</lift:loc></th>
-            <th><lift:loc>paper.status</lift:loc></th>
-            <th><lift:loc>paper.short_description</lift:loc></th>
-            <th><lift:loc>paper.operations</lift:loc></th>
-        </tr>
+    <p id="selections_left"><lift:AcceptRejectPapers.selectionsLeft /></p>
+
+    <span id="paper_list">
         <lift:AcceptRejectPapers.list>
-            <tr paper:rowId="">
-                <paper:cells>
-                    <td><cell:title /></td>
-                    <td><cell:author /></td>
-                    <td><cell:status /></td>
-                    <td><cell:desc /></td>
-                    <td><cell:view /> | <cell:accept /> | <cell:reject /></td>
-                </paper:cells>
-            </tr>
+            <table>
+                <tr>
+                    <th><lift:loc>paper.title</lift:loc></th>
+                    <th><lift:loc>paper.author</lift:loc></th>
+                    <th><lift:loc>paper.status</lift:loc></th>
+                    <th><lift:loc>paper.short_description</lift:loc></th>
+                    <th><lift:loc>paper.operations</lift:loc></th>
+                </tr>
+                <list:row>
+                    <tr paper:rowId="">
+                        <paper:cells>
+                            <td><cell:title /></td>
+                            <td><cell:author /></td>
+                            <td><cell:status /></td>
+                            <td><cell:desc /></td>
+                            <td><cell:view /> | <cell:select /></td>
+                        </paper:cells>
+                    </tr>
+                </list:row>
+            </table>
         </lift:AcceptRejectPapers.list>
-    </table>
+    </span>
 </lift:surround>        

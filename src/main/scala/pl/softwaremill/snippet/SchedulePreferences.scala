@@ -4,9 +4,6 @@ import xml._
 
 import net.liftweb.util.Helpers._
 import net.liftweb.http._
-import js.JsCmds.{CmdPair, SetHtml}
-import net.liftweb.common._
-import SHtml._
 import S._
 
 import pl.softwaremill.lib.D
@@ -16,6 +13,7 @@ import pl.softwaremill.services.PaperService
 import pl.softwaremill.loc.ViewPaperLoc
 
 import SnippetTools._
+import PaperSnippetTools._
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -30,44 +28,36 @@ class SchedulePreferences {
 
   private def initInterestedInPapers() = { interestedInPapers = Set() ++ paperService.interestingPapersForUser(user) }
 
-  // The maximum number of selections is the number of slot spans for a conference
-  private val maxSelections = CurrentConference.is.slotsBySpans.size
+  def selectionsLeft(ignore: NodeSeq) = SelectionConfig.selectionsLeftNode
 
-  def selectionsLeft(ignore: NodeSeq) = {
-    val left = maxSelections - interestedInPapers.size
-    Text(?("schedule.selections_left", left, maxSelections))
+  object SelectionConfig extends PaperListWithMaxSelectionConfig {
+    val maxSelections = CurrentConference.is.slotsBySpans.size
+    val papers = paperService.acceptedConferencePapers(CurrentConference.is)
+    val deselectLinkText = ?("schedule.deselect")
+    val selectLinkText = ?("schedule.select")
+
+    def isSelected(paper: Paper) = interestedInPapers.contains(paper)
+
+    def select(paper: Paper, select: Boolean) = {
+      paperService.updateUserInterestedInPaper(user, paper, select);
+      initInterestedInPapers;
+    }
+
+    def selectedCount = interestedInPapers.size
+
+    def selectionsLeftText(left: Int): String = ?("schedule.selections_left", left, maxSelections)
+
+    def bindCells(paper: Paper, cellsTemplate: NodeSeq): NodeSeq = {
+      bind("cell", cellsTemplate,
+        "title" -> paper.title,
+        "author" -> paper.author,
+        "desc" -> paper.shortDescription,
+        "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view"))
+        )
+    }
   }
 
   def list(listTemplate: NodeSeq): NodeSeq = {
-    def reDrawSelectionsLeft = SetHtml("selections_left", selectionsLeft(NodeSeq.Empty))
-    val papers = paperService.acceptedConferencePapers(CurrentConference.is)
-
-    def rows(rowTemplate: NodeSeq): NodeSeq = paperListWithSingleRowRerender(rowTemplate, papers, Full(reDrawSelectionsLeft _),
-      (paper, cellsTemplate, reDraw) => {
-        val interested = interestedInPapers.contains(paper)
-        def selectionBlocked = maxSelections == interestedInPapers.size
-
-        def selectDeselectLink = a(() => {
-          val selectionBlockedBefore = selectionBlocked
-          paperService.updateUserInterestedInPaper(user, paper, !interested);
-          initInterestedInPapers;
-          val selectionBlockedAfter = selectionBlocked
-
-          // Doing a full-redraw if the selection has been blocked or unblocked to hide/show all select links
-          if (selectionBlockedBefore != selectionBlockedAfter) {
-            CmdPair(reDrawSelectionsLeft, SetHtml("paper_list", list(listTemplate)))
-          } else reDraw() },
-          Text(?(if (interested) "schedule.deselect" else "schedule.select")))
-
-        bind("cell", cellsTemplate,
-          "title" -> paper.title,
-          "author" -> paper.author,
-          "desc" -> paper.shortDescription,
-          "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view")),
-          "select" -> (if (selectionBlocked && !interested) NodeSeq.Empty else selectDeselectLink)
-          )
-      })
-
-    bind("list", listTemplate, "row" -> rows _)
+    paperListWithMaxSelection(listTemplate, SelectionConfig)
   }
 }
