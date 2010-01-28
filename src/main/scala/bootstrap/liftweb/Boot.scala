@@ -1,5 +1,7 @@
 package bootstrap.liftweb
 
+import xml.Text
+
 import _root_.net.liftweb.util._
 import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
@@ -10,7 +12,7 @@ import _root_.net.liftweb.mapper.{DB, Schemifier, DefaultConnectionIdentifier, S
 import _root_.pl.softwaremill.model._
 import java.util.Locale
 import pl.softwaremill.loc._
-import xml.Text
+import LocTools._
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -38,10 +40,12 @@ class Boot {
             Menu(Loc("Static", Link(List("static"), true, "/static/index"), "Static Content")) ::
             // Conferences
             conferencesMenu ::
+            // View conference
+            Menu(ViewConferenceLoc) ::
             // C4P
             c4pMenu ::
             // Schedule preferences
-            Menu(schedulePreferencesLoc) ::
+            Menu(SchedulePreferencesLoc) ::
             // View papers
             Menu(ViewPaperLoc) ::
             // User controls
@@ -79,11 +83,23 @@ class Boot {
     main
   }
 
-  def schedulePreferencesLoc =
-    ActiveConferenceLoc("schedule_preferences" :: Nil,
-      "SchedulePreferences",
-      new LinkText(ignore => Text(?("menu.schedule_preferences"))),
-      _.state == ConferenceState.Schedule)
+  object ViewConferenceLoc extends ActiveConferenceLoc {
+    protected val PathList = "conference" :: Nil
+    protected def acceptConference(conf: Conference) = (conf.state == ConferenceState.Schedule || conf.state == ConferenceState.Finalize)
+
+    def name = "ViewConference"
+    def text = new LinkText(ignore => Text(?("menu.view_conference")))
+  }
+
+  object SchedulePreferencesLoc extends ActiveConferenceLoc {
+    protected val PathList = "schedule_preferences" :: Nil
+    protected def acceptConference(conf: Conference) = conf.state == ConferenceState.Schedule
+
+    override def params = showRequireLogin :: super.params
+
+    def name = "SchedulePreferences"
+    def text = new LinkText(ignore => Text(?("menu.schedule_preferences")))
+  }
 
   private def currentUserLocale: Box[Locale] = {
     User.currentUser.map { user: User =>

@@ -1,0 +1,9 @@
+<lift:surround with="default" at="content">
+    <h2><lift:currentConference.name /></h2>
+
+    <ul>
+        <lift:currentConference.acceptedPapers>
+            <li><paper:title /> (<paper:author />) <paper:view /></li>
+        </lift:currentConference.acceptedPapers>
+    </ul>
+</lift:surround>

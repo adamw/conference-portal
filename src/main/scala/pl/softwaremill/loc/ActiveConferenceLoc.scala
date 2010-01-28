@@ -21,7 +21,7 @@ trait ActiveConferenceLoc extends Loc[Unit] {
    */
   protected def acceptConference(conf: Conference): Boolean
 
-  def params = List(showIfActiveConferenceSatisfies(acceptConference _), showRequireLogin)
+  def params: List[Loc.LocParam[Unit]] = List(showIfActiveConferenceSatisfies(acceptConference _))
 
   def link = new Link(PathList)
 
@@ -38,15 +38,4 @@ trait ActiveConferenceLoc extends Loc[Unit] {
       }
     }
   })
-}
-
-object ActiveConferenceLoc {
-  def apply(_pathList: List[String], _name: String, _text: Loc.LinkText[Unit], _acceptConference: Conference => Boolean) =
-    new ActiveConferenceLoc {
-      protected val PathList = _pathList
-      protected def acceptConference(conf: Conference) = _acceptConference(conf)
-
-      def name = _name
-      def text = _text
-    }
 }
