@@ -29,7 +29,7 @@ class CurrentPaper {
     bind("paper", viewTemplate,
       "title" -> paper.title,
       "shortDescription" -> paper.shortDescription,
-      "author" -> "???"
+      "author" -> paper.author
       )
   }
 }
