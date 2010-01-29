@@ -47,11 +47,14 @@
     </div>
 
     <script type="text/javascript">
-        $(function() {
-            $.datepicker.setDefaults({ dateFormat: 'dd/mm/yy' });
+        $(function() { createDatePickers() });
+
+        $(this).ajaxComplete(createDatePickers);
+
+        function createDatePickers() {
             $("#date_start").find('input').datepicker();
             $("#date_end").find('input').datepicker();
-        });
+        }
     </script>
 
     <br />

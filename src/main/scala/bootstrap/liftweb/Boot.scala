@@ -12,6 +12,7 @@ import _root_.net.liftweb.mapper.{DB, Schemifier, DefaultConnectionIdentifier, S
 import _root_.pl.softwaremill.model._
 import pl.softwaremill.loc._
 import LocTools._
+import Helpers._
 
 import java.text.SimpleDateFormat
 import java.util.{Date, Locale}
@@ -69,7 +70,9 @@ class Boot {
     val defaultLocale = new Locale("pl")
     LiftRules.localeCalculator = { req => currentUserLocale openOr defaultLocale }
 
-    LiftRules.formatDate = d => if (d == null) LiftRules.formatDate(new Date(0)) else new SimpleDateFormat("dd/MM/yyyy").format(d)
+    def dateFormat = new SimpleDateFormat("dd/MM/yyyy")
+    LiftRules.formatDate = d => if (d == null) LiftRules.formatDate(new Date(0)) else dateFormat.format(d)
+    LiftRules.parseDate = str => tryo(dateFormat.parse(str)) or Helpers.toDate(str)
 
     S.addAround(DB.buildLoanWrapper)
   }
