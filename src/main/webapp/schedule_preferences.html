@@ -7,20 +7,46 @@
 
     <span id="paper_list">
         <lift:SchedulePreferences.list eager_eval="true">
-            <lift:surround with="papers_select_table">
-                <lift:bind-at name="headers">
+            <table>
+                <tr>
                     <th><lift:loc>paper.title</lift:loc></th>
                     <th><lift:loc>paper.author</lift:loc></th>
                     <th><lift:loc>paper.short_description</lift:loc></th>
                     <th>&nbsp;</th>
-                </lift:bind-at>
-                <lift:bind-at name="cells">
-                    <td><cell:title /></td>
-                    <td><cell:author /></td>
-                    <td><cell:desc /></td>
-                    <td style="width: 150px"><cell:view /> | <cell:select /></td>
-                </lift:bind-at>
-            </lift:surround>
+                </tr>
+                <list:row>
+                    <tr paper:rowId="">
+                        <paper:cells>
+                            <td class="title"><cell:title /></td>
+                            <td><cell:author /></td>
+                            <td>
+                                <div style="display: none;"><cell:desc /></div>
+
+                                <a href="" onclick="showDialog($(this)); return false;">
+                                    <lift:loc>common.show</lift:loc>
+                                </a>
+                            </td>
+                            <td style="width: 150px"><cell:view /> | <cell:select /></td>
+                        </paper:cells>
+                    </tr>
+                </list:row>
+            </table>
         </lift:SchedulePreferences.list>
     </span>
+
+    <div title="" id="dialogContent"></div>
+
+    <script type="text/javascript">
+	$(function() {
+        $("#dialogContent").dialog({ width: 600, height: 500, autoOpen: false, position: 'center' });
+	});
+
+    function showDialog(caller) {
+        var title = caller.parent().parent().find('.title').html();
+        var desc = caller.parent().find('div').html();
+        $("#ui-dialog-title-dialogContent").html(title);
+        $("#dialogContent").html(desc);
+        $("#dialogContent").dialog('open');
+    }
+	</script>
 </lift:surround>
