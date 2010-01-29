@@ -88,7 +88,7 @@ class ManageConferences  {
           "dateStart" -> conf.dateStart,
           "dateEnd" -> conf.dateEnd,
           "edit" -> a(() => { CurrentConference(conf); reDrawForm }, Text(?("common.edit"))),
-          "delete" -> confirmLink("", () => { /*TODO: enable*/ conf.delete_! }, ?("common.delete"), ?("conference.confirm_delete", conf.name)),
+          "delete" -> confirmLink("", () => { /*TODO: enable conf.delete_!*/ }, ?("common.delete"), ?("conference.confirm_delete", conf.name)),
           "editSlots" -> anchor(SlotEditorLoc.link.createPath(conf), ?("conference.edit_slots")),
           "acceptReject" -> acceptReject(conf) _
           )
