@@ -52,7 +52,7 @@ class AcceptRejectPapers {
         "title" -> paper.title,
         "author" -> paper.author,
         "status" -> ?(paper.status.toString),
-        "desc" -> paper.shortDescription,
+        "desc" -> paper.shortDescription.toHtml,
         "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view"))
         )
     }

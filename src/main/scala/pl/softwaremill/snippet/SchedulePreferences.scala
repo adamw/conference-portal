@@ -51,7 +51,7 @@ class SchedulePreferences {
       bind("cell", cellsTemplate,
         "title" -> paper.title,
         "author" -> paper.author,
-        "desc" -> Text(paper.shortDescription),
+        "desc" -> paper.shortDescription.toHtml,
         "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view"))
         )
     }

@@ -1,11 +1,14 @@
 package pl.softwaremill.model
 
+import xml.NodeSeq
+
 import net.liftweb.util.Helpers._
 import net.liftweb.mapper._
 import net.liftweb.http.S._
 import net.liftweb.http.SHtml._
 import net.liftweb.common._
 import net.liftweb.common.Box._
+import net.liftweb.textile.TextileParser
 
 import pl.softwaremill.services.ConferenceService
 import pl.softwaremill.lib.D
@@ -25,6 +28,8 @@ class Paper extends LongKeyedMapper[Paper] with IdPK {
     override def validations = valMinLen(100, ?("paper.short_description.invalid_length")) _ :: super.validations
     override def textareaRows = 30
     override def textareaCols = 80
+
+    def toHtml: NodeSeq = TextileParser.parse(shortDescription.is, None).map(_.toHtml).getOrElse(NodeSeq.Empty)
   }
 
   object user extends LongMappedMapper[Paper, User](this, User)
