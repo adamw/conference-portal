@@ -54,10 +54,14 @@
 
                 <div id="menu_vert">
                     <lift:Menu.builder li_item:class="menuactive" />
-                    <div>
-                        <lift:Msgs showAll="true"/>
-                        <hr class="space" />
-                    </div>
+                </div>
+                <div>
+                    <lift:Msgs showAll="true">
+                        <lift:error_class>errorBox</lift:error_class>
+                        <lift:warning_class>warningBox</lift:warning_class>
+                        <lift:notice_class>noticeBox</lift:notice_class>
+                    </lift:Msgs>
+                    <hr class="space" />
                 </div>
             </div>
         </div>
