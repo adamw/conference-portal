@@ -64,7 +64,8 @@ class Boot {
 
     LiftRules.resourceNames = "conference" :: Nil
 
-    LiftRules.localeCalculator = { req => currentUserLocale openOr LiftRules.defaultLocaleCalculator(req) }
+    val defaultLocale = new Locale("pl")
+    LiftRules.localeCalculator = { req => currentUserLocale openOr defaultLocale }
 
     S.addAround(DB.buildLoanWrapper)
   }
