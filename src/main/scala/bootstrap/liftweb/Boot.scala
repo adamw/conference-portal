@@ -25,7 +25,7 @@ class Boot {
     if (!DB.jndiJdbcConnAvailable_?)
       DB.defineConnectionManager(DefaultConnectionIdentifier,
         new StandardDBVendor(Props.get("db.driver") openOr "com.mysql.jdbc.Driver",
-          Props.get("db.url") openOr "jdbc:mysql://localhost/conference?user=root",
+          Props.get("db.url") openOr "jdbc:mysql://localhost/conference?user=root&useUnicode=true&characterEncoding=UTF-8",
           Props.get("db.user"), Props.get("db.password")))
 
     Schemifier.schemify(true, Log.infoF _, User, Conference, Room, Slot, Paper, UserInterested, Configuration)
