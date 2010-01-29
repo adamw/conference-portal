@@ -1,7 +1,9 @@
 <lift:surround with="default" at="content">
     <h2><lift:Menu.title /></h2>
 
-    <span id="conf_edit">
+    <h3><lift:loc>conference.edit_header</lift:loc></h3>
+    
+    <div id="conf_edit">
         <lift:manageConferences.edit form="post">
             <table>
                 <tr>
@@ -25,7 +27,7 @@
                     <td><conf:state /></td>
                 </tr>
                 <tr>
-                    <td><lift:loc>conference.rooms</lift:loc>:</td>
+                    <td style="vertical-align:top"><lift:loc>conference.rooms</lift:loc>:</td>
                     <td>
                         <ul>
                             <conf:rooms>
@@ -42,9 +44,19 @@
                 </tr>
             </table>
         </lift:manageConferences.edit>
-    </span>
+    </div>
+
+    <script type="text/javascript">
+        $(function() {
+            $("#date_start").datepicker();
+        });
+    </script>
+
+    <br />
+
+    <h3><lift:loc>conference.list_header</lift:loc></h3>
         
-    <span id="conf_list">
+    <div id="conf_list">
         <lift:manageConferences.list>
             <ul>
                 <conf:item>
@@ -55,11 +67,13 @@
                 </conf:item>
             </ul>
         </lift:manageConferences.list>
-    </span>
+    </div>
 
-    <span id="active_conf">
+    <h3><lift:loc>conference.active</lift:loc></h3>
+
+    <div id="active_conf">
         <lift:manageConferences.active form="post">
-            <lift:loc>conference.active</lift:loc>: <active:confSelect /> <active:save />
+            <active:confSelect /> <active:save />
         </lift:manageConferences.active>
-    </span>
+    </div>
 </lift:surround>        
