@@ -10,6 +10,8 @@ import S._
 
 import pl.softwaremill.lib.CollectionTools
 
+import java.util.Date
+
 /**
  * @author Adam Warski (adam at warski dot org)
  */
@@ -22,8 +24,13 @@ class Conference extends LongKeyedMapper[Conference] with IdPK with OneToMany[Lo
     override def validations = valMinLen(3, "Name must be at least 3 characters") _ :: super.validations
   }
 
-  object dateStart extends MappedDate(this)
-  object dateEnd extends MappedDate(this)
+  object dateStart extends MappedDate(this) {
+    override def defaultValue = new Date()
+  }
+  
+  object dateEnd extends MappedDate(this) {
+    override def defaultValue = new Date()
+  }
 
   object desc extends MappedPoliteString(this, 128) {
     override def validations = valMinLen(3, "Description must be at least 3 characters") _ :: super.validations

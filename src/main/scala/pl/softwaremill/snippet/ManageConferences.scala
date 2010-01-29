@@ -17,9 +17,6 @@ import pl.softwaremill.loc.{AcceptRejectLoc, SlotEditorLoc}
 import SnippetTools._
 import pl.softwaremill.model.{Configuration, ConferenceState, Room, Conference}
 
-import java.text.DateFormat
-import java.util.Date
-
 /**
  * @author Adam Warski (adam at warski dot org)
  */
@@ -84,17 +81,12 @@ class ManageConferences  {
       } else NodeSeq.Empty
     }
 
-    def formatDate(d: Date): String = {
-      val dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, S.locale)      
-      dateFormat.format(new Date(d.getTime))
-    }
-
     def doList(itemTemplate: NodeSeq): NodeSeq = {
       conferenceService.allConferences.flatMap { conf: Conference =>
         bind("conf", itemTemplate,
           "name" -> conf.name,
-          "dateStart" -> formatDate(conf.dateStart),
-          "dateEnd" -> formatDate(conf.dateEnd),
+          "dateStart" -> conf.dateStart,
+          "dateEnd" -> conf.dateEnd,
           "edit" -> a(() => { CurrentConference(conf); reDrawForm }, Text(?("common.edit"))),
           "delete" -> confirmLink("", () => conf.delete_!, ?("common.delete"), ?("conference.confirm_delete", conf.name)),
           "editSlots" -> anchor(SlotEditorLoc.link.createPath(conf), ?("conference.edit_slots")),

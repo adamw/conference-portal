@@ -12,11 +12,11 @@
                 </tr>
                 <tr>
                     <td><lift:loc>conference.date_start</lift:loc>:</td>
-                    <td><conf:dateStart /></td>
+                    <td id="date_start"><conf:dateStart /></td>
                 </tr>
                 <tr>
                     <td><lift:loc>conference.date_end</lift:loc>:</td>
-                    <td><conf:dateEnd /></td>
+                    <td id="date_end"><conf:dateEnd /></td>
                 </tr>
                 <tr>
                     <td><lift:loc>conference.description</lift:loc>:</td>
@@ -48,7 +48,9 @@
 
     <script type="text/javascript">
         $(function() {
-            $("#date_start").datepicker();
+            $.datepicker.setDefaults({ dateFormat: 'dd/mm/yy' });
+            $("#date_start").find('input').datepicker();
+            $("#date_end").find('input').datepicker();
         });
     </script>
 
