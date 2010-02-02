@@ -43,11 +43,11 @@ class Boot {
             Menu(Loc("Home", List("index"), ?("menu.home"), Hidden)) ::
             // Conferences
             conferencesMenu ::
-            // View conference
-            Menu(ViewConferenceLoc) ::
             // View Author(s)
             Menu(AuthorLoc) ::
             Menu(AuthorsLoc) ::
+            // View conference
+            Menu(ViewConferenceLoc) ::
             // View papers
             Menu(ViewPaperLoc) ::
             // Schedule
@@ -87,7 +87,7 @@ class Boot {
   private def conferencesMenu: Menu = {
     val slotEditor = Menu(SlotEditorLoc)
     val acceptReject = Menu(AcceptRejectLoc)
-    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences")), slotEditor, acceptReject)
+    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences"), User.testSuperUser), slotEditor, acceptReject)
     main
   }
 
