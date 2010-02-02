@@ -16,6 +16,7 @@ object D extends Factory {
   implicit object conferenceService extends FactoryMaker[ConferenceService](() => new ConferenceServiceImpl)
   implicit object slotService extends FactoryMaker[SlotService](() => new SlotServiceImpl)
   implicit object paperService extends FactoryMaker[PaperService](() => new PaperServiceImpl)
+  implicit object userService extends FactoryMaker[UserService](() => new UserServiceImpl)
 
   /**
    * objects in Scala are lazily created.  The init()
@@ -24,7 +25,7 @@ object D extends Factory {
    * registering their types with the dependency injector
    */
   private def init() {
-    List(conferenceService, slotService, paperService)
+    List(conferenceService, slotService, paperService, userService)
   }
   init()
 
