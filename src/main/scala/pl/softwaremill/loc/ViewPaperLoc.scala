@@ -8,11 +8,11 @@ import net.liftweb.http._
 
 import xml.Text
 
-import pl.softwaremill.model.Paper
 import pl.softwaremill.lib.D
 import pl.softwaremill.snippet.Util._
 import pl.softwaremill.services.PaperService
 import pl.softwaremill.snippet.CurrentPaper
+import pl.softwaremill.model.{User, PaperStatus, Paper}
 
 import LocTools._
 
@@ -40,7 +40,7 @@ object ViewPaperLoc extends Loc[Paper] {
       val paperBox: Box[Paper] = paperService.find(paperId)
 
       paperBox match {
-        case Full(paper) => {
+        case Full(paper) if (paper.status == PaperStatus.Accepted || User.superUser_?) => {
           CurrentPaper(paper);
           (finalResponse(PaperPath :: Nil), paper)
         }

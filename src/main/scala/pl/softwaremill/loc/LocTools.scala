@@ -4,8 +4,11 @@ import net.liftweb.http._
 import net.liftweb.common._
 import net.liftweb.sitemap.Loc._
 
+import S._
+
 import pl.softwaremill.model.{Conference, ConferenceState, Configuration, User}
 import pl.softwaremill.snippet.CurrentConference
+import pl.softwaremill.snippet.Util._
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -29,11 +32,15 @@ object LocTools {
     }
   }, () => RedirectResponse("/"))
 
-  def withActiveConference[T](default: => T, acceptConference: Conference => Boolean)(block: => (RewriteResponse, T)): (RewriteResponse, T)   = {
+  def withActiveConference[T](default: => T, unavailableKey: Box[String], acceptConference: Conference => Boolean)
+                             (block: => (RewriteResponse, T)): (RewriteResponse, T)   = {
     Configuration.is.activeConference match {
       case Full(conf) if acceptConference(conf) => {
         CurrentConference(conf)
         block
+      }
+      case Full(conf) if unavailableKey.isDefined => {
+        (RewriteResponse("unavailable" :: Nil, Map(unavailableMessageParam -> ?(unavailableKey.open_!))), default)
       }
       case _ => (RewriteResponse("error" :: Nil), default)
     }

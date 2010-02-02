@@ -24,13 +24,14 @@
 
     <style type="text/css">
         /* <![CDATA[ */
-        #menu_vert li.menuactive span {
-            color:#18507C;
-            display:block;
-            min-height:1em;
-            padding:0.8em 0.3em 0.5em 1.5em;
-            text-decoration:none;
-            background-color:inherit;
+        div#menu_vert ul ul span {
+            background:transparent url(http://javarsovia.pl/uploads/ngrey/libk.gif) no-repeat scroll right top;
+            color:#000000;
+            font-size:90%;
+            padding:0.8em 0.5em 0.5em 2.8em;
+            line-height:1.3em;
+            display: block;
+            font-weight: bold;
         }
         /* ]]> */
     </style>
@@ -58,7 +59,18 @@
             <div id="sidebara">
 
                 <div id="menu_vert">
-                    <lift:Menu.builder li_item:class="menuactive" />
+                    <ul>
+                        <li class="menuactive menuparent">
+                            <a class="menuactive menuparent" href="http://www.javarsovia.pl/"><span>Konferencja</span></a>
+                            <lift:Menu.builder li_item:class="currentpage" />
+                        </li>
+                        <li class="parent"><a class="parent" href="http://www.javarsovia.pl/index.php?page=partnerzy"><span>Partnerzy</span></a></li>
+                        <li class="parent"><a class="parent" href="http://www.javarsovia.pl/index.php?page=noclegi"><span>Varsovia</span></a></li>
+                        <li class="parent"><a class="parent" href="http://www.javarsovia.pl/index.php?page=materialy"><span>Materiały</span></a></li>
+                        <li><a href="http://www.javarsovia.pl/index.php?page=organizatorzy-2010">Organizatorzy</a></li>
+                        <li class="parent"><a class="parent" href="http://www.javarsovia.pl/index.php?page=poprzednie-edycje"><span>Poprzednie edycje</span></a></li>
+                        <li><a href="http://www.javarsovia.pl/index.php?page=kontakt">Kontakt</a></li>
+                    </ul>
                 </div>
                 <div>
                     <lift:Msgs showAll="true">
@@ -68,6 +80,7 @@
                     </lift:Msgs>
                     <hr class="space" />
                 </div>
+                <br />
             </div>
         </div>
 

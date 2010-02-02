@@ -20,7 +20,16 @@ trait ActiveConferenceLoc extends Loc[Unit] {
    */
   protected def acceptConference(conf: Conference): Boolean
 
-  def params: List[Loc.LocParam[Unit]] = List(showIfActiveConferenceSatisfies(acceptConference _))
+  /**
+   * The message key of a message to display to the user if the conference is not available.
+   * If {@code Empty} (default), the loc will not be shown in the menu at all.
+   */
+  protected def unavailableKey: Box[String] = Empty
+
+  def params: List[Loc.LocParam[Unit]] = unavailableKey match {
+    case Full(_)  => Nil
+    case _        => List(showIfActiveConferenceSatisfies(acceptConference _))
+  }
 
   def link = new Link(PathList)
 
@@ -28,7 +37,7 @@ trait ActiveConferenceLoc extends Loc[Unit] {
 
   override def rewrite = Full({
     case RewriteRequest(parsePath @ ParsePath(PathList, _, _, _), _, _) => {
-      withActiveConference((), acceptConference _) {
+      withActiveConference((), unavailableKey, acceptConference _) {
         (finalResponse(parsePath), ())
       }
     }

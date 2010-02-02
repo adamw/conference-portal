@@ -35,7 +35,7 @@ object AuthorLoc extends Loc[User] {
 
   override def rewrite = Full({
     case RewriteRequest(parsePath @ ParsePath(AuthorPath :: userId :: Nil, _, _, _), _, httpRequest) => {
-      withActiveConference[User](null, conferenceAfterAcceptReject _) {
+      withActiveConference[User](null, Empty, conferenceAfterAcceptReject _) {
         val userService = D.inject_![UserService]
         val userBox: Box[User] = userService.findAcceptedAuthor(CurrentConference.is, userId)
 

@@ -38,21 +38,24 @@ class Boot {
     val entries =
             // Misc hidden
             Menu(Loc("Error", List("error"), "Error", Hidden)) ::
+            Menu(Loc("Unavailable", List("unavailable"), ?("menu.unavailable"), Hidden)) ::
             // Home
-            Menu(Loc("Home", List("index"), ?("menu.home"))) ::
+            Menu(Loc("Home", List("index"), ?("menu.home"), Hidden)) ::
             // Conferences
             conferencesMenu ::
             // View conference
             Menu(ViewConferenceLoc) ::
+            // View Author(s)
+            Menu(AuthorLoc) ::
+            Menu(AuthorsLoc) ::
+            // View papers
+            Menu(ViewPaperLoc) ::
+            // Schedule
+            Menu(ViewScheduleLoc) ::
             // C4P
             c4pMenu ::
             // Schedule preferences
             Menu(SchedulePreferencesLoc) ::
-            // View papers
-            Menu(ViewPaperLoc) ::
-            // View Author(s)
-            Menu(AuthorLoc) ::
-            Menu(AuthorsLoc) ::
             // User controls
             User.sitemap
 
@@ -71,6 +74,7 @@ class Boot {
     LiftRules.resourceNames = "conference" :: Nil
 
     val defaultLocale = new Locale("pl")
+    Locale.setDefault(defaultLocale)
     LiftRules.localeCalculator = { req => currentUserLocale openOr defaultLocale }
 
     def dateFormat = new SimpleDateFormat("dd/MM/yyyy")
@@ -97,6 +101,8 @@ class Boot {
     protected val PathList = "conference" :: Nil
     protected def acceptConference(conf: Conference) = conferenceAfterAcceptReject(conf)
 
+    override protected def unavailableKey = Full("papers.available_after_c4p")
+
     def name = "ViewConference"
     def text = new LinkText(ignore => Text(?("menu.view_conference")))
   }
@@ -115,8 +121,20 @@ class Boot {
     protected val PathList = "authors" :: Nil
     protected def acceptConference(conf: Conference) = conferenceAfterAcceptReject(conf)
 
+    override protected def unavailableKey = Full("authors.available_after_c4p")
+
     def name = "ViewAuthors"
     def text = new LinkText(ignore => Text(?("menu.view_authors")))
+  }
+
+  object ViewScheduleLoc extends ActiveConferenceLoc {
+    protected val PathList = "schedule" :: Nil
+    protected def acceptConference(conf: Conference) = false //conf.state == ConferenceState.Finalize
+
+    override protected def unavailableKey = Full("schedule.available_after_c4p")
+
+    def name = "ViewSchedule"
+    def text = new LinkText(ignore => Text(?("menu.schedule")))
   }
 
   private def currentUserLocale: Box[Locale] = {
