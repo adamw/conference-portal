@@ -20,7 +20,9 @@ import SnippetTools._
 class C4P {
   lazy val paperService = D.inject_![PaperService]
 
-  def newLink(newLinkTemplate: NodeSeq): NodeSeq = link("edit.html", () => (), newLinkTemplate)
+  def newLink(newLinkTemplate: NodeSeq): NodeSeq = {
+    link("edit.html", () => (), newLinkTemplate)
+  }
 
   def edit(editTemplate: NodeSeq): NodeSeq = {
     val paper = CurrentPaper.is
@@ -49,14 +51,21 @@ class C4P {
 
   def list(rowTemplate: NodeSeq): NodeSeq = {
     val papers = paperService.userPapers(User.currentUser.open_!)
-    papers.flatMap { paper: Paper =>
-      bind("paper", rowTemplate,
-        "title" -> paper.title,
-        "conference" -> paper.conference.obj.map(conf => conf.name.is).openOr(""),
-        "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view")),
-        "edit" -> link("edit.html", () => CurrentPaper(paper), Text(?("common.edit"))),
-        "delete" -> confirmLink("", () => paper.delete_!, ?("common.delete"), ?("paper.confirm_delete", paper.title))
-        )
+
+    if (papers.size == 0) {
+      Text(?("c4p.no_presentations"))
+    } else {
+      papers.flatMap { paper: Paper =>
+        val conference = paper.conference.obj openOr (new Conference)
+        val c4p = conference.state == ConferenceState.C4P
+        bind("paper", rowTemplate,
+          "title" -> paper.title,
+          "conference" -> conference.name.is,
+          "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view")),
+          "edit" -> (if (c4p) link("edit.html", () => CurrentPaper(paper), Text(?("common.edit"))) else NodeSeq.Empty),
+          "delete" -> (if (c4p) confirmLink("", () => paper.delete_!, ?("common.delete"), ?("paper.confirm_delete", paper.title)) else NodeSeq.Empty)
+          )
+      }
     }
   }
 }

@@ -18,7 +18,7 @@ object User extends User with MetaMegaProtoUser[User] {
   override def fieldOrder = List(id, firstName, lastName, email, locale, timezone, password, bio)
 
   // comment this line out to require email validations
-  override def skipEmailValidation = false
+  override def skipEmailValidation = true
 
   // templates
   override def loginXhtml =
