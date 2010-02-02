@@ -1,0 +1,9 @@
+<lift:surround with="default" at="content">
+    <h2><lift:currentConference.name /></h2>
+
+    <ul>
+        <lift:currentConference.acceptedAuthors>
+            <li><author:name /> <author:view /></li>
+        </lift:currentConference.acceptedAuthors>
+    </ul>
+</lift:surround>

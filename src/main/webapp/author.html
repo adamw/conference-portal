@@ -1,0 +1,15 @@
+<lift:surround with="default" at="content">
+    <h2><lift:currentAuthor.name /></h2>
+
+    <p><lift:currentAuthor.bio /></p>
+
+    <hr />
+
+    <h3><lift:loc>author.accepted_papers</lift:loc></h3>
+
+    <ul>
+        <lift:currentAuthor.acceptedPapers>
+            <li><paper:title /> <paper:view /></li>
+        </lift:currentAuthor.acceptedPapers>
+    </ul>
+</lift:surround>

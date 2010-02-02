@@ -6,10 +6,10 @@ import net.liftweb.util.Helpers._
 import net.liftweb.http._
 import S._
 
-import pl.softwaremill.model.{Paper, Conference}
+import pl.softwaremill.model.{User, Paper, Conference}
 import pl.softwaremill.lib.D
-import pl.softwaremill.services.PaperService
-import pl.softwaremill.loc.ViewPaperLoc
+import pl.softwaremill.services.{UserService, PaperService}
+import pl.softwaremill.loc.{AuthorLoc, ViewPaperLoc}
 
 import SnippetTools._
 
@@ -30,6 +30,15 @@ class CurrentConference {
       "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view"))
       ))
   }
+
+  def acceptedAuthors(authorTemplate: NodeSeq): NodeSeq = {
+    val authors = D.inject_![UserService].acceptedAuthors(CurrentConference.is)
+
+    authors.flatMap(author => bind("author", authorTemplate,
+      "name" -> author.shortName,
+      "view" -> anchor(AuthorLoc.link.createPath(author), ?("common.view"))
+      ))
+  }
 }
 
 object CurrentPaper extends RequestVar(Paper.create)
@@ -47,5 +56,22 @@ class CurrentPaper {
       "shortDescription" -> paper.shortDescription.toHtml,
       "author" -> paper.author
       )
+  }
+}
+
+object CurrentAuthor extends RequestVar(User.create)
+
+class CurrentAuthor {
+  def name(ignore: NodeSeq): NodeSeq = Text(CurrentAuthor.is.shortName)
+
+  def bio(ignore: NodeSeq): NodeSeq = CurrentAuthor.is.bio.is match { case null => NodeSeq.Empty; case s => Text(s) }
+
+  def acceptedPapers(paperTemplate: NodeSeq): NodeSeq = {
+    val papers = D.inject_![PaperService].acceptedConferencePapers(CurrentConference.is, CurrentAuthor.is)
+
+    papers.flatMap(paper => bind("paper", paperTemplate,
+      "title" -> paper.title,
+      "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view"))
+      ))
   }
 }

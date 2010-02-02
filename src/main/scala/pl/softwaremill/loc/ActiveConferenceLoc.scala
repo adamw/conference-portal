@@ -5,12 +5,11 @@ import Loc._
 import net.liftweb.common._
 import net.liftweb.http._
 
-import pl.softwaremill.snippet.CurrentConference
 import LocTools._
-import pl.softwaremill.model.{Conference, Configuration}
+import pl.softwaremill.model.Conference
 
 /**
- * A location where the current conference is set basing on the active conference. Requires login.
+ * A location where the current conference is set basing on the active conference.
  * @author Adam Warski (adam at warski dot org)
  */
 trait ActiveConferenceLoc extends Loc[Unit] {
@@ -29,12 +28,8 @@ trait ActiveConferenceLoc extends Loc[Unit] {
 
   override def rewrite = Full({
     case RewriteRequest(parsePath @ ParsePath(PathList, _, _, _), _, _) => {
-      Configuration.is.activeConference match {
-        case Full(conf) if acceptConference(conf) => {
-          CurrentConference(conf)
-          (finalResponse(parsePath), ())
-        }
-        case _ => (RewriteResponse("error" :: Nil), ())
+      withActiveConference((), acceptConference _) {
+        (finalResponse(parsePath), ())
       }
     }
   })

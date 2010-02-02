@@ -12,6 +12,7 @@ trait PaperService {
   def userPapers(user: User): List[Paper]
   def conferencePapers(conf: Conference): List[Paper]
   def acceptedConferencePapers(conf: Conference): List[Paper]
+  def acceptedConferencePapers(conf: Conference, author: User): List[Paper]
   def find(id: String): Box[Paper]
   def interestingPapersForUser(user: User): List[Paper]
   def updateUserInterestedInPaper(user: User, paper: Paper, interested: Boolean)
@@ -31,6 +32,11 @@ class PaperServiceImpl extends PaperService {
   def acceptedConferencePapers(conf: Conference): List[Paper] = {
     Paper.findAll(By(Paper.conference, conf), By(Paper.mappedStatus, PaperStatus.Accepted.id),
       OrderBy(Paper.title, Ascending))
+  }
+
+  def acceptedConferencePapers(conf: Conference, author: User): List[Paper] = {
+    Paper.findAll(By(Paper.conference, conf), By(Paper.mappedStatus, PaperStatus.Accepted.id),
+      By(Paper.user, author), OrderBy(Paper.title, Ascending))
   }
 
   def find(id: String): Box[Paper] = {

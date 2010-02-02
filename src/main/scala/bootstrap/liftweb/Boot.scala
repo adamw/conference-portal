@@ -50,6 +50,9 @@ class Boot {
             Menu(SchedulePreferencesLoc) ::
             // View papers
             Menu(ViewPaperLoc) ::
+            // View Author(s)
+            Menu(AuthorLoc) ::
+            Menu(AuthorsLoc) ::
             // User controls
             User.sitemap
 
@@ -92,7 +95,7 @@ class Boot {
 
   object ViewConferenceLoc extends ActiveConferenceLoc {
     protected val PathList = "conference" :: Nil
-    protected def acceptConference(conf: Conference) = (conf.state == ConferenceState.Schedule || conf.state == ConferenceState.Finalize)
+    protected def acceptConference(conf: Conference) = conferenceAfterAcceptReject(conf)
 
     def name = "ViewConference"
     def text = new LinkText(ignore => Text(?("menu.view_conference")))
@@ -106,6 +109,14 @@ class Boot {
 
     def name = "SchedulePreferences"
     def text = new LinkText(ignore => Text(?("menu.schedule_preferences")))
+  }
+
+  object AuthorsLoc extends ActiveConferenceLoc {
+    protected val PathList = "authors" :: Nil
+    protected def acceptConference(conf: Conference) = conferenceAfterAcceptReject(conf)
+
+    def name = "ViewAuthors"
+    def text = new LinkText(ignore => Text(?("menu.view_authors")))
   }
 
   private def currentUserLocale: Box[Locale] = {

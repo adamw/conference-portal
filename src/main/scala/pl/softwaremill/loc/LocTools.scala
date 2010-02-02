@@ -5,6 +5,7 @@ import net.liftweb.common._
 import net.liftweb.sitemap.Loc._
 
 import pl.softwaremill.model.{Conference, ConferenceState, Configuration, User}
+import pl.softwaremill.snippet.CurrentConference
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -27,4 +28,16 @@ object LocTools {
       case _ => false
     }
   }, () => RedirectResponse("/"))
+
+  def withActiveConference[T](default: => T, acceptConference: Conference => Boolean)(block: => (RewriteResponse, T)): (RewriteResponse, T)   = {
+    Configuration.is.activeConference match {
+      case Full(conf) if acceptConference(conf) => {
+        CurrentConference(conf)
+        block
+      }
+      case _ => (RewriteResponse("error" :: Nil), default)
+    }
+  }
+
+  def conferenceAfterAcceptReject(conf: Conference) = (conf.state == ConferenceState.Schedule || conf.state == ConferenceState.Finalize)
 }
