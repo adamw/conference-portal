@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<localSearchSolver>
+    <scoreDrl>/org/drools/solver/examples/nqueens/solver/nQueensScoreRules.drl</scoreDrl>
+    <scoreDefinition>
+        <scoreDefinitionType>SIMPLE</scoreDefinitionType>
+    </scoreDefinition>
+    <termination>
+        <scoreAttained>0</scoreAttained>
+        <maximumMinutesSpend>2</maximumMinutesSpend>
+    </termination>
+    <selector>
+        <moveFactoryClass>org.drools.solver.examples.nqueens.solver.NQueensMoveFactory</moveFactoryClass>
+    </selector>
+    <accepter>
+        <completeSolutionTabuSize>1000</completeSolutionTabuSize>
+    </accepter>
+    <forager>
+        <foragerType>MAX_SCORE_OF_ALL</foragerType>
+    </forager>
+</localSearchSolver>
