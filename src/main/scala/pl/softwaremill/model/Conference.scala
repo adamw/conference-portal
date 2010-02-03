@@ -139,6 +139,11 @@ class Conference extends LongKeyedMapper[Conference] with IdPK with OneToMany[Lo
   def state = ConferenceState(mappedState.is)
 
   def state(newState: ConferenceState.Value) = mappedState(newState.id)
+
+  def conferenceAfterAcceptReject = {
+    val _state = state
+    (_state == ConferenceState.Schedule || _state == ConferenceState.Finalize)
+  }
 }
 
 object Conference extends Conference with LongKeyedMetaMapper[Conference] {

@@ -9,7 +9,7 @@ import S._
 import pl.softwaremill.model.{User, Paper, Conference}
 import pl.softwaremill.lib.D
 import pl.softwaremill.services.{UserService, PaperService}
-import pl.softwaremill.loc.{AuthorLoc, ViewPaperLoc}
+import pl.softwaremill.loc.{Locs, ViewPaperLoc}
 
 import SnippetTools._
 
@@ -36,7 +36,7 @@ class CurrentConference {
 
     authors.flatMap(author => bind("author", authorTemplate,
       "name" -> author.shortName,
-      "view" -> anchor(AuthorLoc.link.createPath(author), ?("common.view"))
+      "view" -> anchor(Locs.AuthorLoc.link.createPath(author), ?("common.view"))
       ))
   }
 }

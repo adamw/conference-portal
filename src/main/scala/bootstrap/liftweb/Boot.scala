@@ -38,24 +38,24 @@ class Boot {
     val entries =
             // Misc hidden
             Menu(Loc("Error", List("error"), "Error", Hidden)) ::
-            Menu(Loc("Unavailable", List("unavailable"), ?("menu.unavailable"), Hidden)) ::
-            // Home
-            Menu(Loc("Home", List("index"), ?("menu.home"), Hidden)) ::
-            // Conferences
-            conferencesMenu ::
-            // View Author(s)
-            Menu(AuthorLoc) ::
-            Menu(AuthorsLoc) ::
-            // View conference
-            Menu(ViewConferenceLoc) ::
             // View papers
             Menu(ViewPaperLoc) ::
+            // View author
+            Menu(Locs.AuthorLoc) ::
+            // Home
+            Menu(Loc("Home", List("index"), ?("menu.home"), Hidden)) ::
+            // View Authors
+            Menu(Locs.AuthorsLoc) ::
+            // View conference
+            Menu(Locs.ViewConferenceLoc) ::
             // Schedule
-            Menu(ViewScheduleLoc) ::
+            Menu(Locs.ViewScheduleLoc) ::
             // C4P
             c4pMenu ::
             // Schedule preferences
-            Menu(SchedulePreferencesLoc) ::
+            Menu(Locs.SchedulePreferencesLoc) ::
+            // Conferences management
+            conferencesMenu ::
             // User controls
             User.sitemap
 
@@ -95,46 +95,6 @@ class Boot {
     val editPaper = Menu(Loc("C4PEdit", "c4p" :: "edit" :: Nil, ?("menu.c4p.edit"), Hidden, User.loginFirst))
     val main = Menu(Loc("C4PList", "c4p" :: "index" :: Nil, ?("menu.c4p.my"), LocTools.showRequireLogin), editPaper)
     main
-  }
-
-  object ViewConferenceLoc extends ActiveConferenceLoc {
-    protected val PathList = "conference" :: Nil
-    protected def acceptConference(conf: Conference) = conferenceAfterAcceptReject(conf)
-
-    override protected def unavailableKey = Full("papers.available_after_c4p")
-
-    def name = "ViewConference"
-    def text = new LinkText(ignore => Text(?("menu.view_conference")))
-  }
-
-  object SchedulePreferencesLoc extends ActiveConferenceLoc {
-    protected val PathList = "schedule_preferences" :: Nil
-    protected def acceptConference(conf: Conference) = conf.state == ConferenceState.Schedule
-
-    override def params = showRequireLogin :: super.params
-
-    def name = "SchedulePreferences"
-    def text = new LinkText(ignore => Text(?("menu.schedule_preferences")))
-  }
-
-  object AuthorsLoc extends ActiveConferenceLoc {
-    protected val PathList = "authors" :: Nil
-    protected def acceptConference(conf: Conference) = conferenceAfterAcceptReject(conf)
-
-    override protected def unavailableKey = Full("authors.available_after_c4p")
-
-    def name = "ViewAuthors"
-    def text = new LinkText(ignore => Text(?("menu.view_authors")))
-  }
-
-  object ViewScheduleLoc extends ActiveConferenceLoc {
-    protected val PathList = "schedule" :: Nil
-    protected def acceptConference(conf: Conference) = false //conf.state == ConferenceState.Finalize
-
-    override protected def unavailableKey = Full("schedule.available_after_c4p")
-
-    def name = "ViewSchedule"
-    def text = new LinkText(ignore => Text(?("menu.schedule")))
   }
 
   private def currentUserLocale: Box[Locale] = {

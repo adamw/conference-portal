@@ -27,12 +27,12 @@ class Util {
 
   def unavailable(unavailableTemplate: NodeSeq) = {
     bind("unavailable", unavailableTemplate,
-      "message" -> (S.param(Util.unavailableMessageParam) openOr "")
+      "message" -> (?(Util.UnavailableMessageKey.is))
     )
   }
 }
 
 object Util {
   val errorMessageParam = "message";
-  val unavailableMessageParam = "unavailable";
+  object UnavailableMessageKey extends RequestVar("")
 }
