@@ -90,6 +90,19 @@ object User extends User with MetaMegaProtoUser[User] {
         </table>
       </form>
     </span>
+
+  // TODO: remove after patch applied
+  private def localForm(user: User, ignorePassword: Boolean): NodeSeq = {
+    signupFields.
+    map(fi => getSingleton.getActualBaseField(user, fi)).
+    filter(f => !ignorePassword || (f match {
+          case f: MappedPassword[User] => false
+          case _ => true
+        })).
+    flatMap(f =>
+      f.toForm.toList.map(form =>
+        (<tr><td>{f.displayName}</td><td>{form}</td></tr>) ) )
+  }
 }
 
 class User extends MegaProtoUser[User] {
