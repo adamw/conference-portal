@@ -64,7 +64,7 @@ object CurrentAuthor extends RequestVar(User.create)
 class CurrentAuthor {
   def name(ignore: NodeSeq): NodeSeq = Text(CurrentAuthor.is.shortName)
 
-  def bio(ignore: NodeSeq): NodeSeq = CurrentAuthor.is.bio.is match { case null => NodeSeq.Empty; case s => Text(s) }
+  def bio(ignore: NodeSeq): NodeSeq = CurrentAuthor.is.bio.toHtml
 
   def acceptedPapers(paperTemplate: NodeSeq): NodeSeq = {
     val papers = D.inject_![PaperService].acceptedConferencePapers(CurrentConference.is, CurrentAuthor.is)
