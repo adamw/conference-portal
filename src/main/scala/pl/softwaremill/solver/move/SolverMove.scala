@@ -6,13 +6,14 @@ import org.drools.solver.core.move.Move
 import org.drools.WorkingMemory
 
 import pl.softwaremill.solver.domain._
+import org.drools.solver.core.localsearch.decider.accepter.tabu.TabuPropertyEnabled
 
 /**
  * @author Adam Warski (adam at warski dot org)
  */
 object SolverMove {  }
 
-class SlotChangeMove(val ass: Assigment, val slot: Slot) extends Move {
+class SlotChangeMove(val ass: Assigment, val slot: Slot) extends Move with TabuPropertyEnabled {
   def doMove(workingMemory: WorkingMemory) = {
     val assHandle = workingMemory.getFactHandle(ass);
     workingMemory.modifyRetract(assHandle);
@@ -23,6 +24,8 @@ class SlotChangeMove(val ass: Assigment, val slot: Slot) extends Move {
   def createUndoMove(workingMemory: WorkingMemory) = new SlotChangeMove(ass, ass.slot)
 
   def isMoveDoable(workingMemory: WorkingMemory) = ass.slot != slot
+
+  def getTabuProperties = java.util.Collections.singletonList(ass)
 
   override def toString = "[M %s => %s]".format(ass, slot)
 

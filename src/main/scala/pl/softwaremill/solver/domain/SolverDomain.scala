@@ -16,7 +16,7 @@ class Base extends java.lang.Comparable[Base] {
   def compareTo(other: Base): Int = intWrapper(id).compareTo(other.id)
 
   override def equals(other: Any) = other match {
-    case that: this.type => id == that.id
+    case that: Base if (this.getClass() == that.getClass()) => id == that.id
     case _ => false
   }
 
@@ -24,15 +24,15 @@ class Base extends java.lang.Comparable[Base] {
 }
 
 class Paper extends Base {
-  override def toString = "[P%d]".format(id)
+  override def toString = "P%d".format(id)
 }
 
 class Room extends Base {
-  override def toString = "[R%d]".format(id)
+  override def toString = "R%d".format(id)
 }
 
 class Time extends Base {
-  override def toString = "[T%d]".format(id)
+  override def toString = "T%d".format(id)
 }
 
 class Slot extends Base {
@@ -42,15 +42,17 @@ class Slot extends Base {
   @BeanProperty
   var time: Time = _
 
-  override def toString = "[S%d (%s, %s)]".format(id, room, time)
+  override def toString = "S%d (%s,%s)".format(id, room, time)
 }
 
-class Assigment extends Base {
+class Assigment extends java.lang.Comparable[Assigment] {
   @BeanProperty
   var paper: Paper = _
 
   @BeanProperty
   var slot: Slot = _
+
+  def getId() = { paper.id }
 
   override def clone: Assigment = {
     val cloned = new Assigment
@@ -59,7 +61,19 @@ class Assigment extends Base {
     cloned
   }
 
-  override def toString = "[A%d (%s -> %s)]".format(id, paper, slot)
+  def compareTo(other: Assigment): Int = {
+    val res = paper.compareTo(other.paper)
+    if (res == 0) slot.compareTo(other.slot) else res
+  }
+
+  override def equals(other: Any) = other match {
+    case that: Assigment => ((paper == that.paper) && (slot == that.slot))
+    case _ => false
+  }
+
+  override def hashCode = 41*paper.hashCode + slot.hashCode
+
+  override def toString = "[A %s->%s]".format(paper, slot)
 }
 
 class Preference extends Base {
@@ -69,10 +83,10 @@ class Preference extends Base {
   @BeanProperty
   var paper2: Paper = _
 
-  override def toString = "[PR%d (%s & %s)]".format(id, paper1, paper2)
+  override def toString = "[PR%d %s & %s]".format(id, paper1, paper2)
 }
 
-class Schedule(papers: List[Paper], rooms: List[Room], times: List[Time], val slots: List[Slot], val assigments: List[Assigment], preferences: List[Preference])
+class Schedule(papers: List[Paper], val slots: List[Slot], val assigments: List[Assigment], preferences: List[Preference])
         extends ScalaSolution {
   var score: Score[_] = _
 
@@ -81,7 +95,7 @@ class Schedule(papers: List[Paper], rooms: List[Room], times: List[Time], val sl
 
   def cloneSolution = {
     val clonedAssigments = assigments.map { _.clone }
-    val cloned = new Schedule(papers, rooms, times, slots, assigments, preferences)
+    val cloned = new Schedule(papers, slots, clonedAssigments, preferences)
     cloned.setScoreScala(score)
     cloned
   }
@@ -92,4 +106,21 @@ class Schedule(papers: List[Paper], rooms: List[Room], times: List[Time], val sl
     assigments.foreach(ret.add(_))
     ret
   }
+
+  def violatedPreferences = {
+    def preferenceViolated_?(pref: Preference) = {
+      def assigmentForPaper(paper: Paper) = assigments.find(_.paper == paper).get
+
+      assigmentForPaper(pref.paper1).slot.time == assigmentForPaper(pref.paper2).slot.time
+    }
+
+    preferences.filter(preferenceViolated_?(_))
+  }
+
+  override def equals(other: Any) = other match {
+    case that: Schedule => assigments == that.assigments
+    case _ => false
+  }
+
+  override def hashCode = assigments.hashCode
 }
