@@ -1,0 +1,67 @@
+package pl.softwaremill.solver;
+
+import org.drools.solver.core.score.calculator.HardAndSoftConstraintScoreCalculator;
+import org.drools.solver.core.score.constraint.UnweightedConstraintOccurrence;
+import org.drools.solver.core.score.constraint.ConstraintType;
+
+import pl.softwaremill.solver.domain.Assigment;
+import pl.softwaremill.solver.domain.Preference;
+
+// @author Adam Warski (adam at warski dot org)
+
+global HardAndSoftConstraintScoreCalculator scoreCalculator;
+
+// ############################################################################
+// Hard constraints
+// ############################################################################
+
+rule "multipleAssigmentsPerSlot"
+    when
+        $assigment : Assigment($id : id, $slot : slot);
+        exists Assigment(id > $id, slot == $slot);
+    then
+        insertLogical(new UnweightedConstraintOccurrence("multipleAssigmentsPerSlot", ConstraintType.NEGATIVE_HARD, $assigment));
+end
+
+// ############################################################################
+// Soft constraints
+// ############################################################################
+
+rule "preferenceViolated"
+    when
+        $pref : Preference($paper1 : paper1, $paper2 : paper2);
+        $assigment1 : Assigment(paper == $paper1, $slot1 : slot);
+        $assigment2 : Assigment(paper == $paper2, $slot2 : slot);
+        eval($slot1.getTime() == $slot2.getTime());
+    then
+        insertLogical(new UnweightedConstraintOccurrence("preferenceViolated", ConstraintType.NEGATIVE_SOFT, $pref));
+end
+
+// ############################################################################
+// Calculate score
+// ############################################################################
+
+// Accumulate hard constraints
+rule "hardConstraintsBroken"
+        salience -1 // Do the other rules first (optional, for performance)
+    when
+        $hardTotal : Number() from accumulate(
+            $unweightedConstraintOccurrence : UnweightedConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_HARD),
+            count($unweightedConstraintOccurrence)
+        );
+    then
+        scoreCalculator.setHardConstraintsBroken($hardTotal.intValue());
+end
+
+// Accumulate soft constraints
+rule "softConstraintsBroken"
+        salience -1 // Do the other rules first (optional, for performance)
+    when
+        $softTotal : Number() from accumulate(
+            $unweightedConstraintOccurrence : UnweightedConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_SOFT),
+            count($unweightedConstraintOccurrence)
+        );
+    then
+        scoreCalculator.setSoftConstraintsBroken($softTotal.intValue());
+end
+

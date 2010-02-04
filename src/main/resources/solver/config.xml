@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <localSearchSolver>
-    <scoreDrl>/org/drools/solver/examples/nqueens/solver/nQueensScoreRules.drl</scoreDrl>
+    <scoreDrl>/solver/score.drl</scoreDrl>
     <scoreDefinition>
-        <scoreDefinitionType>SIMPLE</scoreDefinitionType>
+        <scoreDefinitionType>HARD_AND_SOFT</scoreDefinitionType>
     </scoreDefinition>
     <termination>
-        <scoreAttained>0</scoreAttained>
+        <scoreAttained>0hard/0soft</scoreAttained>
         <maximumMinutesSpend>2</maximumMinutesSpend>
     </termination>
     <selector>
-        <moveFactoryClass>org.drools.solver.examples.nqueens.solver.NQueensMoveFactory</moveFactoryClass>
+        <moveFactoryClass>pl.softwaremill.solver.move.SimpleMoveFactory</moveFactoryClass>
     </selector>
     <accepter>
-        <completeSolutionTabuSize>1000</completeSolutionTabuSize>
+        <!--<completeSolutionTabuSize>1000</completeSolutionTabuSize>-->
     </accepter>
     <forager>
         <foragerType>MAX_SCORE_OF_ALL</foragerType>
