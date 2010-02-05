@@ -3,6 +3,7 @@ package pl.softwaremill.solver.domain
 import reflect.BeanProperty
 
 import org.drools.solver.core.score.Score
+import pl.softwaremill.lib.CollectionTools
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -52,7 +53,7 @@ class Assigment extends java.lang.Comparable[Assigment] {
   @BeanProperty
   var slot: Slot = _
 
-  def getId() = { paper.id }
+  def getId = { paper.id }
 
   override def clone: Assigment = {
     val cloned = new Assigment
@@ -76,31 +77,38 @@ class Assigment extends java.lang.Comparable[Assigment] {
   override def toString = "[A %s->%s]".format(paper, slot)
 }
 
-class Preference extends Base {
-  @BeanProperty
-  var paper1: Paper = _
-
-  @BeanProperty
-  var paper2: Paper = _
-
-  override def toString = "[PR%d %s & %s]".format(id, paper1, paper2)
+case class Preference(paper1: Paper, paper2: Paper, weight: Int) {
+  def getPaper1 = paper1
+  def getPaper2 = paper2
+  def getWeight = weight
 }
 
 object Preference {
   /**
    * @param papers The papers.
    * @param ids The list of ids for which to generate the preferences.
-   * @return A list of preferences which contains a preference for each pair of ids from the list.
+   * @return A list of preferences which contains a preference for each pair of ids from the list. Each preference
+   * has a weight of 1.
    */
   def generate(papers: List[Paper], ids: List[Int]): List[Preference] = {
     val sortedIds = ids.sort(_ < _)
     val idToPaper = Map(papers.map(p => (p.id -> p)) : _*)
     for (i <- sortedIds; j <- sortedIds; if (i < j)) yield {
-      val p = new Preference
-      p.paper1 = idToPaper(i)
-      p.paper2 = idToPaper(j)
-      p
+      Preference(idToPaper(i), idToPaper(j), 1)
     }
+  }
+
+  /**
+   * Combines all preferences for same pairs of papers to one preference for which the weight is the sum of all
+   * weights.
+   */
+  def collapse(prefs: List[Preference]): List[Preference] = {
+    val prefsByPapers = CollectionTools.aggregate(prefs, (pref: Preference) => Set(pref.paper1, pref.paper2))
+    prefsByPapers.map { case (papers, prefs) => {
+      val combinedWeight = prefs.foldLeft(0)((acc, pref) => acc+pref.weight)
+      val papersList = papers.toList
+      Preference(papersList(0), papersList(1), combinedWeight) 
+    } }.toList
   }
 }
 

@@ -22,6 +22,17 @@ object SolverDomainTest extends Specification {
 
       ids must_== List((1, 2), (1, 4), (1, 5), (2, 4), (2, 5), (4, 5))
     }
+
+    "collapse preferences" in {
+      val prefs = List(Preference(papers(0), papers(1), 2), Preference(papers(3), papers(1), 1), Preference(papers(1), papers(0), 1),
+        Preference(papers(3), papers(1), 1), Preference(papers(2), papers(4), 8))
+      val collapsed = Preference.collapse(prefs)
+
+      collapsed must haveSize(3)
+      collapsed must exist(pref => (pref == Preference(papers(0), papers(1), 3) || (pref == Preference(papers(1), papers(0), 3))))
+      collapsed must exist(pref => (pref == Preference(papers(3), papers(1), 2) || (pref == Preference(papers(1), papers(3), 2))))
+      collapsed must exist(pref => (pref == Preference(papers(2), papers(4), 8) || (pref == Preference(papers(4), papers(2), 8))))
+    }
   }
 }
 
