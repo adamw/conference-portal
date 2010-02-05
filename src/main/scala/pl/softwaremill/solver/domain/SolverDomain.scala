@@ -86,6 +86,24 @@ class Preference extends Base {
   override def toString = "[PR%d %s & %s]".format(id, paper1, paper2)
 }
 
+object Preference {
+  /**
+   * @param papers The papers.
+   * @param ids The list of ids for which to generate the preferences.
+   * @return A list of preferences which contains a preference for each pair of ids from the list.
+   */
+  def generate(papers: List[Paper], ids: List[Int]): List[Preference] = {
+    val sortedIds = ids.sort(_ < _)
+    val idToPaper = Map(papers.map(p => (p.id -> p)) : _*)
+    for (i <- sortedIds; j <- sortedIds; if (i < j)) yield {
+      val p = new Preference
+      p.paper1 = idToPaper(i)
+      p.paper2 = idToPaper(j)
+      p
+    }
+  }
+}
+
 class Schedule(papers: List[Paper], val slots: List[Slot], val assigments: List[Assigment], preferences: List[Preference])
         extends ScalaSolution {
   var score: Score[_] = _

@@ -7,7 +7,7 @@
     <termination>
         <scoreAttained>0hard/0soft</scoreAttained>
         <maximumMinutesSpend>2</maximumMinutesSpend>
-        <maximumUnimprovedStepCount>1000</maximumUnimprovedStepCount>
+        <!--<maximumUnimprovedStepCount>1000</maximumUnimprovedStepCount>-->
     </termination>
     <selector>
         <moveFactoryClass>pl.softwaremill.solver.move.SimpleMoveFactory</moveFactoryClass>

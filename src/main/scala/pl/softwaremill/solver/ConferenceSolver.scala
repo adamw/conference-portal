@@ -12,13 +12,15 @@ import org.apache.log4j.{Level, PatternLayout, ConsoleAppender, Logger}
 class ConferenceSolver {
   val configPath = "/solver/config.xml"
 
-  def randomSeed = System.currentTimeMillis
-
-  def createSolver(): Solver = {
+  def createConfigurer: XmlSolverConfigurer = {
     val configurer = new XmlSolverConfigurer()
     configurer.configure(configPath);
-    configurer.getConfig.setRandomSeed(randomSeed)
-    configurer.buildSolver();
+    configurer.getConfig.setRandomSeed(System.currentTimeMillis)
+    configurer
+  }
+
+  def createSolver: Solver = {
+    createConfigurer.buildSolver()
   }
 
   def createInitialAssigments(papers: List[Paper], slots: List[Slot]): List[Assigment] = {
@@ -44,9 +46,13 @@ object Test {
 //    val timesCount = 2
 //    val preferencesDefs = List((1, 2), (1, 3), (2, 3))
 
-    val roomsCount = 3
-    val timesCount = 3
-    val preferencesDefs = List((1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4))
+//    val roomsCount = 3
+//    val timesCount = 3
+//    val preferencesDefs = List((1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4))
+
+    val roomsCount = 2
+    val timesCount = 5
+    val preferencesDefs = List[(Int, Int)]()
 
     val papers = (1 to (roomsCount * timesCount)).map(i => { val p = new Paper; p.id = i; p}).toList
     val rooms = (1 to roomsCount).map(i => { val r = new Room; r.id = i; r}).toList
