@@ -6,16 +6,25 @@
     </scoreDefinition>
     <termination>
         <scoreAttained>0hard/0soft</scoreAttained>
-        <maximumMinutesSpend>5</maximumMinutesSpend>
-        <!--<maximumUnimprovedStepCount>1000</maximumUnimprovedStepCount>-->
+        <maximumMinutesSpend>1</maximumMinutesSpend>
+        <maximumUnimprovedStepCount>5000</maximumUnimprovedStepCount>
     </termination>
     <selector>
-        <moveFactoryClass>pl.softwaremill.solver.move.SimpleMoveFactory</moveFactoryClass>
+        <!--<moveFactoryClass>pl.softwaremill.solver.move.SimpleMoveFactory</moveFactoryClass>-->
+        <moveFactoryClass>pl.softwaremill.solver.move.SlotSwapMoveFactory</moveFactoryClass>
+        <!--<relativeSelection>0.02</relativeSelection>-->
+        <shuffle>true</shuffle>
     </selector>
     <accepter>
-        <completeSolutionTabuSize>5000</completeSolutionTabuSize>
+        <completeSolutionTabuSize>10000</completeSolutionTabuSize>
+        <completePropertyTabuSize>5</completePropertyTabuSize>
+        <!--<accepterType>SIMULATED_ANNEALING</accepterType>-->
+        <!--<greatDelugeWaterLevelUpperBoundRate>1.30</greatDelugeWaterLevelUpperBoundRate>-->
+        <!--<greatDelugeWaterRisingRate>0.000000143</greatDelugeWaterRisingRate>-->
     </accepter>
     <forager>
-        <foragerType>MAX_SCORE_OF_ALL</foragerType>
+        <foragerType>FIRST_BEST_SCORE_IMPROVING</foragerType>
+        <!--<foragerType>MAX_SCORE_OF_ALL</foragerType>-->
+        <!--<foragerType>FIRST_RANDOMLY_ACCEPTED</foragerType>-->
     </forager>
 </localSearchSolver>

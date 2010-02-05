@@ -5,6 +5,7 @@ import org.drools.solver.core.Solver
 
 import pl.softwaremill.solver.domain._
 import org.apache.log4j.{Level, PatternLayout, ConsoleAppender, Logger}
+import org.drools.solver.core.event.{BestSolutionChangedEvent, SolverEventListener}
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -23,11 +24,17 @@ class ConferenceSolver {
     createConfigurer.buildSolver()
   }
 
+//  def createInitialAssigments(papers: List[Paper], slots: List[Slot]): List[Assigment] = {
+//    papers.map(p => { val a = new Assigment; a.slot = slots.first; a.paper = p; a }).toList
+//  }
+
   def createInitialAssigments(papers: List[Paper], slots: List[Slot]): List[Assigment] = {
-    papers.map(p => { val a = new Assigment; a.slot = slots.first; a.paper = p; a }).toList
+    papers.zip(slots).map { case (p, s) => { val a = new Assigment; a.slot = s; a.paper = p; a } }.toList
   }
 
   def solve(papers: List[Paper], slots: List[Slot], preferences: List[Preference]): Schedule = {
+    require(papers.size == slots.size)
+
     val startingSchedule = new Schedule(papers, slots, createInitialAssigments(papers, slots), Preference.collapse(preferences))
 
     val solver = createSolver
@@ -42,15 +49,23 @@ object Test {
   def main(args: Array[String]) {
     test
     test
-    test
   }
 
   def test {
     val solver = new ConferenceSolver {
       override def createConfigurer = {
         val configurer = super.createConfigurer
-        configurer.getConfig.setRandomSeed(5124l)
+        //configurer.getConfig.setRandomSeed(5124l)
         configurer
+      }
+
+      override def createSolver = {
+        val solver = super.createSolver
+        solver.addEventListener(new SolverEventListener() {
+          def bestSolutionChanged(event: BestSolutionChangedEvent) = { println("New best solution: %s after %d".format(
+            event.getNewBestSolution.getScore, event.getTimeMillisSpend/1000)) }
+        })
+        solver
       }
     }
 
@@ -79,8 +94,10 @@ object Test {
 //    } }
 
     // Based on JV2009. 200 random choices of 4-6 papers a user wants to see
+    // Best score so far: 0hard/-158soft in 5 minutes
 
-    val r = new scala.util.Random(847261l)
+    val r = new scala.util.Random(System.currentTimeMillis)
+    //val r = new scala.util.Random(847261l)
 
     val preferences: List[Preference] = (1 to 200).flatMap(i => {
       // Number of papers user wants to see

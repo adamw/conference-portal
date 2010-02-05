@@ -16,13 +16,15 @@ global HardAndSoftConstraintScoreCalculator scoreCalculator;
 // Hard constraints
 // ############################################################################
 
-rule "multipleAssigmentsPerSlot"
-    when
-        $assigment : Assigment($id : id, $slot : slot);
-        exists Assigment(id > $id, slot == $slot);
-    then
-        insertLogical(new IntConstraintOccurrence("multipleAssigmentsPerSlot", ConstraintType.NEGATIVE_HARD, 1, $assigment));
-end
+// Not needed as with move swapping it is not possible to put multiple assigments for a slot
+
+//rule "multipleAssigmentsPerSlot"
+//    when
+//        $assigment : Assigment($id : id, $slot : slot);
+//        exists Assigment(id > $id, slot == $slot);
+//    then
+//        insertLogical(new IntConstraintOccurrence("multipleAssigmentsPerSlot", ConstraintType.NEGATIVE_HARD, 1, $assigment));
+//end
 
 // ############################################################################
 // Soft constraints
@@ -43,16 +45,16 @@ end
 // ############################################################################
 
 // Accumulate hard constraints
-rule "hardConstraintsBroken"
-        salience -1 // Do the other rules first (optional, for performance)
-    when
-        $hardTotal : Number() from accumulate(
-            IntConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_HARD, $weight : weight),
-            sum($weight) // Vote for http://jira.jboss.com/jira/browse/JBRULES-1075
-        );
-    then
-        scoreCalculator.setHardConstraintsBroken($hardTotal.intValue());
-end
+// rule "hardConstraintsBroken"
+//         salience -1 // Do the other rules first (optional, for performance)
+//     when
+//         $hardTotal : Number() from accumulate(
+//             IntConstraintOccurrence(constraintType == ConstraintType.NEGATIVE_HARD, $weight : weight),
+//             sum($weight) // Vote for http://jira.jboss.com/jira/browse/JBRULES-1075
+//         );
+//     then
+//         scoreCalculator.setHardConstraintsBroken($hardTotal.intValue());
+// end
 
 // Accumulate soft constraints
 rule "softConstraintsBroken"
