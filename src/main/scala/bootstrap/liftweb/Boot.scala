@@ -89,7 +89,8 @@ class Boot {
   private def conferencesMenu: Menu = {
     val slotEditor = Menu(SlotEditorLoc)
     val acceptReject = Menu(AcceptRejectLoc)
-    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences"), User.testSuperUser), slotEditor, acceptReject)
+    val stats = Menu(StatisticsLoc)
+    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences"), User.testSuperUser), slotEditor, acceptReject, stats)
     main
   }
 

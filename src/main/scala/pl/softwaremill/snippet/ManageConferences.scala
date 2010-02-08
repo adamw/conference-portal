@@ -13,9 +13,9 @@ import xml._
 
 import pl.softwaremill.services.ConferenceService
 import pl.softwaremill.lib.D
-import pl.softwaremill.loc.{AcceptRejectLoc, SlotEditorLoc}
 import SnippetTools._
 import pl.softwaremill.model.{Configuration, ConferenceState, Room, Conference}
+import pl.softwaremill.loc.{StatisticsLoc, AcceptRejectLoc, SlotEditorLoc}
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -90,6 +90,7 @@ class ManageConferences  {
           "edit" -> a(() => { CurrentConference(conf); reDrawForm }, Text(?("common.edit"))),
           "delete" -> confirmLink("", () => { /*TODO: enable conf.delete_!*/ }, ?("common.delete"), ?("conference.confirm_delete", conf.name)),
           "editSlots" -> anchor(SlotEditorLoc.link.createPath(conf), ?("conference.edit_slots")),
+          "stats" -> anchor(StatisticsLoc.link.createPath(conf), ?("conference.statistics")),
           "acceptReject" -> acceptReject(conf) _
           )
       }
