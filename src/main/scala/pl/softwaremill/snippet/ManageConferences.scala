@@ -40,7 +40,7 @@ class ManageConferences  {
     def checkAndSave {
       conf.validate match {
         case Nil  => conf.save(); S.notice(S.?("conference.saved", conf.name)); CurrentConference(Conference.create);
-        case xs   => xs.map { i => S.error(i.msg); }
+        case xs   => S.error(xs)
       }
     }
 
