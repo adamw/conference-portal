@@ -8,12 +8,13 @@ import net.liftweb.http._
 import net.liftweb.textile.TextileParser
 
 import S._
+import SHtml._
 
 object User extends User with MetaMegaProtoUser[User] {
   override def dbTableName = "users" // define the DB table name
   override def screenWrap = Full(<lift:surround with="default" at="content"><lift:bind /></lift:surround>)
 
-  override def signupFields = super.signupFields ::: (bio :: Nil)
+  override def signupFields = firstName :: lastName :: email :: password :: mappedSex :: bio :: Nil
 
   // define the order fields will appear in forms and output
   override def fieldOrder = List(id, firstName, lastName, email, locale, timezone, password, bio)
@@ -127,4 +128,23 @@ class User extends MegaProtoUser[User] {
       case s => TextileParser.parse(s, None).map(_.toHtml).getOrElse(NodeSeq.Empty)
     }
   }
+
+  object mappedSex extends MappedInt(this) {
+    override def defaultValue = Sex.Male.id
+    override def dbColumnName = "sex"
+    override def displayName = ?("user.sex")
+
+    override def _toForm = {
+      val options = Sex.map { sex => (sex, ?(sex.toString)) }.toList
+      Full(selectObj[Sex.Value](options, Full(sex), sex(_)))
+    }
+  }
+
+  def sex = Sex(mappedSex.is)
+  def sex(newSex: Sex.Value) = mappedSex(newSex.id)
+}
+
+object Sex extends Enumeration {
+  val Female = Value("sex.female")
+  val Male = Value("sex.male")
 }
