@@ -21,11 +21,11 @@ object SolverTest extends Specification {
           Preference.generate(papers, _))
 
         val solver = new ConferenceSolver {
+          override val randomSeed = 1234l
+
           override def createConfigurer = {
             val configurer = super.createConfigurer
-            configurer.getConfig.setRandomSeed(1234l)
             configurer.getConfig.getTerminationConfig.setScoreAttained("0hard/" + (-maxViolations) + "soft")
-
             configurer
           }
         }

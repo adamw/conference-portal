@@ -13,10 +13,12 @@ import org.drools.solver.core.event.{BestSolutionChangedEvent, SolverEventListen
 class ConferenceSolver {
   val configPath = "/solver/config.xml"
 
+  val randomSeed = System.currentTimeMillis
+
   def createConfigurer: XmlSolverConfigurer = {
     val configurer = new XmlSolverConfigurer()
     configurer.configure(configPath);
-    configurer.getConfig.setRandomSeed(System.currentTimeMillis)
+    configurer.getConfig.setRandomSeed(randomSeed)
     configurer
   }
 
@@ -24,12 +26,22 @@ class ConferenceSolver {
     createConfigurer.buildSolver()
   }
 
-//  def createInitialAssigments(papers: List[Paper], slots: List[Slot]): List[Assigment] = {
-//    papers.map(p => { val a = new Assigment; a.slot = slots.first; a.paper = p; a }).toList
-//  }
-
   def createInitialAssigments(papers: List[Paper], slots: List[Slot]): List[Assigment] = {
-    papers.zip(slots).map { case (p, s) => { val a = new Assigment; a.slot = s; a.paper = p; a } }.toList
+    var availableSlotNumbers = (0 until slots.size).toList
+    val rand = new scala.util.Random(randomSeed)
+
+    papers.map { case p => {
+      // Choosing a new random slot
+      val slotNumberIdx = rand.nextInt(availableSlotNumbers.size)
+      val slotNumber = availableSlotNumbers(slotNumberIdx)
+      val s = slots(slotNumber)
+      availableSlotNumbers -= slotNumber
+
+      val a = new Assigment
+      a.slot = s
+      a.paper = p
+      a }
+    }.toList
   }
 
   def solve(papers: List[Paper], slots: List[Slot], preferences: List[Preference]): Schedule = {
@@ -53,11 +65,7 @@ object Test {
 
   def test {
     val solver = new ConferenceSolver {
-      override def createConfigurer = {
-        val configurer = super.createConfigurer
-        //configurer.getConfig.setRandomSeed(5124l)
-        configurer
-      }
+      override val randomSeed = 5124l
 
       override def createSolver = {
         val solver = super.createSolver
@@ -96,8 +104,8 @@ object Test {
     // Based on JV2009. 200 random choices of 4-6 papers a user wants to see
     // Best score so far: 0hard/-158soft in 5 minutes
 
-    val r = new scala.util.Random(System.currentTimeMillis)
-    //val r = new scala.util.Random(847261l)
+    //val r = new scala.util.Random(System.currentTimeMillis)
+    val r = new scala.util.Random(847261l)
 
     val preferences: List[Preference] = (1 to 200).flatMap(i => {
       // Number of papers user wants to see
