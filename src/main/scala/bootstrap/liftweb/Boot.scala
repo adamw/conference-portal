@@ -1,7 +1,5 @@
 package bootstrap.liftweb
 
-import xml.Text
-
 import _root_.net.liftweb.util._
 import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
@@ -11,7 +9,6 @@ import _root_.net.liftweb.sitemap.Loc._
 import _root_.net.liftweb.mapper.{DB, Schemifier, DefaultConnectionIdentifier, StandardDBVendor}
 import _root_.pl.softwaremill.model._
 import pl.softwaremill.loc._
-import LocTools._
 import Helpers._
 
 import java.text.SimpleDateFormat

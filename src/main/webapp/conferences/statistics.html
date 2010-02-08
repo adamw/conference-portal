@@ -1,4 +1,28 @@
 <lift:surround with="default" at="content">
     <h2><lift:Menu.title /></h2>
 
+    <lift:Statistics>
+        <table>
+            <tr>
+                <td><lift:loc>statistics.registered_participants</lift:loc>:</td>
+                <td><stats:registered /></td>
+            </tr>
+            <tr>
+                <td><lift:loc>statistics.confirmed_participants</lift:loc>:</td>
+                <td><stats:confirmed /></td>
+            </tr>
+            <tr>
+                <td><lift:loc>statistics.female_registered_participants</lift:loc>:</td>
+                <td><stats:femaleRegistered /></td>
+            </tr>
+            <tr>
+                <td><lift:loc>statistics.male_registered_participants</lift:loc>:</td>
+                <td><stats:maleRegistered /></td>
+            </tr>
+            <tr>
+                <td><lift:loc>statistics.users_made_schedule_preferences</lift:loc>:</td>
+                <td><stats:madeSchedulePreferences /></td>
+            </tr>
+        </table>
+    </lift:Statistics>
 </lift:surround>
