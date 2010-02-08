@@ -20,7 +20,7 @@ import PaperSnippetTools._
  */
 class SchedulePreferences {
   private lazy val paperService = D.inject_![PaperService]
-  private val user = User.currentUser.open_!
+  private lazy val user = User.currentUser.open_!
 
   // Keeping this in a set to quickly check if a paper is interesting
   private var interestedInPapers: Set[Paper] = _

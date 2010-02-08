@@ -29,7 +29,7 @@ class Boot {
           Props.get("db.url") openOr "jdbc:mysql://localhost/conference?user=root&useUnicode=true&characterEncoding=UTF-8",
           Props.get("db.user"), Props.get("db.password")))
 
-    Schemifier.schemify(true, Log.infoF _, User, Conference, Room, Slot, Paper, UserInterested, Configuration)
+    Schemifier.schemify(true, Log.infoF _, User, Conference, Room, Slot, Paper, UserInterested, Configuration, Registration)
 
     // where to search snippet
     LiftRules.addToPackages("pl.softwaremill")
@@ -50,6 +50,8 @@ class Boot {
             Menu(Locs.ViewConferenceLoc) ::
             // Schedule
             Menu(Locs.ViewScheduleLoc) ::
+            // Register
+            Menu(Locs.RegisterLoc) ::
             // C4P
             c4pMenu ::
             // Schedule preferences

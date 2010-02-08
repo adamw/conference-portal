@@ -31,6 +31,10 @@ object Locs {
     def rewrite: LocRewrite
   }
 
+  trait RequiresLoginLoc[T] extends Loc[T] {
+    override abstract def params = LocTools.showRequireLogin :: super.params
+  }
+
   /**
    * Serves all paths with the path equals to {@code PathList} (but not sub-paths).
    */
@@ -147,7 +151,8 @@ object Locs {
     protected def conferenceAcceptable(conf: Conference) = conf.conferenceAfterAcceptReject
   }
 
-  val SchedulePreferencesLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with AcceptableConferenceLoc[Unit] with ActiveConferenceLoc[Unit] {
+  val SchedulePreferencesLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with AcceptableConferenceLoc[Unit] with ActiveConferenceLoc[Unit]
+          with RequiresLoginLoc[Unit] {
     protected val PathList = "schedule_preferences" :: Nil
     protected def default = ()
     protected def conferenceAcceptable(conf: Conference) = conf.state == ConferenceState.Schedule
@@ -184,5 +189,15 @@ object Locs {
 
     def name = "ViewSchedule"
     def text = new LinkText(ignore => Text(?("menu.schedule")))
+  }
+
+  val RegisterLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with AcceptableConferenceLoc[Unit] with ActiveConferenceLoc[Unit]
+          with RequiresLoginLoc[Unit] {
+    protected val PathList = "register" :: Nil
+    protected def default = ()
+    protected def conferenceAcceptable(conf: Conference) = conf.state != ConferenceState.Prepare
+
+    def name = "Register"
+    def text = new LinkText(ignore => Text(?("menu.register")))
   }
 }
