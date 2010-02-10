@@ -44,7 +44,7 @@ class PaperServiceImpl extends PaperService {
   }
 
   def interestingPapersForUser(conf: Conference, user: User): List[Paper] = {
-    UserInterested.findMap(By(UserInterested.user, user))(_.paper.obj)
+    UserInterested.findMap(By(UserInterested.user, user))(_.paper.obj).filter(paper => ((paper.conference.obj openOr null) == conf))
   }
 
   def updateUserInterestedInPaper(user: User, paper: Paper, interested: Boolean) {
