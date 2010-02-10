@@ -14,7 +14,7 @@ trait PaperService {
   def acceptedConferencePapers(conf: Conference): List[Paper]
   def acceptedConferencePapers(conf: Conference, author: User): List[Paper]
   def find(id: String): Box[Paper]
-  def interestingPapersForUser(user: User): List[Paper]
+  def interestingPapersForUser(conf: Conference, user: User): List[Paper]
   def updateUserInterestedInPaper(user: User, paper: Paper, interested: Boolean)
 }
 
@@ -43,7 +43,7 @@ class PaperServiceImpl extends PaperService {
     Paper.find(id)
   }
 
-  def interestingPapersForUser(user: User): List[Paper] = {
+  def interestingPapersForUser(conf: Conference, user: User): List[Paper] = {
     UserInterested.findMap(By(UserInterested.user, user))(_.paper.obj)
   }
 
