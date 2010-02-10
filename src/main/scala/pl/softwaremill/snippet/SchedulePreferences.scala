@@ -26,7 +26,7 @@ class SchedulePreferences {
   private var interestedInPapers: Set[Paper] = _
   initInterestedInPapers()
 
-  private def initInterestedInPapers() = { interestedInPapers = Set() ++ paperService.interestingPapersForUser(user) }
+  private def initInterestedInPapers() = { interestedInPapers = Set() ++ paperService.interestingPapersForUser(CurrentConference.is, user) }
 
   def selectionsLeft(ignore: NodeSeq) = SelectionConfig.selectionsLeftNode
 
