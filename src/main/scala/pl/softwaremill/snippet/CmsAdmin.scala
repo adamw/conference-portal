@@ -5,7 +5,8 @@ import xml._
 import net.liftweb.util.Helpers._
 import net.liftweb.http._
 import js.JE._
-import js.JsCmds.SetHtml
+import js.JsCmd
+import js.JsCmds.{CmdPair, SetHtml}
 import net.liftweb.common._
 import SHtml._
 import S._
@@ -19,7 +20,18 @@ import SnippetTools._
  * @author Adam Warski (adam at warski dot org)
  */
 class CmsAdmin {
+  object CurrentMenuItem extends RequestVar[Box[MenuItem]](Empty)
+
+  var editTreeTemplates: NodeSeq = _
+  var editTemplate: NodeSeq = _
+
+  def reRenderEditTree: JsCmd = SetHtml("editTree", editTree(editTreeTemplates))
+  def reRenderEditMenuItem: JsCmd = SetHtml("editMenuItem", editMenuItem(editTemplate))
+  def reRender: JsCmd = CmdPair(reRenderEditTree, reRenderEditMenuItem)
+
   def editTree(templates: NodeSeq): NodeSeq = {
+    this.editTreeTemplates = templates
+
     def rootMenuItem = {
       val conf = CurrentConference.is
       conf.mainMenuItem.obj match {
@@ -38,19 +50,11 @@ class CmsAdmin {
       }
     }
 
-    def reRender = SetHtml("editTree", editTree(templates))
-
     def addMenuItem(child: MenuItem, parent: MenuItem) = {
-      println("X")
-
       child.title(?("menuitem.title_template")).parent(parent).save
-
-      println("C " + child)
 
       parent.children += child
       parent.save
-
-      println("P " + parent)
 
       child
     }
@@ -74,19 +78,20 @@ class CmsAdmin {
       ajaxForm(
         bind("add", chooseTemplate("tree", "add", templates),
           "type" -> typeForm,
-          "submit" -> ajaxSubmit(?("common.add"), () => { println("Add"); addMenuItem(child, parent); reRender }))
+          "submit" -> ajaxSubmit(?("common.add"), () => { addMenuItem(child, parent); reRender }))
         )
     }
 
     def tree(menuItem: MenuItem): NodeSeq = {
       <li>
         <span>
-          { menuItem.title.is }
+          { if (Full(menuItem) == CurrentMenuItem.is) <strong>{menuItem.title.is}</strong> else menuItem.title.is }
           {
           if (menuItem.hasParent) {
+            a(() => { CurrentMenuItem(Full(menuItem)); reRender }, Text(?("common.edit"))) :: Text(" ") ::
             a(Call("confirm_menuitem_delete", Str(?("menuitem.confirm_delete", menuItem.title.is))),
               () => { deleteMenuItem(menuItem); reRender },
-              Text(?("common.delete")))
+              Text(?("common.delete"))) :: Nil
           } else NodeSeq.Empty
           }
         </span>
@@ -101,5 +106,21 @@ class CmsAdmin {
     }
 
     tree(rootMenuItem)
+  }
+
+  def editMenuItem(editTemplate: NodeSeq): NodeSeq = {
+    this.editTemplate = editTemplate
+
+    CurrentMenuItem.is match {
+      case Full(menuItem) =>
+        ajaxForm(
+          bind("edit", editTemplate,
+            "title" -> menuItem.title.toForm,
+            "save" -> ajaxSubmit(?("common.save"), () => { menuItem.save; reRender }),
+            "cancel" -> a(() => { CurrentMenuItem(Empty); reRender }, Text(?("common.cancel")))
+            )
+          )
+      case _ => NodeSeq.Empty
+    }
   }
 }

@@ -9,6 +9,21 @@
         </lift:CmsAdmin.editTree>
     </div>
 
+    <div id="editMenuItem">
+        <lift:CmsAdmin.editMenuItem>
+            <table>
+                <tr>
+                    <td><lift:loc>menuitem.title</lift:loc></td>
+                    <td><edit:title /></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td><edit:save /> <edit:cancel /></td>
+                </tr>
+            </table>
+        </lift:CmsAdmin.editMenuItem>
+    </div>
+
     <script type="text/javascript">
         function confirm_menuitem_delete(message, action) {
             if (confirm(message)) {
