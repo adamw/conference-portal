@@ -1,0 +1,19 @@
+<lift:surround with="default" at="content">
+    <h2><lift:Menu.title /></h2>
+
+    <div id="editTree">
+        <lift:CmsAdmin.editTree>
+            <tree:add>
+                <lift:loc>menuitem.type</lift:loc>: <add:type /> <add:submit />
+            </tree:add>
+        </lift:CmsAdmin.editTree>
+    </div>
+
+    <script type="text/javascript">
+        function confirm_menuitem_delete(message, action) {
+            if (confirm(message)) {
+                action()
+            }
+        }
+    </script>
+</lift:surround>

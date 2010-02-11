@@ -47,6 +47,8 @@ class Conference extends LongKeyedMapper[Conference] with IdPK with OneToMany[Lo
     override def dbColumnName = "state"
   }
 
+  object mainMenuItem extends LongMappedMapper[Conference, MenuItem](this, MenuItem)
+
   /* Managing rooms */
 
   def addRoom = {

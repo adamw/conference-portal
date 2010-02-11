@@ -1,12 +1,14 @@
 package pl.softwaremill.loc
 
+import xml._
+
 import net.liftweb.sitemap.Loc
 import Loc._
 import net.liftweb.http.S._
 import net.liftweb.common._
 import net.liftweb.http._
 
-import pl.softwaremill.model.Conference
+import pl.softwaremill.model._
 import pl.softwaremill.services.ConferenceService
 import pl.softwaremill.lib.D
 import pl.softwaremill.snippet.Util._
@@ -45,4 +47,44 @@ trait ConferenceAwareLoc extends Loc[Conference] {
       }
     }
   })
+}
+
+object AcceptRejectLoc extends ConferenceAwareLoc {
+  protected val PathList = "conferences" :: "accept_reject" :: Nil
+
+  def name = "AcceptReject"
+
+  def text = new LinkText((conf: Conference) => Text(?("menu.accept_reject", conf.name)))
+
+  def params = List(Hidden, User.testSuperUser)
+}
+
+object SlotEditorLoc extends ConferenceAwareLoc {
+  protected val PathList = "conferences" :: "slot_editor" :: Nil
+
+  def name = "SlotEditor"
+
+  def text = new LinkText((conf: Conference) => Text(?("menu.slot_editor", conf.name)))
+
+  def params = List(Hidden, User.testSuperUser)
+}
+
+object StatisticsLoc extends ConferenceAwareLoc {
+  protected val PathList = "conferences" :: "statistics" :: Nil
+
+  def name = "Statistics"
+
+  def text = new LinkText((conf: Conference) => Text(?("menu.statistics", conf.name)))
+
+  def params = List(Hidden, User.testSuperUser)
+}
+
+object CmsAdminLoc extends ConferenceAwareLoc {
+  protected val PathList = "conferences" :: "cms" :: Nil
+
+  def name = "CmsAdmin"
+
+  def text = new LinkText((conf: Conference) => Text(?("menu.cms_admin", conf.name)))
+
+  def params = List(Hidden) // TODO: enable, User.testSuperUser)
 }

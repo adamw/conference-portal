@@ -27,7 +27,8 @@ class Boot {
           Props.get("db.url") openOr "jdbc:mysql://localhost/conference?user=root&useUnicode=true&characterEncoding=UTF-8",
           Props.get("db.user"), Props.get("db.password")))
 
-    Schemifier.schemify(true, Log.infoF _, User, Conference, Room, Slot, Paper, UserInterested, Configuration, Registration)
+    Schemifier.schemify(true, Log.infoF _, User, Conference, Room, Slot, Paper, UserInterested, Configuration,
+      Registration, pl.softwaremill.model.MenuItem)
 
     // where to search snippet
     LiftRules.addToPackages("pl.softwaremill")
@@ -95,7 +96,9 @@ class Boot {
     val slotEditor = Menu(SlotEditorLoc)
     val acceptReject = Menu(AcceptRejectLoc)
     val stats = Menu(StatisticsLoc)
-    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences"), User.testSuperUser), slotEditor, acceptReject, stats)
+    val cmsAdmin = Menu(CmsAdminLoc)
+    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences"), User.testSuperUser),
+      slotEditor, acceptReject, stats, cmsAdmin)
     main
   }
 

@@ -15,7 +15,7 @@ import pl.softwaremill.services.ConferenceService
 import pl.softwaremill.lib.D
 import SnippetTools._
 import pl.softwaremill.model.{Configuration, ConferenceState, Room, Conference}
-import pl.softwaremill.loc.{StatisticsLoc, AcceptRejectLoc, SlotEditorLoc}
+import pl.softwaremill.loc.{CmsAdminLoc, StatisticsLoc, AcceptRejectLoc, SlotEditorLoc}
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -91,6 +91,7 @@ class ManageConferences  {
           "delete" -> confirmLink("", () => { /*TODO: enable conf.delete_!*/ }, ?("common.delete"), ?("conference.confirm_delete", conf.name)),
           "editSlots" -> anchor(SlotEditorLoc.link.createPath(conf), ?("conference.edit_slots")),
           "stats" -> anchor(StatisticsLoc.link.createPath(conf), ?("conference.statistics")),
+          "cmsAdmin" -> anchor(CmsAdminLoc.link.createPath(conf), ?("conference.cms_admin")),
           "acceptReject" -> acceptReject(conf) _
           )
       }

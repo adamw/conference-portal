@@ -21,5 +21,7 @@ object SnippetTools {
   def redirectButton(text: String, to: String) = <input type="button" value={text} /> % ("onclick" -> "window.location = '%s'".format(to))
 
   def confirmLink(to: String, func: () => Any, text: String, confirmText: String) = link(to, func, Text(text),
-    "onclick" -> JsRaw("if (!confirm(" + confirmText.encJs + ")) return false;").cmd)
+    confirmAttr(confirmText))
+
+  def confirmAttr(confirmText: String): (String, String) = ("onclick" -> JsRaw("if (!confirm(" + confirmText.encJs + ")) return false;").cmd)
 }
