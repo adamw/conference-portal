@@ -8,16 +8,14 @@ import ModelTools._
 /**
  * @author Adam Warski (adam at warski dot org)
  */
-class Room extends LongKeyedMapper[Room] with IdPK {
+class Room extends LongKeyedMapper[Room] with IdPK with Positionable[Room] {
   def getSingleton = Room
+
+  lazy val validatePosition = valMin(Room.minPosition, "room.position.below_minimum", position) _
+  lazy val defaultPosition = Room.minPosition
 
   object name extends MappedPoliteString(this, 32) {
     override def validations = valMinLen(1, S.?("room.name.invalid_length")) _ :: super.validations
-  }
-
-  object position extends MappedInt(this) {
-    override def defaultValue = Room.minPosition
-    override def validations = valMin(Room.minPosition, "room.position.below_minimum", this) _ :: super.validations
   }
 
   object conference extends LongMappedMapper[Room, Conference](this, Conference)
