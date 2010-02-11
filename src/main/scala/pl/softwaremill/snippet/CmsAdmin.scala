@@ -11,7 +11,6 @@ import net.liftweb.common._
 import SHtml._
 import S._
 
-import pl.softwaremill.lib.D
 import pl.softwaremill.model._
 
 import SnippetTools._
@@ -86,6 +85,7 @@ class CmsAdmin {
       <li>
         <span>
           { if (Full(menuItem) == CurrentMenuItem.is) <strong>{menuItem.title.is}</strong> else menuItem.title.is }
+          ({ ?(menuItem.menuItemType.toString) })
           {
           if (menuItem.hasParent) {
             a(() => { CurrentMenuItem(Full(menuItem)); reRender }, Text(?("common.edit"))) :: Text(" ") ::
@@ -111,13 +111,37 @@ class CmsAdmin {
   def editMenuItem(editTemplate: NodeSeq): NodeSeq = {
     this.editTemplate = editTemplate
 
+    def bindFooter(menuItem: MenuItem)(footerTemplate: NodeSeq) =
+      bind("footer", footerTemplate,
+        "save" -> ajaxSubmit(?("common.save"), () => { menuItem.save; reRender }),
+        "cancel" -> a(() => { CurrentMenuItem(Empty); reRender }, Text(?("common.cancel")))
+        )
+
+    def bindRow(labelKey: String, content: Box[NodeSeq], rowTemplate: NodeSeq) = {
+      bind("row", rowTemplate,
+        "label" -> ?(labelKey),
+        "content" -> content)
+    }
+
+    def bindTypeSpecific(menuItem: MenuItem, template: NodeSeq): NodeSeq = {
+      menuItem.menuItemType match {
+        case MenuItemType.Link => bindRow("menuitem.link", menuItem.linkContent.toForm, template)
+        case MenuItemType.Page => bindRow("menuitem.page", menuItem.pageContent.toForm, template)
+        case _ => NodeSeq.Empty
+      }
+    }
+    
+    def bindRows(menuItem: MenuItem)(rowTemplate: NodeSeq): NodeSeq = {
+      bindRow("menuitem.title", menuItem.title.toForm, rowTemplate) ++
+      bindTypeSpecific(menuItem, rowTemplate) 
+    }
+
     CurrentMenuItem.is match {
       case Full(menuItem) =>
         ajaxForm(
-          bind("edit", editTemplate,
-            "title" -> menuItem.title.toForm,
-            "save" -> ajaxSubmit(?("common.save"), () => { menuItem.save; reRender }),
-            "cancel" -> a(() => { CurrentMenuItem(Empty); reRender }, Text(?("common.cancel")))
+          bind("template", chooseTemplate("edit", "template", editTemplate),
+            "row" -> bindRows(menuItem) _,
+            "footer" -> bindFooter(menuItem) _
             )
           )
       case _ => NodeSeq.Empty

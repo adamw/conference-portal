@@ -11,16 +11,22 @@
 
     <div id="editMenuItem">
         <lift:CmsAdmin.editMenuItem>
-            <table>
-                <tr>
-                    <td><lift:loc>menuitem.title</lift:loc></td>
-                    <td><edit:title /></td>
-                </tr>
-                <tr>
-                    <td>&nbsp;</td>
-                    <td><edit:save /> <edit:cancel /></td>
-                </tr>
-            </table>
+            <edit:template>
+                <table>
+                    <template:row>
+                        <tr>
+                            <td><row:label /></td>
+                            <td><row:content /></td>
+                        </tr>
+                    </template:row>
+                    <template:footer>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td><footer:save /> <footer:cancel /></td>
+                        </tr>
+                    </template:footer>
+                </table>
+            </edit:template>
         </lift:CmsAdmin.editMenuItem>
     </div>
 
