@@ -22,15 +22,15 @@ object ConferenceTest extends Specification {
     val conf = new Conference
 
     "correctly assign indexes for the first room" >> {
-      conf.addRoom
+      conf._rooms.addObj
       conf.rooms.size must_== 1
       checkRoomPositions(conf)
     }
 
     "correctly assign indexes for three rooms" >> {
-      conf.addRoom
-      conf.addRoom
-      conf.addRoom
+      conf._rooms.addObj
+      conf._rooms.addObj
+      conf._rooms.addObj
       conf.rooms.size must_== 3
       checkRoomPositions(conf)
     }
@@ -40,12 +40,12 @@ object ConferenceTest extends Specification {
     val conf = new Conference
 
     "delete the specified room" >> {
-      conf.addRoom.name("r1")
-      conf.addRoom.name("r2")
-      conf.addRoom.name("r3")
-      conf.addRoom.name("r4")
+      conf._rooms.addObj.name("r1")
+      conf._rooms.addObj.name("r2")
+      conf._rooms.addObj.name("r3")
+      conf._rooms.addObj.name("r4")
 
-      conf.deleteRoom(conf.rooms(1))
+      conf._rooms.deleteObj(conf.rooms(1))
 
       conf.rooms.size must_== 3
       conf.rooms(0).name must_== "r1"
@@ -54,47 +54,47 @@ object ConferenceTest extends Specification {
     }
 
     "correctly re-assign indexes for the first room" >> {
-      conf.addRoom
-      conf.addRoom
-      conf.addRoom
+      conf._rooms.addObj
+      conf._rooms.addObj
+      conf._rooms.addObj
 
-      conf.deleteRoom(conf.rooms.first)
+      conf._rooms.deleteObj(conf.rooms.first)
 
       conf.rooms.size must_== 2
       checkRoomPositions(conf)
     }
 
     "correctly re-assign indexes for the last room" >> {
-      conf.addRoom
-      conf.addRoom
-      conf.addRoom
+      conf._rooms.addObj
+      conf._rooms.addObj
+      conf._rooms.addObj
 
-      conf.deleteRoom(conf.rooms.last)
+      conf._rooms.deleteObj(conf.rooms.last)
 
       conf.rooms.size must_== 2
       checkRoomPositions(conf)
     }
 
     "correctly re-assign indexes for a middle room" >> {
-      conf.addRoom
-      conf.addRoom
-      conf.addRoom
-      conf.addRoom
+      conf._rooms.addObj
+      conf._rooms.addObj
+      conf._rooms.addObj
+      conf._rooms.addObj
 
-      conf.deleteRoom(conf.rooms(1))
+      conf._rooms.deleteObj(conf.rooms(1))
 
       conf.rooms.size must_== 3
       checkRoomPositions(conf)
     }
 
     "correctly re-assign indexes after a move up" >> {
-      conf.addRoom
-      conf.addRoom
-      conf.addRoom
-      conf.addRoom
+      conf._rooms.addObj
+      conf._rooms.addObj
+      conf._rooms.addObj
+      conf._rooms.addObj
 
-      conf.moveUp(conf.rooms(2))
-      conf.deleteRoom(conf.rooms(1))
+      conf._rooms.moveUp(conf.rooms(2))
+      conf._rooms.deleteObj(conf.rooms(1))
 
       conf.rooms.size must_== 3
       checkRoomPositions(conf)
@@ -103,14 +103,14 @@ object ConferenceTest extends Specification {
 
   "The move up operation" should {
     val conf = new Conference
-    conf.addRoom.name("r1")
-    conf.addRoom.name("r2")
-    conf.addRoom.name("r3")
-    conf.addRoom.name("r4")
+    conf._rooms.addObj.name("r1")
+    conf._rooms.addObj.name("r2")
+    conf._rooms.addObj.name("r3")
+    conf._rooms.addObj.name("r4")
 
     def moveUpExample(index: Int, expectedNames: Array[String])() = {
       "correctly move up room %d".format(index) in {
-        conf.moveUp(conf.rooms(index))
+        conf._rooms.moveUp(conf.rooms(index))
         checkRoomNames(conf, expectedNames: _*)
         checkRoomPositions(conf)
       }
@@ -124,14 +124,14 @@ object ConferenceTest extends Specification {
 
   "The move down operation" should {
     val conf = new Conference
-    conf.addRoom.name("r1")
-    conf.addRoom.name("r2")
-    conf.addRoom.name("r3")
-    conf.addRoom.name("r4")
+    conf._rooms.addObj.name("r1")
+    conf._rooms.addObj.name("r2")
+    conf._rooms.addObj.name("r3")
+    conf._rooms.addObj.name("r4")
 
     def moveDownExample(index: Int, expectedNames: Array[String])() = {
       "correctly move down room %d".format(index) in {
-        conf.moveDown(conf.rooms(index))
+        conf._rooms.moveDown(conf.rooms(index))
         checkRoomNames(conf, expectedNames: _*)
         checkRoomPositions(conf)
       }
@@ -145,23 +145,23 @@ object ConferenceTest extends Specification {
 
   "The move up and down operations" should {
     val conf = new Conference
-    val r1 = conf.addRoom.name("r1")
-    val r2 = conf.addRoom.name("r2")
-    val r3 = conf.addRoom.name("r3")
-    val r4 = conf.addRoom.name("r4")
+    val r1 = conf._rooms.addObj.name("r1")
+    val r2 = conf._rooms.addObj.name("r2")
+    val r3 = conf._rooms.addObj.name("r3")
+    val r4 = conf._rooms.addObj.name("r4")
 
     "correctly move up and down rooms multiple times" >> {
       // Moving r4 to the top
-      conf.moveUp(r4)
-      conf.moveUp(r4)
-      conf.moveUp(r4)
+      conf._rooms.moveUp(r4)
+      conf._rooms.moveUp(r4)
+      conf._rooms.moveUp(r4)
 
       // Moving r1 to the bottom
-      conf.moveDown(r1)
-      conf.moveDown(r1)
+      conf._rooms.moveDown(r1)
+      conf._rooms.moveDown(r1)
 
       // Swapping r2 and r3
-      conf.moveUp(r3)
+      conf._rooms.moveUp(r3)
 
       checkRoomPositions(conf)
       checkRoomNames(conf, "r4", "r3", "r2", "r1")
@@ -183,8 +183,8 @@ object ConferenceTest extends Specification {
 
     "reject duplicate slots" >> {
       val conf = new Conference
-      conf.addRoom.name("r1")
-      conf.addRoom.name("r2")
+      conf._rooms.addObj.name("r1")
+      conf._rooms.addObj.name("r2")
 
       addSlot(conf, "08:00", "10:00", "r1")
       addSlot(conf, "11:00", "12:00", "r1")
@@ -200,8 +200,8 @@ object ConferenceTest extends Specification {
 
     "reject single overlapping slots" >> {
       val conf = new Conference
-      conf.addRoom.name("r1")
-      conf.addRoom.name("r2")
+      conf._rooms.addObj.name("r1")
+      conf._rooms.addObj.name("r2")
 
       addSlot(conf, "08:00", "10:00", "r1")
       addSlot(conf, "09:00", "12:00", "r1")
@@ -214,8 +214,8 @@ object ConferenceTest extends Specification {
 
     "accept slots with matching start end times" >> {
       val conf = new Conference
-      conf.addRoom.name("r1")
-      conf.addRoom.name("r2")
+      conf._rooms.addObj.name("r1")
+      conf._rooms.addObj.name("r2")
 
       addSlot(conf, "08:00", "10:00", "r1")
       addSlot(conf, "10:00", "12:00", "r1")
@@ -227,9 +227,9 @@ object ConferenceTest extends Specification {
 
     "reject all overlapping slots" >> {
       val conf = new Conference
-      conf.addRoom.name("r1")
-      conf.addRoom.name("r2")
-      conf.addRoom.name("r3")
+      conf._rooms.addObj.name("r1")
+      conf._rooms.addObj.name("r2")
+      conf._rooms.addObj.name("r3")
 
       addSlot(conf, "15:00", "17:00", "r3")
       addSlot(conf, "08:00", "10:00", "r1")

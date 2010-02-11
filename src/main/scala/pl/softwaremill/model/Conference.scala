@@ -36,8 +36,12 @@ class Conference extends LongKeyedMapper[Conference] with IdPK with OneToMany[Lo
     override def validations = valMinLen(3, "Description must be at least 3 characters") _ :: super.validations
   }
 
-  private object _rooms extends MappedOneToMany(Room, Room.conference, OrderBy(Room.position, Ascending))
-    with Owned[Room] with Cascade[Room]
+  object _rooms extends MappedOneToMany(Room, Room.conference, OrderBy(Room.position, Ascending))
+    with Owned[Room] with Cascade[Room] with PositionManager[Conference, Room] {
+    def createNew = new Room
+  }
+
+  def rooms = _rooms.sorted
 
   object slots extends MappedOneToMany(Slot, Slot.conference)
     with Owned[Slot] with Cascade[Slot]
@@ -48,46 +52,6 @@ class Conference extends LongKeyedMapper[Conference] with IdPK with OneToMany[Lo
   }
 
   object mainMenuItem extends LongMappedMapper[Conference, MenuItem](this, MenuItem)
-
-  /* Managing rooms */
-
-  def addRoom = {
-    val room = new Room
-    room.position(_rooms.size)
-    _rooms += room
-    room
-  }
-
-  def deleteRoom(room: Room) = {
-    _rooms -= room
-
-    // Fixing the indexes using the sorted list
-    val sortedRooms = rooms
-    for (i <- room.position until sortedRooms.size) sortedRooms(i).position(i)
-    this
-  }
-
-  def moveUp(room: Room) = {
-    move(room, room.position-1, -1)
-  }
-
-  def moveDown(room: Room) = {
-    move(room, room.position+1, _rooms.size)
-  }
-
-  def rooms = _rooms.toList.sort((_: Room).position.is < (_: Room).position.is)
-
-  private def move(room: Room, newIdx: Int, bound: Int) = {
-    if (newIdx != bound) {
-      // There must be a room with a position equal to newIdx
-      val secondRoom = _rooms.find(_.position == newIdx).get
-
-      secondRoom.position(room.position)
-      room.position(newIdx)
-    }
-    
-    this
-  }
 
   /* Managing slots */
 

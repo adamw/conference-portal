@@ -33,10 +33,10 @@ object SlotServiceTest extends Specification {
 
     "return a one-row table for a conference with one slot span" >> {
       val conf = new Conference
-      conf.addRoom.name("r1")
-      conf.addRoom.name("r2")
-      conf.addRoom.name("r3")
-      conf.addRoom.name("r4")
+      conf._rooms.addObj.name("r1")
+      conf._rooms.addObj.name("r2")
+      conf._rooms.addObj.name("r3")
+      conf._rooms.addObj.name("r4")
 
       addSlot(conf, "08:00", "10:00", "r1")
       addSlot(conf, "08:00", "10:00", "r3")
@@ -55,10 +55,10 @@ object SlotServiceTest extends Specification {
 
     "return a multi-row table for a conference with multiple slot spans" >> {
       val conf = new Conference
-      conf.addRoom.name("r1")
-      conf.addRoom.name("r2")
-      conf.addRoom.name("r3")
-      conf.addRoom.name("r4")
+      conf._rooms.addObj.name("r1")
+      conf._rooms.addObj.name("r2")
+      conf._rooms.addObj.name("r3")
+      conf._rooms.addObj.name("r4")
 
       addSlot(conf, "08:00", "10:00", "r1")
       addSlot(conf, "08:00", "10:00", "r3")

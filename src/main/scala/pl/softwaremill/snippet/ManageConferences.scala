@@ -48,9 +48,9 @@ class ManageConferences  {
       conf.rooms.flatMap { room: Room =>
           bind("room", roomTemplate,
             "name" -> room.name.toForm,
-            "moveUp" -> ajaxSubmit(?("room.moveUp"), () => { conf.moveUp(room); reDrawForm }),
-            "moveDown" -> ajaxSubmit(?("room.moveDown"), () => { conf.moveDown(room); reDrawForm }),
-            "delete" -> ajaxSubmit(?("common.delete"), () => { conf.deleteRoom(room); reDrawForm })
+            "moveUp" -> ajaxSubmit(?("room.moveUp"), () => { conf._rooms.moveUp(room); reDrawForm }),
+            "moveDown" -> ajaxSubmit(?("room.moveDown"), () => { conf._rooms.moveDown(room); reDrawForm }),
+            "delete" -> ajaxSubmit(?("common.delete"), () => { conf._rooms.deleteObj(room); reDrawForm })
             )
       }
     }
@@ -68,7 +68,7 @@ class ManageConferences  {
         "desc" -> conf.desc.toForm,
         "state" -> stateForm,
         "rooms" -> editRoom _,
-        "addRoom" -> ajaxSubmit(?("conference.rooms.add"), () => { conf.addRoom; reDrawForm }),
+        "addRoom" -> ajaxSubmit(?("conference.rooms.add"), () => { conf._rooms.addObj; reDrawForm }),
         "save" -> ajaxSubmit(if (conf.saved_?) ?("common.save") else ?("common.add"), () => { checkAndSave; reDraw }),
         "cancel" -> refreshButton(?("common.cancel"))
         ))
