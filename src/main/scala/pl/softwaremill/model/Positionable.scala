@@ -1,26 +1,25 @@
 package pl.softwaremill.model
 
-import net.liftweb.util.FieldError
 import net.liftweb.mapper.{OneToMany, Mapper, MappedInt}
+
+import ModelTools._
 
 /**
  * @author Adam Warski (adam at warski dot org)
  */
 trait Positionable[T <: Mapper[T]] { this: Mapper[T] =>
-  val defaultPosition: Int
-  val validatePosition: Int => List[FieldError]
-
   object position extends MappedInt[T](this) {
-    override def defaultValue = defaultPosition
-    override def validations = validatePosition :: super.validations
+    override def defaultValue = 0
+    override def validations = valMin(0, "position.below_minimum", position) _ :: super.validations
   }
 }
 
 trait PositionManager[C <: OneToMany[Long, C], T <: Positionable[T] with Mapper[T]] { this: C#MappedOneToMany[T] =>
   def createNew: T
 
-  def addObj = {
-    val obj = createNew
+  def addObj: T = addObj(createNew)
+
+  def addObj(obj: T): T = {
     obj.position(this.size)
     this += obj
     obj

@@ -48,8 +48,8 @@ class ManageConferences  {
       conf.rooms.flatMap { room: Room =>
           bind("room", roomTemplate,
             "name" -> room.name.toForm,
-            "moveUp" -> ajaxSubmit(?("room.moveUp"), () => { conf._rooms.moveUp(room); reDrawForm }),
-            "moveDown" -> ajaxSubmit(?("room.moveDown"), () => { conf._rooms.moveDown(room); reDrawForm }),
+            "moveUp" -> ajaxSubmit(?("common.move_up"), () => { conf._rooms.moveUp(room); reDrawForm }),
+            "moveDown" -> ajaxSubmit(?("common.move_down"), () => { conf._rooms.moveDown(room); reDrawForm }),
             "delete" -> ajaxSubmit(?("common.delete"), () => { conf._rooms.deleteObj(room); reDrawForm })
             )
       }

@@ -1,13 +1,12 @@
 package pl.softwaremill.model
 
-import net.liftweb.http._
 import net.liftweb.mapper._
 
 /**
  * @author Adam Warski (adam at warski dot org)
  */
 
-class MenuItem extends LongKeyedMapper[MenuItem] with IdPK with OneToMany[Long, MenuItem] {
+class MenuItem extends LongKeyedMapper[MenuItem] with IdPK with OneToMany[Long, MenuItem] with Positionable[MenuItem] {
   def getSingleton = MenuItem
 
   object mappedMenuItemType extends MappedInt(this) {
@@ -27,16 +26,19 @@ class MenuItem extends LongKeyedMapper[MenuItem] with IdPK with OneToMany[Long, 
 
   object linkContent extends MappedString(this, 1000)
 
-  object children extends MappedOneToMany(MenuItem, MenuItem.parent) with Owned[MenuItem] with Cascade[MenuItem]
+  object _children extends MappedOneToMany(MenuItem, MenuItem.parent) with Owned[MenuItem] with Cascade[MenuItem]
+    with PositionManager[MenuItem, MenuItem] {
+    def createNew = new MenuItem
+  }
+
+  def children = _children.sorted
 
   object parent extends LongMappedMapper[MenuItem, MenuItem](this, MenuItem)
 
   def hasParent = parent.defined_?
 }
 
-object MenuItem extends MenuItem with LongKeyedMetaMapper[MenuItem] {
-
-}
+object MenuItem extends MenuItem with LongKeyedMetaMapper[MenuItem]
 
 object MenuItemType extends Enumeration {
   val Parent = Value("menuitemtype.parent")

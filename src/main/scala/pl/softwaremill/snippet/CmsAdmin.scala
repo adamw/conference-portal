@@ -13,8 +13,6 @@ import S._
 
 import pl.softwaremill.model._
 
-import SnippetTools._
-
 /**
  * @author Adam Warski (adam at warski dot org)
  */
@@ -51,8 +49,7 @@ class CmsAdmin {
 
     def addMenuItem(child: MenuItem, parent: MenuItem) = {
       child.title(?("menuitem.title_template")).parent(parent).save
-
-      parent.children += child
+      parent._children.addObj(child)
       parent.save
 
       child
@@ -61,13 +58,13 @@ class CmsAdmin {
     def deleteMenuItem(menuItem: MenuItem) {
       if (menuItem.hasParent) {
         val parent = menuItem.parent.obj.open_!
-        parent.children -= menuItem
+        parent._children.deleteObj(menuItem)
         parent.save
       }
     }
 
     def addTypeForm(parent: MenuItem) = {
-      val child = new MenuItem
+      val child = parent._children.createNew
 
       def typeForm = {
         val options = MenuItemType.map { menuItemType => (menuItemType, ?(menuItemType.toString)) }
@@ -89,6 +86,8 @@ class CmsAdmin {
           {
           if (menuItem.hasParent) {
             a(() => { CurrentMenuItem(Full(menuItem)); reRender }, Text(?("common.edit"))) :: Text(" ") ::
+            a(() => { menuItem.parent.obj.open_!._children.moveUp(menuItem).save; reRender }, Text(?("common.move_up"))) :: Text(" ") ::
+            a(() => { menuItem.parent.obj.open_!._children.moveDown(menuItem).save; reRender }, Text(?("common.move_down"))) :: Text(" ") ::
             a(Call("confirm_menuitem_delete", Str(?("menuitem.confirm_delete", menuItem.title.is))),
               () => { deleteMenuItem(menuItem); reRender },
               Text(?("common.delete"))) :: Nil
