@@ -99,7 +99,7 @@ class Boot {
     val acceptReject = Menu(AcceptRejectLoc)
     val stats = Menu(StatisticsLoc)
     val cmsAdmin = Menu(CmsAdminLoc)
-    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences")/*, User.testSuperUser*/),
+    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences"), User.testSuperUser),
       slotEditor, acceptReject, stats, cmsAdmin)
     main
   }

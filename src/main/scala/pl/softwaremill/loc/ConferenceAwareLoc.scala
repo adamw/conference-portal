@@ -86,5 +86,5 @@ object CmsAdminLoc extends ConferenceAwareLoc {
 
   def text = new LinkText((conf: Conference) => Text(?("menu.cms_admin", conf.name)))
 
-  def params = List(Hidden) // TODO: enable, User.testSuperUser)
+  def params = List(Hidden, User.testSuperUser)
 }
