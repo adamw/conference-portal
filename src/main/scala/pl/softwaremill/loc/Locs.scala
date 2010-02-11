@@ -231,8 +231,6 @@ object Locs {
       }
     }
 
-    override def calcTemplate = TemplateFinder.findAnyTemplate("templates-hidden" :: "cms_page" :: Nil)
-
     protected def doRewrite(request: RewriteRequest): (RewriteResponse, MenuItem) = {
       request match {
         case RewriteRequest(parsePath @ ParsePath(ContentPath :: rest, _, _, _), _, httpRequest) => {
@@ -247,11 +245,11 @@ object Locs {
 
           val result = find(rootMenuItem, rest)
           result match {
-            case Full(menuItem) => { CurrentMenuItemPage(menuItem); (finalResponse(parsePath), menuItem) }
+            case Full(menuItem) => { CurrentMenuItemPage(menuItem); (finalResponse(ContentPath :: Nil), menuItem) }
             case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("menuitem.unknown"))), null)
           }
         }
-        case _ => throw new MatchError
+        case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("menuitem.unknown"))), null)
       }
     }
 

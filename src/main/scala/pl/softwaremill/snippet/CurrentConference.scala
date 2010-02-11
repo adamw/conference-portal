@@ -81,5 +81,5 @@ object CurrentMenuItemPage extends RequestVar(MenuItem.create)
 class CurrentMenuItemPage {
   def title(ignore: NodeSeq): NodeSeq = Text(CurrentMenuItemPage.is.title)
 
-  def content(ignore: NodeSeq): NodeSeq = Unparsed(CurrentMenuItemPage.is.title)
+  def content(ignore: NodeSeq): NodeSeq = Unparsed(CurrentMenuItemPage.is.pageContent)
 }
