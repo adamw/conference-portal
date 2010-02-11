@@ -132,7 +132,9 @@ class CmsAdmin {
     def bindTypeSpecific(menuItem: MenuItem, template: NodeSeq): NodeSeq = {
       menuItem.menuItemType match {
         case MenuItemType.Link => bindRow("menuitem.link", menuItem.linkContent.toForm, template)
-        case MenuItemType.Page => bindRow("menuitem.page", menuItem.pageContent.toForm, template)
+        case MenuItemType.Page => bindRow("menuitem.page_path", menuItem.pagePath.toForm, template) ++
+          bindRow("menuitem.page", menuItem.pageContent.toForm, template)
+        case MenuItemType.Parent => bindRow("menuitem.page_path", menuItem.pagePath.toForm, template)
         case _ => NodeSeq.Empty
       }
     }

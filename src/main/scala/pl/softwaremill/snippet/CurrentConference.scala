@@ -1,12 +1,12 @@
 package pl.softwaremill.snippet
 
-import xml.{Text, NodeSeq}
+import xml.{Unparsed, Text, NodeSeq}
 
 import net.liftweb.util.Helpers._
 import net.liftweb.http._
 import S._
 
-import pl.softwaremill.model.{User, Paper, Conference}
+import pl.softwaremill.model.{MenuItem, User, Paper, Conference}
 import pl.softwaremill.lib.D
 import pl.softwaremill.services.{UserService, PaperService}
 import pl.softwaremill.loc.{Locs, ViewPaperLoc}
@@ -74,4 +74,12 @@ class CurrentAuthor {
       "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view"))
       ))
   }
+}
+
+object CurrentMenuItemPage extends RequestVar(MenuItem.create)
+
+class CurrentMenuItemPage {
+  def title(ignore: NodeSeq): NodeSeq = Text(CurrentMenuItemPage.is.title)
+
+  def content(ignore: NodeSeq): NodeSeq = Unparsed(CurrentMenuItemPage.is.title)
 }

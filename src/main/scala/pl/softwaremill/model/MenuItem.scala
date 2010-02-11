@@ -21,6 +21,8 @@ class MenuItem extends LongKeyedMapper[MenuItem] with IdPK with OneToMany[Long, 
   def menuItemType = MenuItemType(mappedMenuItemType.is)
   def menuItemType(newType: MenuItemType.Value) = mappedMenuItemType(newType.id)
 
+  object pagePath extends MappedString(this, 1000)
+
   object pageContent extends MappedTextarea(this, 10000) {
     override def textareaRows = 30
     override def textareaCols = 80
@@ -35,7 +37,7 @@ class MenuItem extends LongKeyedMapper[MenuItem] with IdPK with OneToMany[Long, 
     def createNew = new MenuItem
   }
 
-  def children = _children.sorted
+  def children: List[MenuItem] = _children.sorted
 
   object parent extends LongMappedMapper[MenuItem, MenuItem](this, MenuItem)
 

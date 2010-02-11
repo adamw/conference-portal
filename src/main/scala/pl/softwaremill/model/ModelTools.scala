@@ -26,7 +26,7 @@ object ModelTools {
 
   def valXml(errorKey: String, field: FieldIdentifier)(xml: String) = {
     try {
-      XML.loadString(xml)
+      if (xml != "") XML.loadString(xml)
       Nil
     } catch {
       case e => List(FieldError(field, S.?(errorKey, e.getMessage)))

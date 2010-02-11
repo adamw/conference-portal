@@ -5,14 +5,16 @@ import xml._
 import net.liftweb.sitemap.Loc
 import net.liftweb.common._
 import net.liftweb.http._
+import net.liftweb.util.Helpers._
 
+import Box._
 import Loc._
 import S._
 
 import pl.softwaremill.model._
 import pl.softwaremill.lib.D
 import pl.softwaremill.services._
-import pl.softwaremill.snippet.{CurrentAuthor, CurrentConference, Util}
+import pl.softwaremill.snippet.{CurrentAuthor, CurrentConference, CurrentMenuItemPage, Util}
 
 import LocTools._
 import Util._
@@ -39,10 +41,6 @@ object Locs {
    * Serves all paths with the path equals to {@code PathList} (but not sub-paths).
    */
   trait SinglePathLoc[T] extends PrefixLoc[T] {
-    override def rewrite = Full({
-      case request @ RewriteRequest(ParsePath(PathList, _, _, _), _, _) => doRewrite(request)
-    })
-
     def link = new Link(PathList)
 
     def params: List[Loc.LocParam[T]] = Nil
@@ -208,4 +206,61 @@ object Locs {
     def name = "Tweets"
     def text = new LinkText(ignore => Text(?("menu.tweets")))
   }
+
+  class CmsLocBase extends PrefixLoc[MenuItem] {
+    private val ContentPath = "content"
+
+    protected val PathList = ContentPath :: Nil
+    protected def default: MenuItem = null
+
+    def name = "Content"
+    def text = new LinkText(menuItem => Text(menuItem.title.is))
+
+    override def params: List[Loc.LocParam[MenuItem]] = Hidden :: Nil
+
+    override def link = new Link[MenuItem](PathList) {
+      override def pathList(menuItem: MenuItem): List[String] = {
+        def accumulatePaths(current: MenuItem, acc: List[String]): List[String] = {
+          current.parent.obj match {
+            case Full(parent) => accumulatePaths(parent, current.pagePath.is :: acc)
+            case _ => acc.reverse
+          }
+        }
+
+        super.pathList(menuItem) ++ accumulatePaths(menuItem, Nil)
+      }
+    }
+
+    override def calcTemplate = TemplateFinder.findAnyTemplate("templates-hidden" :: "cms_page" :: Nil)
+
+    protected def doRewrite(request: RewriteRequest): (RewriteResponse, MenuItem) = {
+      request match {
+        case RewriteRequest(parsePath @ ParsePath(ContentPath :: rest, _, _, _), _, httpRequest) => {
+          val rootMenuItem = CurrentConference.is.mainMenuItem.obj.open_!
+
+          def find(parent: MenuItem, path: List[String]): Box[MenuItem] = {
+            path match {
+              case Nil => if (parent.menuItemType == MenuItemType.Page) Full(parent) else Empty
+              case head :: tail => parent.children.find(_.pagePath.is == head).flatMap(find(_, tail))
+            }
+          }
+
+          val result = find(rootMenuItem, rest)
+          result match {
+            case Full(menuItem) => { CurrentMenuItemPage(menuItem); (finalResponse(parsePath), menuItem) }
+            case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("menuitem.unknown"))), null)
+          }
+        }
+        case _ => throw new MatchError
+      }
+    }
+
+    override def rewrite = Full({
+      case request @ RewriteRequest(ParsePath(ContentPath :: _, _, _, _), _, _) => {
+        doRewrite(request)
+      }
+    })
+  }
+
+  val CmsLoc = new CmsLocBase with ActiveConferenceLoc[MenuItem]
 }

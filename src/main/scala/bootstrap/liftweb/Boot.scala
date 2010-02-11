@@ -41,6 +41,8 @@ class Boot {
             Menu(ViewPaperLoc) ::
             // View author
             Menu(Locs.AuthorLoc) ::
+            // View CMS pages
+            Menu(Locs.CmsLoc) ::
             // Home
             Menu(Loc("Home", List("index"), ?("menu.home"), Hidden)) ::
             // View Authors
