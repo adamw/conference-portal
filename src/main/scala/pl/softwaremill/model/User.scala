@@ -76,7 +76,7 @@ object User extends User with MetaMegaProtoUser[User] {
       <h2>{S.??("edit")}</h2>
       <form method="post" action={S.uri}>
         <table>
-          {localForm(user, true)}
+          {localForm2(user, true)}
           <tr><td>&nbsp;</td><td><user:submit/></td></tr>
         </table>
       </form>
@@ -87,14 +87,14 @@ object User extends User with MetaMegaProtoUser[User] {
       <h2>{S.??("sign.up")}</h2>
       <form method="post" action={S.uri}>
         <table>
-          {localForm(user, false)}
+          {localForm2(user, false)}
           <tr><td>&nbsp;</td><td><user:submit/></td></tr>
         </table>
       </form>
     </span>
 
   // TODO: remove after patch applied
-  private def localForm(user: User, ignorePassword: Boolean): NodeSeq = {
+  private def localForm2(user: User, ignorePassword: Boolean): NodeSeq = {
     signupFields.
     map(fi => getSingleton.getActualBaseField(user, fi)).
     filter(f => !ignorePassword || (f match {

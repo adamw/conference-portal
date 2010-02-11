@@ -13,6 +13,7 @@ import Helpers._
 
 import java.text.SimpleDateFormat
 import java.util.{Date, Locale}
+import pl.softwaremill.comet.{TweetsUpdater, Shutdown, Update}
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -53,6 +54,8 @@ class Boot {
             c4pMenu ::
             // Schedule preferences
             Menu(Locs.SchedulePreferencesLoc) ::
+            // Tweets
+            //Menu(Locs.TweetsLoc) ::
             // Conferences management
             conferencesMenu ::
             // User controls
@@ -81,6 +84,11 @@ class Boot {
     LiftRules.parseDate = str => tryo(dateFormat.parse(str)) or Helpers.toDate(str)
 
     S.addAround(DB.buildLoanWrapper)
+
+    // Starting tweet updates
+    //TweetsUpdater ! Update()
+
+    //LiftRules.unloadHooks.append(() => TweetsUpdater ! Shutdown())
   }
 
   private def conferencesMenu: Menu = {

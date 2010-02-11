@@ -200,4 +200,12 @@ object Locs {
     def name = "Register"
     def text = new LinkText(ignore => Text(?("menu.register")))
   }
+
+  val TweetsLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with ActiveConferenceLoc[Unit] {
+    protected val PathList = "tweets" :: Nil
+    protected def default = ()
+
+    def name = "Tweets"
+    def text = new LinkText(ignore => Text(?("menu.tweets")))
+  }
 }
