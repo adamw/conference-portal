@@ -1,9 +1,9 @@
 package pl.softwaremill.model
 
 import net.liftweb.http.S
-import xml.Text
 import net.liftweb.util.{FieldIdentifier, FieldError}
 import net.liftweb.mapper.LongMappedForeignMapper
+import xml.{XML, Text}
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -21,6 +21,15 @@ object ModelTools {
     valMin(min, errorKey, field)(value) match {
       case Nil => valMax(max, errorKey, field)(value)
       case errors => errors
+    }
+  }
+
+  def valXml(errorKey: String, field: FieldIdentifier)(xml: String) = {
+    try {
+      XML.loadString(xml)
+      Nil
+    } catch {
+      case e => List(FieldError(field, S.?(errorKey, e.getMessage)))
     }
   }
 

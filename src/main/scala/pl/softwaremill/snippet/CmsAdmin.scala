@@ -110,9 +110,16 @@ class CmsAdmin {
   def editMenuItem(editTemplate: NodeSeq): NodeSeq = {
     this.editTemplate = editTemplate
 
+    def saveMenuItem(menuItem: MenuItem) {
+      menuItem.validate match {
+        case Nil  => menuItem.save(); S.notice(S.?("common.saved", menuItem.title))
+        case xs   => S.error(xs)
+      }
+    }
+
     def bindFooter(menuItem: MenuItem)(footerTemplate: NodeSeq) =
       bind("footer", footerTemplate,
-        "save" -> ajaxSubmit(?("common.save"), () => { menuItem.save; reRender }),
+        "save" -> ajaxSubmit(?("common.save"), () => { saveMenuItem(menuItem); reRender }),
         "cancel" -> a(() => { CurrentMenuItem(Empty); reRender }, Text(?("common.cancel")))
         )
 

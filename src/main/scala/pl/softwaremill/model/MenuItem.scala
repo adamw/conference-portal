@@ -1,11 +1,13 @@
 package pl.softwaremill.model
 
 import net.liftweb.mapper._
+import net.liftweb.http.S._
+
+import ModelTools._
 
 /**
  * @author Adam Warski (adam at warski dot org)
  */
-
 class MenuItem extends LongKeyedMapper[MenuItem] with IdPK with OneToMany[Long, MenuItem] with Positionable[MenuItem] {
   def getSingleton = MenuItem
 
@@ -22,6 +24,8 @@ class MenuItem extends LongKeyedMapper[MenuItem] with IdPK with OneToMany[Long, 
   object pageContent extends MappedTextarea(this, 10000) {
     override def textareaRows = 30
     override def textareaCols = 80
+
+    override def validations = valXml(?("menuitem.page.invalid_xml"), pageContent) _ :: super.validations
   }
 
   object linkContent extends MappedString(this, 1000)
