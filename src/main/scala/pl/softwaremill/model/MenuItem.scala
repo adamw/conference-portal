@@ -72,3 +72,27 @@ object MenuItemType extends Enumeration {
   val User = Value("menuitemtype.user")
   val Manage = Value("menuitemtype.manage")
 }
+
+object MenuItemPath {
+  def apply(menuItem: MenuItem) = {
+    def accumulatePaths(current: MenuItem, acc: List[String]): List[String] = {
+      current.parent.obj match {
+        case Full(parent) => accumulatePaths(parent, current.pagePath.is :: acc)
+        case _ => acc
+      }
+    }
+
+    accumulatePaths(menuItem, Nil)
+  }
+
+  def unapply(rootAndPaths: (MenuItem, List[String])): Option[MenuItem] = {
+    def find(parent: MenuItem, path: List[String]): Box[MenuItem] = {
+      path match {
+        case Nil => if (parent.menuItemType == MenuItemType.Page) Full(parent) else Empty
+        case head :: tail => parent.children.find(_.pagePath.is == head).flatMap(find(_, tail))
+      }
+    }
+
+    find(rootAndPaths._1, rootAndPaths._2)
+  }
+}

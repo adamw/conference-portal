@@ -223,16 +223,7 @@ object Locs {
     override def params: List[Loc.LocParam[MenuItem]] = Hidden :: Nil
 
     override def link = new Link[MenuItem](PathList) {
-      override def pathList(menuItem: MenuItem): List[String] = {
-        def accumulatePaths(current: MenuItem, acc: List[String]): List[String] = {
-          current.parent.obj match {
-            case Full(parent) => accumulatePaths(parent, current.pagePath.is :: acc)
-            case _ => acc
-          }
-        }
-
-        super.pathList(menuItem) ++ accumulatePaths(menuItem, Nil)
-      }
+      override def pathList(menuItem: MenuItem): List[String] = super.pathList(menuItem) ++ MenuItemPath(menuItem)
     }
 
     protected def doRewrite(request: RewriteRequest): (RewriteResponse, MenuItem) = {
@@ -240,16 +231,8 @@ object Locs {
         case RewriteRequest(parsePath @ ParsePath(ContentPath :: rest, _, _, _), _, httpRequest) => {
           val rootMenuItem = CurrentConference.is.mainMenuItem.obj.open_!
 
-          def find(parent: MenuItem, path: List[String]): Box[MenuItem] = {
-            path match {
-              case Nil => if (parent.menuItemType == MenuItemType.Page) Full(parent) else Empty
-              case head :: tail => parent.children.find(_.pagePath.is == head).flatMap(find(_, tail))
-            }
-          }
-
-          val result = find(rootMenuItem, rest)
-          result match {
-            case Full(menuItem) => { CurrentMenuItemPage(menuItem); (finalResponse(ContentPath :: Nil), menuItem) }
+          (rootMenuItem, rest) match {
+            case MenuItemPath(menuItem) => { CurrentMenuItemPage(menuItem); (finalResponse(ContentPath :: Nil), menuItem) }
             case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("menuitem.unknown"))), null)
           }
         }
