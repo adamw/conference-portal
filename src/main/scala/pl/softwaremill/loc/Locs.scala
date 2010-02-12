@@ -44,6 +44,10 @@ object Locs {
     def link = new Link(PathList)
 
     def params: List[Loc.LocParam[T]] = Nil
+
+    override def rewrite = Full({
+      case request @ RewriteRequest(ParsePath(PathList, _, _, _), _, _) => doRewrite(request)
+    })
   }
 
   /**
