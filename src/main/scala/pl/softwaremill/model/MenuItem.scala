@@ -2,8 +2,10 @@ package pl.softwaremill.model
 
 import net.liftweb.mapper._
 import net.liftweb.http.S._
+import net.liftweb.common._
 
 import ModelTools._
+import xml.NodeSeq
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -42,6 +44,22 @@ class MenuItem extends LongKeyedMapper[MenuItem] with IdPK with OneToMany[Long, 
   object parent extends LongMappedMapper[MenuItem, MenuItem](this, MenuItem)
 
   def hasParent = parent.defined_?
+
+  def htmlTree(body: MenuItem => NodeSeq, additionalChildren: MenuItem => Box[NodeSeq]): NodeSeq = {
+    <li>
+      { body(this) }
+      {
+      val chld = children
+      val addChld = additionalChildren(this)
+      if (chld.size > 0 || addChld.isDefined) {
+        <ul>
+          { chld.flatMap(_.htmlTree(body, additionalChildren)) }
+          { addChld openOr NodeSeq.Empty }
+        </ul>
+      } else NodeSeq.Empty
+      }
+    </li>
+  }
 }
 
 object MenuItem extends MenuItem with LongKeyedMetaMapper[MenuItem]
@@ -52,4 +70,5 @@ object MenuItemType extends Enumeration {
   val Page = Value("menuitemtype.page")
   val Conference = Value("menuitemtype.conference")
   val User = Value("menuitemtype.user")
+  val Manage = Value("menuitemtype.manage")
 }

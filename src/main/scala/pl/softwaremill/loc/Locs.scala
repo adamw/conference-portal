@@ -2,7 +2,7 @@ package pl.softwaremill.loc
 
 import xml._
 
-import net.liftweb.sitemap.Loc
+import net.liftweb.sitemap.{Menu, Loc}
 import net.liftweb.common._
 import net.liftweb.http._
 import net.liftweb.util.Helpers._
@@ -223,7 +223,7 @@ object Locs {
         def accumulatePaths(current: MenuItem, acc: List[String]): List[String] = {
           current.parent.obj match {
             case Full(parent) => accumulatePaths(parent, current.pagePath.is :: acc)
-            case _ => acc.reverse
+            case _ => acc
           }
         }
 
@@ -261,4 +261,45 @@ object Locs {
   }
 
   val CmsLoc = new CmsLocBase with ActiveConferenceLoc[MenuItem]
+
+  val ManageLoc = Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences"), User.testSuperUser)
+}
+
+object Menus {
+  import Locs._
+
+  val ConferenceMenus =
+          // View Authors
+          Menu(AuthorsLoc) ::
+          // View conference
+          Menu(ViewConferenceLoc) ::
+          // Schedule
+          Menu(ViewScheduleLoc) ::
+          // Register
+          Menu(RegisterLoc) ::
+          // C4P
+          c4pMenu ::
+          // Schedule preferences
+          Menu(SchedulePreferencesLoc) ::
+          // View papers
+          Menu(ViewPaperLoc) ::
+          // View author
+          Menu(AuthorLoc) :: Nil
+
+  private def c4pMenu: Menu = {
+    val editPaper = Menu(Loc("C4PEdit", "c4p" :: "edit" :: Nil, ?("menu.c4p.edit"), Hidden, User.loginFirst))
+    val main = Menu(Loc("C4PList", "c4p" :: "index" :: Nil, ?("menu.c4p.my"), LocTools.showRequireLogin), editPaper)
+    main
+  }
+
+  val ManageMenu = manageMenu
+
+  private def manageMenu: Menu = {
+    val slotEditor = Menu(SlotEditorLoc)
+    val acceptReject = Menu(AcceptRejectLoc)
+    val stats = Menu(StatisticsLoc)
+    val cmsAdmin = Menu(CmsAdminLoc)
+    val main = Menu(ManageLoc, slotEditor, acceptReject, stats, cmsAdmin)
+    main
+  }
 }

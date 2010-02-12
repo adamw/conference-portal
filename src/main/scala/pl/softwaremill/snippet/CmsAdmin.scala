@@ -78,33 +78,29 @@ class CmsAdmin {
         )
     }
 
-    def tree(menuItem: MenuItem): NodeSeq = {
-      <li>
-        <span>
-          { if (Full(menuItem) == CurrentMenuItem.is) <strong>{menuItem.title.is}</strong> else menuItem.title.is }
-          ({ ?(menuItem.menuItemType.toString) })
-          {
-          if (menuItem.hasParent) {
-            a(() => { CurrentMenuItem(Full(menuItem)); reRender }, Text(?("common.edit"))) :: Text(" ") ::
-            a(() => { menuItem.parent.obj.open_!._children.moveUp(menuItem).save; reRender }, Text(?("common.move_up"))) :: Text(" ") ::
-            a(() => { menuItem.parent.obj.open_!._children.moveDown(menuItem).save; reRender }, Text(?("common.move_down"))) :: Text(" ") ::
-            a(Call("confirm_menuitem_delete", Str(?("menuitem.confirm_delete", menuItem.title.is))),
-              () => { deleteMenuItem(menuItem); reRender },
-              Text(?("common.delete"))) :: Nil
-          } else NodeSeq.Empty
-          }
-        </span>
-        <ul>
-          { menuItem.children.flatMap(tree(_)) }
-          {
-          if (menuItem.menuItemType == MenuItemType.Parent) <li>{ addTypeForm(menuItem) }</li>
-          else NodeSeq.Empty
-          }
-        </ul>
-      </li>
+    def menuItemBody(menuItem: MenuItem) = {
+      <span>
+        { if (Full(menuItem) == CurrentMenuItem.is) <strong>{menuItem.title.is}</strong> else menuItem.title.is }
+        ({ ?(menuItem.menuItemType.toString) })
+        {
+        if (menuItem.hasParent) {
+          a(() => { CurrentMenuItem(Full(menuItem)); reRender }, Text(?("common.edit"))) :: Text(" ") ::
+                  a(() => { menuItem.parent.obj.open_!._children.moveUp(menuItem).save; reRender }, Text(?("common.move_up"))) :: Text(" ") ::
+                  a(() => { menuItem.parent.obj.open_!._children.moveDown(menuItem).save; reRender }, Text(?("common.move_down"))) :: Text(" ") ::
+                  a(Call("confirm_menuitem_delete", Str(?("menuitem.confirm_delete", menuItem.title.is))),
+                    () => { deleteMenuItem(menuItem); reRender },
+                    Text(?("common.delete"))) :: Nil
+        } else NodeSeq.Empty
+        }
+      </span>
     }
 
-    tree(rootMenuItem)
+    def menuItemAdditionalChildren(menuItem: MenuItem) =
+      if (menuItem.menuItemType == MenuItemType.Parent)
+        Full(<li>{ addTypeForm(menuItem) }</li>)
+      else Empty
+
+    rootMenuItem.htmlTree(menuItemBody _, menuItemAdditionalChildren _)
   }
 
   def editMenuItem(editTemplate: NodeSeq): NodeSeq = {

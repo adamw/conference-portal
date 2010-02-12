@@ -33,34 +33,19 @@ class Boot {
     // where to search snippet
     LiftRules.addToPackages("pl.softwaremill")
 
-    // Build SiteMap
     val entries =
             // Misc hidden
             Menu(Loc("Error", List("error"), "Error", Hidden)) ::
-            // View papers
-            Menu(ViewPaperLoc) ::
-            // View author
-            Menu(Locs.AuthorLoc) ::
             // View CMS pages
             Menu(Locs.CmsLoc) ::
             // Home
             Menu(Loc("Home", List("index"), ?("menu.home"), Hidden)) ::
-            // View Authors
-            Menu(Locs.AuthorsLoc) ::
-            // View conference
-            Menu(Locs.ViewConferenceLoc) ::
-            // Schedule
-            Menu(Locs.ViewScheduleLoc) ::
-            // Register
-            Menu(Locs.RegisterLoc) ::
-            // C4P
-            c4pMenu ::
-            // Schedule preferences
-            Menu(Locs.SchedulePreferencesLoc) ::
             // Tweets
             //Menu(Locs.TweetsLoc) ::
             // Conferences management
-            conferencesMenu ::
+            Menus.ManageMenu :: Nil :::
+            // Conference view
+            Menus.ConferenceMenus :::
             // User controls
             User.sitemap
 
@@ -92,22 +77,6 @@ class Boot {
     //TweetsUpdater ! Update()
 
     //LiftRules.unloadHooks.append(() => TweetsUpdater ! Shutdown())
-  }
-
-  private def conferencesMenu: Menu = {
-    val slotEditor = Menu(SlotEditorLoc)
-    val acceptReject = Menu(AcceptRejectLoc)
-    val stats = Menu(StatisticsLoc)
-    val cmsAdmin = Menu(CmsAdminLoc)
-    val main = Menu(Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences"), User.testSuperUser),
-      slotEditor, acceptReject, stats, cmsAdmin)
-    main
-  }
-
-  private def c4pMenu: Menu = {
-    val editPaper = Menu(Loc("C4PEdit", "c4p" :: "edit" :: Nil, ?("menu.c4p.edit"), Hidden, User.loginFirst))
-    val main = Menu(Loc("C4PList", "c4p" :: "index" :: Nil, ?("menu.c4p.my"), LocTools.showRequireLogin), editPaper)
-    main
   }
 
   private def currentUserLocale: Box[Locale] = {

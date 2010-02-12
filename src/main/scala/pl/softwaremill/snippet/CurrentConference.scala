@@ -4,12 +4,14 @@ import xml.{Unparsed, Text, NodeSeq}
 
 import net.liftweb.util.Helpers._
 import net.liftweb.http._
+import net.liftweb.common._
+import net.liftweb.sitemap.{Loc, Menu}
 import S._
 
-import pl.softwaremill.model.{MenuItem, User, Paper, Conference}
+import pl.softwaremill.model._
 import pl.softwaremill.lib.D
 import pl.softwaremill.services.{UserService, PaperService}
-import pl.softwaremill.loc.{Locs, ViewPaperLoc}
+import pl.softwaremill.loc.{Menus, Locs, ViewPaperLoc}
 
 import SnippetTools._
 
@@ -38,6 +40,43 @@ class CurrentConference {
       "name" -> author.shortName,
       "view" -> anchor(Locs.AuthorLoc.link.createPath(author), ?("common.view"))
       ))
+  }
+}
+
+class ActiveConference {
+  def mainMenu(x: NodeSeq): NodeSeq = {
+    def body(menuItem: MenuItem) = {
+      menuItem.menuItemType match {
+        case MenuItemType.Link => anchor(menuItem.linkContent.is, menuItem.title)
+        case MenuItemType.Page => anchor(Locs.CmsLoc.link.createPath(menuItem), menuItem.title)
+        case MenuItemType.Manage => anchor(Locs.ManageLoc.link.createPath(()), menuItem.title)
+        case _ => Text(menuItem.title)
+      }
+    }
+
+    def additionalChildren(menuItem: MenuItem): Box[NodeSeq] = {
+      def testVisible(loc: Loc[_]) = !loc.hidden && (loc.testAccess match {
+        case Left(true) => true case _ => false
+      })
+
+      def fromMenu(menu: Menu): NodeSeq = {
+        (for (loc <- Full(menu.loc) if testVisible(loc);
+              link <- loc.createDefaultLink;
+              linkText <- loc.linkText) yield <li>{ anchor(link.text, linkText.text) }</li>) openOr NodeSeq.Empty
+      }
+
+      def fromMenus(menus: Seq[Menu]): NodeSeq = menus.flatMap(fromMenu(_))
+
+      menuItem.menuItemType match {
+        case MenuItemType.Conference => Full(fromMenus(Menus.ConferenceMenus))
+        case MenuItemType.User => Full(fromMenus(User.sitemap))
+        case _ => Empty
+      }
+    }
+
+    (for (conf <- Configuration.is.activeConference;
+          mainMenu <- conf.mainMenuItem.obj)
+    yield mainMenu.htmlTree(body(_), additionalChildren(_))) openOr NodeSeq.Empty
   }
 }
 
