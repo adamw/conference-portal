@@ -1,11 +1,57 @@
 <lift:surround with="default" at="content">
+    <head>
+        <style type="text/css">
+        /* <![CDATA[ */
+        div.tweet {
+            padding: 0.5em;
+            background-color: #ffffcc;
+            margin: 0.5em;
+        }
+
+        div.tweet .content {
+            margin-bottom: .5em;
+        }
+
+        div.tweet .author_cont {
+            color: gray;
+        }
+        /* ]]> */
+    </style>
+    </head>
+
     <h2><lift:Menu.title /></h2>
 
-    <div>
-        <lift:comet type="TweetsClient">
-            Error
-        </lift:comet>
+    <div style="width: 400px;">
+        <div>
+            <lift:comet type="TweetsClient">
+                Error
+            </lift:comet>
+        </div>
     </div>
 
     <br />
+
+    <div id="tweet_template" class="tweet" style="display:none;">
+        <div class="content"></div>
+        <div class="author_cont">by <span class="author"></span></div>
+    </div>
+
+    <script type="text/javascript">
+    // <![CDATA[        
+	function newMessages(content) {
+        var template = $("#tweet_template");
+        var newTweet = template.clone();
+        newTweet.removeAttr("style");
+        newTweet.removeAttr("id");
+
+        var author = content[0].author
+        var message = content[0].message
+
+        newTweet.find(".content").html(message)
+        newTweet.find(".author").html(author)
+
+        $("#tweets").prepend($(newTweet).fadeIn(3000));
+    }
+    // ]]>
+	</script>
 </lift:surround>

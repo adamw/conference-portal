@@ -39,6 +39,7 @@
     <div title="" id="dialogContent"></div>
 
     <script type="text/javascript">
+    // <![CDATA[
 	$(function() {
         $("#dialogContent").dialog({ width: 600, height: 350, autoOpen: false, position: 'center' });
 	});
@@ -50,5 +51,6 @@
         $("#dialogContent").html(desc);
         $("#dialogContent").dialog('open');
     }
+    // ]]>
 	</script>
 </lift:surround>

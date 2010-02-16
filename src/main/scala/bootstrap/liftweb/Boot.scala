@@ -41,7 +41,7 @@ class Boot {
             // Home
             Menu(Loc("Home", List("index"), ?("menu.home"), Hidden)) ::
             // Tweets
-            //Menu(Locs.TweetsLoc) ::
+            Menu(Locs.TweetsLoc) ::
             // Conferences management
             Menus.ManageMenu :: Nil :::
             // Conference view
@@ -59,6 +59,8 @@ class Boot {
 
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
 
+    LiftRules.jQueryVersion = LiftRules.JQueryVersion.v14
+
     LiftRules.loggedInTest = Full(() => User.loggedIn_?)
 
     LiftRules.resourceNames = "conference" :: Nil
@@ -74,9 +76,9 @@ class Boot {
     S.addAround(DB.buildLoanWrapper)
 
     // Starting tweet updates
-    //TweetsUpdater ! Update()
+    TweetsUpdater ! Update()
 
-    //LiftRules.unloadHooks.append(() => TweetsUpdater ! Shutdown())
+    LiftRules.unloadHooks.append(() => TweetsUpdater ! Shutdown())
   }
 
   private def currentUserLocale: Box[Locale] = {

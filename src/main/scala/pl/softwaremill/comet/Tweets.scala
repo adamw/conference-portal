@@ -1,13 +1,19 @@
 package pl.softwaremill.comet
 
 import xml._
+import io.Source
 
 import net.liftweb.util.Helpers._
 import net.liftweb.http._
 import net.liftweb.common._
 import net.liftweb.util.ActorPing
-import net.liftweb.http.js.JsCmds.SetHtml
+import net.liftweb.json._
 import net.liftweb.actor._
+
+import util.parsing.json.JSON
+
+import js.JsCmds._
+import js.JE._
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -15,12 +21,16 @@ import net.liftweb.actor._
 object Tweets
 
 class TweetsClient extends CometActor {
-  def render = <span id="tweets">Waiting for tweets to arrive ...</span>
+  implicit private val formats = DefaultFormats
+
+  def render =
+    <span>
+      <div id="tweets"></div>
+    </span>
 
   override def lowPriority : PartialFunction[Any, Unit] = {
     case UpdateTweets(newTweets) => {
-      println("New tweets " + newTweets)
-      partialUpdate(SetHtml("tweets", Text(timeNow.toString)))
+      partialUpdate(Call("newMessages", JsRaw(Serialization.write(newTweets))))
     }
   }
 
@@ -30,16 +40,11 @@ class TweetsClient extends CometActor {
   }
 
   override def localShutdown() {
-    println("!!!")
-    println("!!!")
-    println("UNSUB")
-    println("!!!")
-    println("!!!")
     TweetsMaster ! Unsubscribe(this)
     super.localShutdown()
   }
 
-  override def lifespan: Box[TimeSpan] = Full(2 minutes)
+  override def lifespan: Box[TimeSpan] = Full(30 seconds)
 }
 
 object TweetsMaster extends LiftActor {
@@ -59,8 +64,6 @@ object TweetsMaster extends LiftActor {
       // Sending the tweets delta to clients, if there are any
       if (clients != Nil) {
         val delta = newTweets -- currentTweets
-
-        println("update " + delta)
 
         if (delta != Nil) clients map { _ ! UpdateTweets(delta) }
       }
@@ -82,8 +85,29 @@ object TweetsUpdater extends LiftActor {
     case Shutdown() => scheduleUpdates = false
   }
 
-  var testCount = 3;
-  def readTweets = { println("read tweets"); testCount += 1; (1 to testCount).map(i => Tweet("i"+i, "m"+i, "a"+i)).toList.takeRight(10) }
+  def readTweets = {
+    def toString(o: Any) = if (o == null) null else o.toString
+
+    val source = Source.fromURL("http://search.twitter.com/search.json?q=obama&rpp=10", "UTF-8")
+    val json = source.getLines.mkString
+    val parsed = JSON.parseFull(json).asInstanceOf[Option[Map[Any, Any]]] getOrElse Map[Any, Any]()
+
+    val results = parsed.getOrElse("results", List[Any]()).asInstanceOf[List[List[Any]]]
+
+    val tweets = results.map { result =>
+      val resultMap = result.foldLeft(Map[String, String]())((acc, el) => el match {
+        case (key, value) => acc + (toString(key) -> toString(value))
+        case _ => acc
+      })
+
+      Tweet(resultMap.getOrElse("source", ""),
+        resultMap.getOrElse("text", ""),
+        resultMap.getOrElse("from_user", ""),
+        resultMap.getOrElse("profile_image_url", ""))
+    }
+
+    tweets
+  }
 }
 
 // Used by the updater
@@ -96,5 +120,5 @@ case class Subscribe(t: TweetsClient)
 case class Unsubscribe(t: TweetsClient)
 
 // Data class
-case class Tweet(link: String, message: String, author: String)
+case class Tweet(link: String, message: String, author: String, profileImageUrl: String)
 
