@@ -6,6 +6,10 @@
 
     <title><lift:Menu.title /></title>
 
+    <link href="http://www.herbstcampus.de/hc09/style/css/common.css" rel="stylesheet" type="text/css" media="all" />
+    <link rel="shortcut icon" href="http://www.herbstcampus.de/hc09/favicon.gif" type="image/gif" />
+    <link rel="icon" href="http://www.herbstcampus.de/hc09/favicon.gif" type="image/gif" />
+
     <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css" />
 
     <script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>
@@ -22,54 +26,43 @@
     });
     // ]]>
 </script>
-<div id="pagewrapper">
-    <div id="header">
-        <h2 class="headright">
-            <img alt="" id="ajax-loader" style="display:none; margin-bottom: 0px; margin-left: 5px" src="/images/ajax-loader.gif"/>
-            Konferencja
-        </h2>
+<div id="head">
+    <div id="head_brown"></div>
 
-        <h1><a href="http://www.javarsovia.pl/" title="Konferencja" >Javarsovia</a></h1>
+    <center>
+        <table style="height: 121px; width:100%;">
+            <tr>
+                <td align="center" valign="middle"><img style="padding-left: 50px;" src="http://www.herbstcampus.de/hc09/style/image/logo-left.gif" alt="" /></td>
+                <td align="center" valign="middle"><img src="http://www.herbstcampus.de/hc09/style/image/logo.gif" alt="" /></td>
+                <td align="center" valign="middle"><img style="padding-right: 50px;" src="http://www.herbstcampus.de/hc09/style/image/logo-right.gif" alt="" /></td>
+            </tr>
+        </table>
+    </center>
 
-        <hr class="accessibility" />
+</div>
+
+<div id="menu">
+    <div id="menu2">
+        <lift:ActiveConference.mainMenu />
     </div>
 
+    <lift:Msgs showAll="true">
+        <lift:error_class>errorBox</lift:error_class>
+        <lift:warning_class>warningBox</lift:warning_class>
+        <lift:notice_class>noticeBox</lift:notice_class>
+    </lift:Msgs>
+
+    <img alt="" id="ajax-loader" style="display:none; margin-bottom: 0px; margin-left: 5px" src="/images/ajax-loader.gif"/>
+</div>
+
+<div id="container">
     <div id="content">
-        <div id="sidebar">
-            <div id="sidebara">
-                <div id="menu_vert">
-                    <lift:ActiveConference.mainMenu />
-                </div>
-
-                <div>
-                    <lift:Msgs showAll="true">
-                        <lift:error_class>errorBox</lift:error_class>
-                        <lift:warning_class>warningBox</lift:warning_class>
-                        <lift:notice_class>noticeBox</lift:notice_class>
-                    </lift:Msgs>
-                    <hr class="space" />
-                </div>
-                <br />
-            </div>
-        </div>
-
-        <div class="back">
-            <div id="main">
-                <lift:bind name="content" />
-            </div>
-        </div>
+        <lift:bind name="content" />
     </div>
+</div>
 
-    <div class="footback">
-        <div id="footer">
-            <div id="fooleft">
-            </div>
-            <div id="footrt">
-                <p>&copy; 2010 <a href="http://softwaremill.eu"><i>SoftwareMill</i></a>(c) 2010.</p>
-            </div>
-            <div class="clear"></div>
-        </div>
-    </div>
+<div id="foot">
+    <p style="text-align: center; color: white;">&copy; 2010 <a style="color: white;" href="http://softwaremill.eu"><i>SoftwareMill</i></a> (c) 2010.</p>
 </div>
 </body>
 </html>

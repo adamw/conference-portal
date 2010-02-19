@@ -16,7 +16,7 @@ table td {
     padding: 5px;
 }
 
-.errorBox {
+div#menu .errorBox ul li {
     color:red;
     display:block;
     min-height:1em;
@@ -24,7 +24,7 @@ table td {
     text-decoration:none;
 }
 
-.warningBox {
+div#menu .warningBox ul li {
     color:orange;
     display:block;
     min-height:1em;
@@ -32,10 +32,64 @@ table td {
     text-decoration:none;
 }
 
-.noticeBox {
+div#menu .noticeBox ul li {
     color:green;
     display:block;
     min-height:1em;
     padding:0.8em 1.5em 0.5em 1.5em;
     text-decoration:none;
+}
+
+div#menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+div#menu ul li {
+    color: inherit;
+}
+
+div#menu2 ul {
+    margin: 0;
+    padding: 0;
+}
+
+div#menu2 ul li {
+    width: 100%;
+    color: #444;
+    font-size: 12pt;
+    text-align: left;
+    /*padding-left: 14pt;*/
+    list-style: none;
+}
+
+div#menu2 ul ul li {
+    vertical-align: middle;
+    width: 100%;
+    /*background-color: white;
+    background-image: url("http://www.herbstcampus.de/herbstcampus/style/image/weiss.gif");*/
+    color: #555;
+    font-size: 10.5pt;
+    padding-left: 30pt;
+    list-style:none;
+}
+
+a {
+    color: #880000;
+}
+
+a:hover {
+    color: #880000;
+    text-decoration: underline;
+}
+
+#content {
+    margin: 0;
+    top: 0;
+    width: 90%;
+}
+
+#container {
+    width: 80%;
 }

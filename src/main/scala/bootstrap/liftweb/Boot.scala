@@ -65,7 +65,7 @@ class Boot {
 
     LiftRules.resourceNames = "conference" :: Nil
 
-    val defaultLocale = new Locale("pl")
+    val defaultLocale = new Locale("en")
     Locale.setDefault(defaultLocale)
     LiftRules.localeCalculator = { req => currentUserLocale openOr defaultLocale }
 
