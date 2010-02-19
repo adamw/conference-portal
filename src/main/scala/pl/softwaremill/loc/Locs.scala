@@ -286,7 +286,8 @@ object Menus {
     val acceptReject = Menu(AcceptRejectLoc)
     val stats = Menu(StatisticsLoc)
     val cmsAdmin = Menu(CmsAdminLoc)
-    val main = Menu(ManageLoc, slotEditor, acceptReject, stats, cmsAdmin)
+    val createSchedule = Menu(CreateScheduleLoc)
+    val main = Menu(ManageLoc, slotEditor, acceptReject, stats, cmsAdmin, createSchedule)
     main
   }
 }

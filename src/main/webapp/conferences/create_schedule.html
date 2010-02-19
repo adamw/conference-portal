@@ -1,0 +1,17 @@
+<lift:surround with="default" at="content">
+    <h2><lift:Menu.title /></h2>
+
+    <lift:CreateSchedule>
+        <p>
+            <schedule:numberOfPreferences />
+        </p>
+
+        <schedule:generate />
+
+        <div id="generated">            
+        </div>
+
+        <div id="generatedScore">            
+        </div>
+    </lift:CreateSchedule>
+</lift:surround>

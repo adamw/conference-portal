@@ -77,7 +77,7 @@ class Assigment extends java.lang.Comparable[Assigment] {
   override def toString = "[A %s->%s]".format(paper, slot)
 }
 
-case class Preference(paper1: Paper, paper2: Paper, weight: Int) {
+case class Preference(paper1: Paper, paper2: Paper, val weight: Int) {
   def getPaper1 = paper1
   def getPaper2 = paper2
   def getWeight = weight
@@ -142,6 +142,8 @@ class Schedule(papers: List[Paper], val slots: List[Slot], val assigments: List[
 
     preferences.filter(preferenceViolated_?(_))
   }
+
+  def violatedPreferencesCount = violatedPreferences.foldLeft(0)((acc, pref) => acc + pref.weight)
 
   override def equals(other: Any) = other match {
     case that: Schedule => assigments == that.assigments

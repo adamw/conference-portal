@@ -88,3 +88,13 @@ object CmsAdminLoc extends ConferenceAwareLoc {
 
   def params = List(Hidden, User.testSuperUser)
 }
+
+object CreateScheduleLoc extends ConferenceAwareLoc {
+  protected val PathList = "conferences" :: "create_schedule" :: Nil
+
+  def name = "CreateSchedule"
+
+  def text = new LinkText((conf: Conference) => Text(?("menu.create_schedule", conf.name)))
+
+  def params = List(Hidden, User.testSuperUser)
+}

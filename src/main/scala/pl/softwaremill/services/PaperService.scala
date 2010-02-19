@@ -4,6 +4,7 @@ import net.liftweb.mapper._
 import net.liftweb.common.Box
 
 import pl.softwaremill.model._
+import pl.softwaremill.lib.CollectionTools._
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -16,6 +17,8 @@ trait PaperService {
   def find(id: String): Box[Paper]
   def interestingPapersForUser(conf: Conference, user: User): List[Paper]
   def updateUserInterestedInPaper(user: User, paper: Paper, interested: Boolean)
+  def interestingPapersByUser(conf: Conference): Map[User, List[Paper]]
+  def interestsForConference(conf: Conference): List[UserInterested]
 }
 
 class PaperServiceImpl extends PaperService {
@@ -62,5 +65,17 @@ class PaperServiceImpl extends PaperService {
       // Delete the entity if it's there
       current.map { _.delete_! }
     }
+  }
+
+  def interestingPapersByUser(conf: Conference): Map[User, List[Paper]] = {
+    val allInterests = interestsForConference(conf)
+    aggregate(allInterests, (_: UserInterested).user.obj.open_!, (_: UserInterested).paper.obj.open_!)
+  }
+
+  def interestsForConference(conf: Conference): List[UserInterested] = {
+    // TODO improve
+    UserInterested.findAll.filter(ui => {
+      (for (paper <- ui.paper.obj; paperConf <- paper.conference.obj) yield paperConf == conf) openOr false
+    })
   }
 }
