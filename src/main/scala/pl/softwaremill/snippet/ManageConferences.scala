@@ -75,10 +75,18 @@ class ManageConferences  {
   }
 
   def list(listTemplate: NodeSeq) = {
-    def acceptReject(conf: Conference)(separator: NodeSeq): NodeSeq = {
-      if (conf.state == ConferenceState.Accept) {
-        separator ++ anchor(AcceptRejectLoc.link.createPath(conf), ?("conference.accept_reject"))
-      } else NodeSeq.Empty
+    def options(conf: Conference)(separator: NodeSeq): NodeSeq = {
+      def showIf(show: Boolean, loc: ConferenceAwareLoc, textKey: String): NodeSeq = {
+        if (show)
+          separator ++ anchor(loc.link.createPath(conf), ?(textKey))
+        else NodeSeq.Empty
+      }
+
+      showIf(true, SlotEditorLoc, "conference.edit_slots") ++
+      showIf(true, StatisticsLoc, "conference.statistics") ++
+      showIf(true, CmsAdminLoc, "conference.cms_admin") ++
+      showIf(conf.state == ConferenceState.Schedule || conf.state == ConferenceState.Finalize, CreateScheduleLoc, "conference.create_schedule") ++
+      showIf(conf.state == ConferenceState.Accept, AcceptRejectLoc, "conference.accept_reject")
     }
 
     def doList(itemTemplate: NodeSeq): NodeSeq = {
@@ -89,11 +97,7 @@ class ManageConferences  {
           "dateEnd" -> conf.dateEnd,
           "edit" -> a(() => { CurrentConference(conf); reDrawForm }, Text(?("common.edit"))),
           "delete" -> confirmLink("", () => { /*TODO: enable conf.delete_!*/ }, ?("common.delete"), ?("conference.confirm_delete", conf.name)),
-          "editSlots" -> anchor(SlotEditorLoc.link.createPath(conf), ?("conference.edit_slots")),
-          "stats" -> anchor(StatisticsLoc.link.createPath(conf), ?("conference.statistics")),
-          "cmsAdmin" -> anchor(CmsAdminLoc.link.createPath(conf), ?("conference.cms_admin")),
-          "createSchedule" -> anchor(CreateScheduleLoc.link.createPath(conf), ?("conference.create_schedule")),
-          "acceptReject" -> acceptReject(conf) _
+          "options" -> options(conf) _
           )
       }
     }
