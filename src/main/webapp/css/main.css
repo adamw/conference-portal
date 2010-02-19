@@ -52,7 +52,7 @@ div#menu ul li {
 
 div#menu2 ul {
     margin: 0.1em;
-    padding: 0.1em;
+    padding: 0.05em;
 }
 
 div#menu2 ul li {
@@ -62,7 +62,7 @@ div#menu2 ul li {
     text-align: left;
     /*padding-left: 14pt;*/
     list-style: none;
-    padding: 0.1em;
+    padding: 0.05em;
 }
 
 div#menu2 ul ul li {
