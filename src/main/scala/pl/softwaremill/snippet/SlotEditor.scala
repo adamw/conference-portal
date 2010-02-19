@@ -39,7 +39,7 @@ class SlotEditor {
     def checkAndSave {
       val conf = CurrentConference.is
       conf.validate match {
-        case Nil  => conf.save(); S.notice(S.?("conference.saved", conf.name))
+        case Nil  => conf.save(); S.notice(S.?("common.saved", conf.name))
         case xs   => xs.map { i => S.error(i.msg); }
       }
     }

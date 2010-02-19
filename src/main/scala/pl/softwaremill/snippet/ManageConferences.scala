@@ -114,9 +114,10 @@ class ManageConferences  {
     }
 
     this.activeTemplate = activeTemplate
-    bind("active", activeTemplate,
-      "confSelect" -> confSelect,
-      "save" -> ajaxSubmit(?("common.save"), () => { configuration.save; reDraw })
-      )
+    ajaxForm(
+      bind("active", activeTemplate,
+        "confSelect" -> confSelect,
+        "save" -> ajaxSubmit(?("common.save"), () => { configuration.save; reDraw })
+        ))
   }
 }
