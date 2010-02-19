@@ -25,7 +25,7 @@ class CreateSchedule {
 
   def render(template: NodeSeq) = {
     val conf = CurrentConference.is
-    val allInterests = paperService.interestsForConference(conf)
+    val allInterestsSize = paperService.interestsForConference(conf).size
 
     def createScheduleTable(assigments: Map[Slot, Paper]) = {
       // TODO: factor out common code from this and SlotEditor
@@ -33,18 +33,20 @@ class CreateSchedule {
         room => Text(room.name.is),
         slotSpan => Text(?("slot.span.from_to", slotSpan.startTime, slotSpan.endTime)),
         () => EntityRef("nbsp"),
-        slot => assigments(slot).title.is)
+        slot => Text(assigments(slot).title.is))
     }
 
-    // TODO: secure 
-
-    bind("schedule", template,
-      "numberOfPreferences" -> ?("createschedule.number_of_preferences", allInterests.size),
-      "generate" -> ajaxButton(?("createschedule.generate"), () => {
+    def generateButton = if (conf.slots.size == paperService.acceptedConferencePapers(conf).size) {
+      ajaxButton(?("createschedule.generate"), () => {
         val result = conferenceService.generateSchedule(conf)
         println(result)
         SetHtml("generated", createScheduleTable(result.assigments)) &
-        SetHtml("generatedScore", Text(?("createschedule.generated", result.violated)))
-      }))
+                SetHtml("generatedScore", Text(?("createschedule.generated", result.violated)))
+      })
+    } else Text(?("createschedule.cannot_generate"))
+
+    bind("schedule", template,
+      "numberOfPreferences" -> ?("createschedule.number_of_preferences", allInterestsSize),
+      "generate" -> generateButton)
   }
 }
