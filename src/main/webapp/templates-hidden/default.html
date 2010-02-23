@@ -50,11 +50,6 @@
         <ul id="menu">
             <lift:ActiveConference.mainMenu />
         </ul>
-        <lift:Msgs showAll="true">
-            <lift:error_class>errorBox</lift:error_class>
-            <lift:warning_class>warningBox</lift:warning_class>
-            <lift:notice_class>noticeBox</lift:notice_class>
-        </lift:Msgs>
     </div>
 </div>>
 
@@ -88,6 +83,12 @@
         <div id="tresc">
             <div id="lewa_kolumna">
                 <div class="tekst">
+                    <lift:Msgs showAll="true">
+                        <lift:error_class>errorBox</lift:error_class>
+                        <lift:warning_class>warningBox</lift:warning_class>
+                        <lift:notice_class>noticeBox</lift:notice_class>
+                    </lift:Msgs>
+                    
                     <lift:bind name="content" />
                 </div>
             </div>
@@ -127,29 +128,29 @@
                     </div>
                     <hr class="clear" />
                 </div>
-                <hr class="clear" />                
+                <hr class="clear" />
             </div>
             <hr class="clear" />
         </div>
-        <div id="dol"></div>   
+        <div id="dol"></div>
     </div>
-    </div>
-    <div id="footer">
-        <div id="footer_text">
+</div>
+<div id="footer">
+    <div id="footer_text">
 
-            <p><a href="#" class="red">&copy; Javarsovia 2010</a><br />
-                Wszelkie prawa zastrzeżone</p>
+        <p><a href="#" class="red">&copy; Javarsovia 2010</a><br />
+            Wszelkie prawa zastrzeżone</p>
 
-            <p><a href="http://softwaremill.eu">&copy; SoftwareMill 2010</a></p>
-            <div id="hello">
-                Design &amp; illustration<br />
+        <p><a href="http://softwaremill.eu">&copy; SoftwareMill 2010</a></p>
+        <div id="hello">
+            Design &amp; illustration<br />
 
-                <a href="http://hellostudio.eu" class="red">Hello! Studio</a>
-            </div>
+            <a href="http://hellostudio.eu" class="red">Hello! Studio</a>
         </div>
-        <div id="miasto"></div>
-
     </div>
+    <div id="miasto"></div>
+
+</div>
 
 </body>
 </html>

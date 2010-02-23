@@ -54,10 +54,12 @@ class ActiveConference {
       }
     }
 
+    def testAccessFor(loc: Loc[_]) = loc.testAccess match {
+      case Left(true) => true case _ => false
+    }
+
     def additionalChildren(menuItem: MenuItem): Box[NodeSeq] = {
-      def testVisible(loc: Loc[_]) = !loc.hidden && (loc.testAccess match {
-        case Left(true) => true case _ => false
-      })
+      def testVisible(loc: Loc[_]) = !loc.hidden && testAccessFor(loc)
 
       def fromMenu(menu: Menu): NodeSeq = {
         (for (loc <- Full(menu.loc) if testVisible(loc);
@@ -74,9 +76,17 @@ class ActiveConference {
       }
     }
 
+    def visible(menuItem: MenuItem): Boolean = {
+      menuItem.menuItemType match {
+        case MenuItemType.Manage => testAccessFor(Locs.ManageLoc)
+        case _ => true
+      }
+    }
+
     (for (conf <- Configuration.is.activeConference;
           mainMenu <- conf.mainMenuItem.obj)
-    yield mainMenu.children.flatMap(_.htmlTree(body _, additionalChildren _, List("navigation-2", "navigation-3")))) openOr NodeSeq.Empty
+    yield mainMenu.children.flatMap(_.htmlTree(body _, additionalChildren _, visible _,
+        List("navigation-2", "navigation-3")))) openOr NodeSeq.Empty
   }
 }
 
