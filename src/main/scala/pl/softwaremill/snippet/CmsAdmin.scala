@@ -100,7 +100,7 @@ class CmsAdmin {
         Full(<li>{ addTypeForm(menuItem) }</li>)
       else Empty
 
-    rootMenuItem.htmlTree(menuItemBody _, menuItemAdditionalChildren _)
+    rootMenuItem.htmlTree(menuItemBody _, menuItemAdditionalChildren _, Nil)
   }
 
   def editMenuItem(editTemplate: NodeSeq): NodeSeq = {

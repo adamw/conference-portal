@@ -76,7 +76,7 @@ class ActiveConference {
 
     (for (conf <- Configuration.is.activeConference;
           mainMenu <- conf.mainMenuItem.obj)
-    yield mainMenu.htmlTree(body(_), additionalChildren(_))) openOr NodeSeq.Empty
+    yield mainMenu.children.flatMap(_.htmlTree(body _, additionalChildren _, List("navigation-2", "navigation-3")))) openOr NodeSeq.Empty
   }
 }
 

@@ -1,11 +1,12 @@
 package pl.softwaremill.model
 
+import xml._
+
 import net.liftweb.mapper._
 import net.liftweb.http.S._
 import net.liftweb.common._
 
 import ModelTools._
-import xml.NodeSeq
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -45,15 +46,15 @@ class MenuItem extends LongKeyedMapper[MenuItem] with IdPK with OneToMany[Long, 
 
   def hasParent = parent.defined_?
 
-  def htmlTree(body: MenuItem => NodeSeq, additionalChildren: MenuItem => Box[NodeSeq]): NodeSeq = {
+  def htmlTree(body: MenuItem => NodeSeq, additionalChildren: MenuItem => Box[NodeSeq], nestedUlClasses: List[String]): NodeSeq = {
     <li>
       { body(this) }
       {
       val chld = children
       val addChld = additionalChildren(this)
       if (chld.size > 0 || addChld.isDefined) {
-        <ul>
-          { chld.flatMap(_.htmlTree(body, additionalChildren)) }
+        <ul class={nestedUlClasses.firstOption.map(Text(_))}>
+          { chld.flatMap(_.htmlTree(body, additionalChildren, nestedUlClasses match { case Nil => Nil; case l => l })) }
           { addChld openOr NodeSeq.Empty }
         </ul>
       } else NodeSeq.Empty

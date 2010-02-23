@@ -1,7 +1,8 @@
 <lift:surround with="default" at="content">
-    <h2><lift:Menu.title /></h2>
+    <h1 class="tytul"><lift:Menu.title /></h1>
+    <hr class="clear"/>
 
-    <h3><lift:loc>slots.choose_spans</lift:loc></h3>
+    <h2><lift:loc>slots.choose_spans</lift:loc></h2>
 
     <span id="slot_times">
         <lift:slotEditor.slotsTimes form="post">
@@ -27,7 +28,7 @@
 
     <br />
 
-    <h3><lift:loc>slots.current_grid</lift:loc></h3>
+    <h2><lift:loc>slots.current_grid</lift:loc></h2>
 
     <span id="slot_grid">
         <lift:slotEditor.slotGrid />

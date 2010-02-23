@@ -25,7 +25,8 @@ object User extends User with MetaMegaProtoUser[User] {
   // templates
   override def loginXhtml =
     <span>
-      <h2>{S.??("log.in")}</h2>
+      <h1 class="tytul">{S.??("log.in")}</h1>
+      <hr class="clear"/>
       <form method="post" action={S.uri}>
         <table>
           <tr><td>{S.??("email.address")}</td><td><user:email /></td></tr>
@@ -37,7 +38,8 @@ object User extends User with MetaMegaProtoUser[User] {
 
   override def lostPasswordXhtml =
     <span>
-      <h2>{S.??("enter.email")}</h2>
+      <h1 class="tytul">{S.??("enter.email")}</h1>
+      <hr class="clear"/>
       <form method="post" action={S.uri}>
         <table>
           <tr><td>{S.??("email.address")}</td><td><user:email /></td></tr>
@@ -48,7 +50,8 @@ object User extends User with MetaMegaProtoUser[User] {
 
   override def passwordResetXhtml =
     <span>
-      <h2>{S.??("reset.your.password")}</h2>
+      <h1 class="tytul">{S.??("reset.your.password")}</h1>
+      <hr class="clear"/>
       <form method="post" action={S.uri}>
         <table>
           <tr><td>{S.??("enter.your.new.password")}</td><td><user:pwd/></td></tr>
@@ -60,7 +63,8 @@ object User extends User with MetaMegaProtoUser[User] {
 
   override def changePasswordXhtml =
     <span>
-      <h2>{S.??("change.password")}</h2>
+      <h1 class="tytul">{S.??("change.password")}</h1>
+      <hr class="clear"/>
       <form method="post" action={S.uri}>
         <table>
           <tr><td>{S.??("old.password")}</td><td><user:old_pwd /></td></tr>
@@ -73,7 +77,8 @@ object User extends User with MetaMegaProtoUser[User] {
 
   override def editXhtml(user: User) =
     <span>
-      <h2>{S.??("edit")}</h2>
+      <h1 class="tytul">{S.??("edit")}</h1>
+      <hr class="clear"/>
       <form method="post" action={S.uri}>
         <table>
           {localForm2(user, true)}
@@ -84,7 +89,8 @@ object User extends User with MetaMegaProtoUser[User] {
 
   override def signupXhtml(user: User) =
     <span>
-      <h2>{S.??("sign.up")}</h2>
+      <h1 class="tytul">{S.??("sign.up")}</h1>
+      <hr class="clear"/>
       <form method="post" action={S.uri}>
         <table>
           {localForm2(user, false)}

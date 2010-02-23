@@ -1,7 +1,8 @@
 <lift:surround with="default" at="content">
-    <h2><lift:Menu.title /></h2>
+    <h1 class="tytul"><lift:Menu.title /></h1>
+    <hr class="clear"/>
 
-    <h3><lift:loc>conference.edit_header</lift:loc></h3>
+    <h2><lift:loc>conference.edit_header</lift:loc></h2>
     
     <div id="conf_edit">
         <lift:manageConferences.edit form="post">
@@ -59,7 +60,7 @@
 
     <br />
 
-    <h3><lift:loc>conference.list_header</lift:loc></h3>
+    <h2><lift:loc>conference.list_header</lift:loc></h2>
         
     <div id="conf_list">
         <lift:manageConferences.list>
@@ -74,7 +75,7 @@
         </lift:manageConferences.list>
     </div>
 
-    <h3><lift:loc>conference.active</lift:loc></h3>
+    <h2><lift:loc>conference.active</lift:loc></h2>
 
     <div id="active_conf">
         <lift:manageConferences.active>
