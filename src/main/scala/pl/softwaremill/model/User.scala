@@ -1,14 +1,19 @@
 package pl.softwaremill.model
 
-import xml.NodeSeq
+import xml._
+import io.Source
 
 import net.liftweb.mapper._
 import net.liftweb.common._
 import net.liftweb.http._
 import net.liftweb.textile.TextileParser
+import net.liftweb.util.Helpers._
+import net.liftweb.util.FieldError
 
 import S._
 import SHtml._
+
+import dispatch._
 
 object User extends User with MetaMegaProtoUser[User] {
   override def dbTableName = "users" // define the DB table name
@@ -81,7 +86,7 @@ object User extends User with MetaMegaProtoUser[User] {
       <hr class="clear"/>
       <form method="post" action={S.uri}>
         <table>
-          {localForm2(user, true)}
+          {localForm(user, true)}
           <tr><td>&nbsp;</td><td><user:submit/></td></tr>
         </table>
       </form>
@@ -93,23 +98,61 @@ object User extends User with MetaMegaProtoUser[User] {
       <hr class="clear"/>
       <form method="post" action={S.uri}>
         <table>
-          {localForm2(user, false)}
+          {localForm(user, false)}
+          <tr>
+            <td>&nbsp;</td>
+            <td><lift:embed what="recaptcha" /></td>
+          </tr>
           <tr><td>&nbsp;</td><td><user:submit/></td></tr>
         </table>
       </form>
     </span>
 
-  // TODO: remove after patch applied
-  private def localForm2(user: User, ignorePassword: Boolean): NodeSeq = {
-    signupFields.
-    map(fi => getSingleton.getActualBaseField(user, fi)).
-    filter(f => !ignorePassword || (f match {
-          case f: MappedPassword[User] => false
-          case _ => true
-        })).
-    flatMap(f =>
-      f.toForm.toList.map(form =>
-        (<tr><td>{f.displayName}</td><td>{form}</td></tr>) ) )
+  def checkCaptcha(challenge: String, response: String): Boolean = {
+    val http = new Http
+    val req = :/("api-verify.recaptcha.net") / "verify"
+    val remoteAddress = S.request.map(_.request.remoteAddress) openOr ""
+    val postParams = Map("privatekey" -> "6LfLawsAAAAAAN0cK1scWz9osc6wHP6E_O2HroAH",
+      "remoteip" -> remoteAddress,
+      "challenge" -> challenge,
+      "response" -> response)
+
+    val rform = req << postParams
+    http(rform >~ { s => { s.getLine(1) == "true" } })
+  }
+
+  def validateSignup(theUser: User): List[FieldError] = {
+    def wrongCaptcha = List(FieldError(id, Text(?("captcha.wrong"))))
+
+    (for (captchaChallenge <- S.param("recaptcha_challenge_field");
+          captchaResponse <- S.param("recaptcha_response_field")) yield {
+      if (!checkCaptcha(captchaChallenge, captchaResponse))
+        wrongCaptcha
+      else
+        theUser.validate
+    }) openOr wrongCaptcha
+  }
+  
+  // TODO: remove after Lift supports a validate signup method
+  override def signup = {
+    val theUser: User = create
+    val theName = signUpPath.mkString("")
+
+    def testSignup() {
+      validateSignup(theUser) match {
+        case Nil =>
+          actionsAfterSignup(theUser)
+          S.redirectTo(homePage)
+
+        case xs => S.error(xs) ; signupFunc(Full(innerSignup _))
+      }
+    }
+
+    def innerSignup = bind("user",
+                           signupXhtml(theUser),
+                           "submit" -> SHtml.submit(S.??("sign.up"), testSignup _))
+
+    innerSignup
   }
 }
 
