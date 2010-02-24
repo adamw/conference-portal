@@ -1,7 +1,6 @@
 package pl.softwaremill.model
 
 import xml._
-import io.Source
 
 import net.liftweb.mapper._
 import net.liftweb.common._
