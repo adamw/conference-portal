@@ -3,6 +3,7 @@ package bootstrap.liftweb
 import _root_.net.liftweb.util._
 import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
+import js.jquery.JQuery14Artifacts
 import S._
 import _root_.net.liftweb.sitemap._
 import _root_.net.liftweb.sitemap.Loc._
@@ -59,7 +60,7 @@ class Boot {
 
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
 
-    LiftRules.jQueryVersion = LiftRules.JQueryVersion.v14
+    LiftRules.jsArtifacts = JQuery14Artifacts
 
     LiftRules.loggedInTest = Full(() => User.loggedIn_?)
 
