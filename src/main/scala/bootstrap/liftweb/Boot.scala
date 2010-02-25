@@ -15,6 +15,7 @@ import Helpers._
 import java.text.SimpleDateFormat
 import java.util.{Date, Locale}
 import pl.softwaremill.comet.{TweetsUpdater, Shutdown, Update}
+import pl.softwaremill.services.FileService
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -29,10 +30,12 @@ class Boot {
           Props.get("db.user"), Props.get("db.password")))
 
     Schemifier.schemify(true, Log.infoF _, User, Conference, Room, Slot, Paper, UserInterested, Configuration,
-      Registration, pl.softwaremill.model.MenuItem)
+      Registration, pl.softwaremill.model.MenuItem, File)
 
     // where to search snippet
     LiftRules.addToPackages("pl.softwaremill")
+
+    LiftRules.dispatch.append(FileService.matcher)
 
     val entries =
             // Misc hidden

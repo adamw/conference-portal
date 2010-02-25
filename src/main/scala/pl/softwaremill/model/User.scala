@@ -79,13 +79,16 @@ object User extends User with MetaMegaProtoUser[User] {
       </form>
     </span>
 
+  def faceRow(user: User) = <tr><td>{user.face.displayName}</td><td>{user.face.toForm.open_!}</td></tr>
+
   override def editXhtml(user: User) =
     <span>
       <h1 class="tytul">{S.??("edit")}</h1>
       <hr class="clear"/>
-      <form method="post" action={S.uri}>
+      <form method="post" action={S.uri} enctype="multipart/form-data">
         <table>
           {localForm(user, true)}
+          {faceRow(user)}
           <tr><td>&nbsp;</td><td><user:submit/></td></tr>
         </table>
       </form>
@@ -95,9 +98,10 @@ object User extends User with MetaMegaProtoUser[User] {
     <span>
       <h1 class="tytul">{S.??("sign.up")}</h1>
       <hr class="clear"/>
-      <form method="post" action={S.uri}>
+      <form method="post" action={S.uri} enctype="multipart/form-data">
         <table>
           {localForm(user, false)}
+          {faceRow(user)}
           <tr>
             <td>&nbsp;</td>
             <td><lift:embed what="recaptcha" /></td>
@@ -155,7 +159,7 @@ object User extends User with MetaMegaProtoUser[User] {
   }
 }
 
-class User extends MegaProtoUser[User] {
+class User extends MegaProtoUser[User] { user =>
   def getSingleton = User // what's the "meta" server
 
   // define an additional field for a personal essay
@@ -186,6 +190,28 @@ class User extends MegaProtoUser[User] {
       val options = Sex.map { sex => (sex, ?(sex.toString)) }.toList
       Full(selectObj[Sex.Value](options, Full(sex), sex(_)))
     }
+  }
+
+  object face extends LongMappedMapper[User, File](this, File) with FullCascade[User, File] {
+    override def displayName = ?("user.face")
+
+    override def _toForm = {
+      Full(fileUpload(fileHolder => fileHolder match {
+        case FileParamHolder(_, mimeType, _, content) if mimeType != null && mimeType.startsWith("image/") => {
+          val file = obj match {
+            case Full(file) => file
+            case _ => val f = new File; f.save; user.face(f); f
+          }
+
+          file.content(content)
+          file.mimeType(mimeType)
+
+          dirty_?(true)
+          user.face(file)
+        }
+        case _ => ()
+      })
+    )}
   }
 
   def sex = Sex(mappedSex.is)
