@@ -14,8 +14,9 @@ import Helpers._
 
 import java.text.SimpleDateFormat
 import java.util.{Date, Locale}
-import pl.softwaremill.comet.{TweetsUpdater, Shutdown, Update}
-import pl.softwaremill.services.FileService
+import pl.softwaremill.lib._
+import pl.softwaremill.comet.{Update, TweetsUpdater}
+import pl.softwaremill.services.{UpdateSpec, ExternalMarkupUpdater, FileService}
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -79,10 +80,13 @@ class Boot {
 
     S.addAround(DB.buildLoanWrapper)
 
-    // Starting tweet updates
+    // Starting tweet and markup updates
     TweetsUpdater ! Update()
 
+    ExternalMarkupUpdater ! UpdateSpec("http://javarsovia.pl", ("id", "srodkowa_kolumna") :: ("id", "prawa_kolumna") :: Nil)
+
     LiftRules.unloadHooks.append(() => TweetsUpdater ! Shutdown())
+    LiftRules.unloadHooks.append(() => ExternalMarkupUpdater ! Shutdown())
   }
 
   private def currentUserLocale: Box[Locale] = {

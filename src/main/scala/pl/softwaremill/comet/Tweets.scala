@@ -1,6 +1,5 @@
 package pl.softwaremill.comet
 
-import xml._
 import io.Source
 
 import net.liftweb.util.Helpers._
@@ -14,6 +13,8 @@ import util.parsing.json.JSON
 
 import js.JsCmds._
 import js.JE._
+
+import pl.softwaremill.lib._
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -79,7 +80,7 @@ object TweetsUpdater extends LiftActor {
   protected def messageHandler = {
     case Update() => {
       TweetsMaster ! UpdateTweets(readTweets)
-      if (scheduleUpdates) { ActorPing.schedule(this, Update(), 10000L) }
+      if (scheduleUpdates) { ActorPing.schedule(this, Update(), 20 seconds) }
     }
     
     case Shutdown() => scheduleUpdates = false
@@ -112,7 +113,6 @@ object TweetsUpdater extends LiftActor {
 
 // Used by the updater
 case class Update()
-case class Shutdown()
 
 // Used by the clients and the master
 case class UpdateTweets(newTweets: List[Tweet])
