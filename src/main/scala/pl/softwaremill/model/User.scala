@@ -79,7 +79,14 @@ object User extends User with MetaMegaProtoUser[User] {
       </form>
     </span>
 
-  def faceRow(user: User) = <tr><td>{user.face.displayName}</td><td>{user.face.toForm.open_!}</td></tr>
+  def faceRow(user: User) =
+    <tr>
+      <td>{user.face.displayName}</td>
+      <td>
+        {user.faceImageHtml}
+        {user.face.toForm.open_!}
+      </td>
+    </tr>
 
   override def editXhtml(user: User) =
     <span>
@@ -213,6 +220,8 @@ class User extends MegaProtoUser[User] { user =>
       })
     )}
   }
+
+  def faceImageHtml = face.obj.map(_.imageHtml) openOr NodeSeq.Empty
 
   def sex = Sex(mappedSex.is)
   def sex(newSex: Sex.Value) = mappedSex(newSex.id)

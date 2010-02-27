@@ -123,6 +123,8 @@ class CurrentAuthor {
       "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view"))
       ))
   }
+
+  def img(ignore: NodeSeq): NodeSeq = CurrentAuthor.is.faceImageHtml
 }
 
 object CurrentMenuItemPage extends RequestVar(MenuItem.create)
