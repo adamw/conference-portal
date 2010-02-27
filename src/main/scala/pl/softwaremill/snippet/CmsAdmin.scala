@@ -95,10 +95,7 @@ class CmsAdmin {
       </span>
     }
 
-    def menuItemAdditionalChildren(menuItem: MenuItem) =
-      if (menuItem.menuItemType == MenuItemType.Parent)
-        Full(<li>{ addTypeForm(menuItem) }</li>)
-      else Empty
+    def menuItemAdditionalChildren(menuItem: MenuItem) = Full(<li>{ addTypeForm(menuItem) }</li>)
 
     rootMenuItem.htmlTree(menuItemBody _, menuItemAdditionalChildren _, mi => true, Nil)
   }
@@ -128,15 +125,14 @@ class CmsAdmin {
     def bindTypeSpecific(menuItem: MenuItem, template: NodeSeq): NodeSeq = {
       menuItem.menuItemType match {
         case MenuItemType.Link => bindRow("menuitem.link", menuItem.linkContent.toForm, template)
-        case MenuItemType.Page => bindRow("menuitem.page_path", menuItem.pagePath.toForm, template) ++
-          bindRow("menuitem.page", menuItem.pageContent.toForm, template)
-        case MenuItemType.Parent => bindRow("menuitem.page_path", menuItem.pagePath.toForm, template)
+        case MenuItemType.Page => bindRow("menuitem.page", menuItem.pageContent.toForm, template)
         case _ => NodeSeq.Empty
       }
     }
     
     def bindRows(menuItem: MenuItem)(rowTemplate: NodeSeq): NodeSeq = {
       bindRow("menuitem.title", menuItem.title.toForm, rowTemplate) ++
+      bindRow("menuitem.page_path", menuItem.pagePath.toForm, rowTemplate) ++
       bindTypeSpecific(menuItem, rowTemplate) 
     }
 
