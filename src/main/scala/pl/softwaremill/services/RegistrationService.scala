@@ -27,7 +27,7 @@ class RegistrationServiceImpl extends RegistrationService {
   def newRegisterData(conf: Conference) = {
     val registration = new Registration
     // By default the password is the confirmation code
-    val user = User.currentUser openOr (new User).password(registration.confirmationCode.is)
+    val user = User.currentUser openOr (new User).password(registration.confirmationCode.is).validated(true)
 
     registration.conference(conf).user(user)
 
@@ -48,12 +48,13 @@ class RegistrationServiceImpl extends RegistrationService {
 
     // Send information e-mail
     val confName = conf.name.is
+    val bodyText = ?("register.mail.body", confName, confName, data.user.email,
+        data.registration.confirmationCode, confName)
     Mailer.sendMail(
       From("do-not-reply@javarsovia.pl"),
       Subject(?("register.mail.subject", confName)),
-      To("adam@warski.org"),
-      ?("register.mail.body", confName, confName, data.user.email,
-        data.registration.confirmationCode, confName))
+      To(data.user.email),
+      PlainPlusBodyType(bodyText, "UTF-8"))
   }
 
   def confirmRegistration(code: String) = {

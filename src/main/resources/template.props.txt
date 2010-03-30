@@ -1,0 +1,8 @@
+db.driver=
+db.url=
+db.user=
+db.password=
+
+mail.smtp.host=
+mail.smtp.username=
+mail.smtp.password=

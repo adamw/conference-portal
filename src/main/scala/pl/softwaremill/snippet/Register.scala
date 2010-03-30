@@ -41,7 +41,6 @@ class Register {
         }))
     }
 
-
     val isRegistered = registrationService.isRegistered(OngoingRegistrationData.is.user, conf)
     val isNewUser = OngoingRegistrationData.is.user.saved_?
 

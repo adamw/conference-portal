@@ -40,7 +40,8 @@ object ViewPaperLoc extends Loc[Paper] {
       val paperBox: Box[Paper] = paperService.find(paperId)
 
       paperBox match {
-        case Full(paper) if (paper.status == PaperStatus.Accepted || User.superUser_?) => {
+        // Only accepted papers can be viewed, unless the authors wants to view it or the super user
+        case Full(paper) if (paper.status == PaperStatus.Accepted || User.superUser_? || paper.user == (User.currentUser openOr null)) => {
           CurrentPaper(paper);
           (finalResponse(PaperPath :: Nil), paper)
         }

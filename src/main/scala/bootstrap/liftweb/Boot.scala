@@ -18,6 +18,8 @@ import pl.softwaremill.lib._
 import pl.softwaremill.comet.{Update, TweetsUpdater}
 import pl.softwaremill.services.{UpdateSpec, ExternalMarkupUpdater, FileService}
 
+import javax.mail._
+
 /**
  * A class that's instantiated early and run.  It allows the application
  * to modify lift's environment
@@ -26,8 +28,8 @@ class Boot {
   def boot {
     if (!DB.jndiJdbcConnAvailable_?)
       DB.defineConnectionManager(DefaultConnectionIdentifier,
-        new StandardDBVendor(Props.get("db.driver") openOr "com.mysql.jdbc.Driver",
-          Props.get("db.url") openOr "jdbc:mysql://localhost/conference?user=root&useUnicode=true&characterEncoding=UTF-8",
+        new StandardDBVendor(Props.get("db.driver") openOr "",
+          Props.get("db.url") openOr "",
           Props.get("db.user"), Props.get("db.password")))
 
     Schemifier.schemify(true, Log.infoF _, User, Conference, Room, Slot, Paper, UserInterested, Configuration,
@@ -87,12 +89,26 @@ class Boot {
 
     LiftRules.unloadHooks.append(() => TweetsUpdater ! Shutdown())
     LiftRules.unloadHooks.append(() => ExternalMarkupUpdater ! Shutdown())
+
+    configMailer(Props.get("mail.smtp.host") openOr "localhost",
+      Props.get("mail.smtp.username") openOr "",
+      Props.get("mail.smtp.password") openOr "")
   }
 
   private def currentUserLocale: Box[Locale] = {
     User.currentUser.map { user: User =>
       user.locale.isAsLocale
     }
+  }
+
+  private def configMailer(host: String, user: String, password: String) {
+    System.setProperty("mail.smtp.starttls.enable","true");
+    System.setProperty("mail.smtp.host", host)
+    System.setProperty("mail.smtp.auth", "true")
+    Mailer.authenticator = Full(new Authenticator {
+      override def getPasswordAuthentication =
+        new PasswordAuthentication(user, password)
+    })
   }
 }
 
