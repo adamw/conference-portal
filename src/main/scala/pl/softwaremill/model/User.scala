@@ -39,7 +39,9 @@ object User extends User with MetaMegaProtoUser[User] {
         <table>
           <tr><td>{S.??("email.address")}</td><td><user:email /></td></tr>
           <tr><td>{S.??("password")}</td><td><user:password /></td></tr>
-          <tr><td><a href={lostPasswordPath.mkString("/", "/", "")}>{S.??("recover.password")}</a></td><td><user:submit /></td></tr>
+          <tr><td>&nbsp;</td><td><user:submit /></td></tr>
+          <tr><td>&nbsp;</td><td><a href={lostPasswordPath.mkString("/", "/", "")}>{S.??("recover.password")}</a></td></tr>
+          <tr><td>&nbsp;</td><td><a href={signUpPath.mkString("/", "/", "")}>{S.??("sign.up")}</a></td></tr>
         </table>
       </form>
     </span>
