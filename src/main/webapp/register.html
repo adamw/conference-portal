@@ -1,5 +1,5 @@
 <lift:surround with="default" at="content">
-    <lift:register>
+    <lift:register form="POST">
         <h1 class="tytul"><lift:Menu.title /></h1>
         <hr class="clear"/>
 
@@ -7,9 +7,21 @@
             <register:info />
         </p>
 
-        <p>
-            <register:do />
-            <register:undo />
+        <p>     
+            <register:do>
+                <table>
+                    <do:registerFields />
+                    <do:source />
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td><lift:embed what="recaptcha" /></td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td><do:submit /></td>
+                    </tr>
+                </table>
+            </register:do>
         </p>
 
         <br />

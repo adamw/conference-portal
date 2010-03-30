@@ -193,8 +193,7 @@ object Locs {
     def text = new LinkText(ignore => Text(?("menu.schedule")))
   }
 
-  val RegisterLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with AcceptableConferenceLoc[Unit] with ActiveConferenceLoc[Unit]
-          with RequiresLoginLoc[Unit] {
+  val RegisterLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with AcceptableConferenceLoc[Unit] with ActiveConferenceLoc[Unit] {
     protected val PathList = "register" :: Nil
     protected def default = ()
     protected def conferenceAcceptable(conf: Conference) = conf.state != ConferenceState.Prepare

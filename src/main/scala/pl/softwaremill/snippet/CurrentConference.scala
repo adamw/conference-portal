@@ -50,7 +50,7 @@ class ActiveConference {
         case MenuItemType.Link => anchor(menuItem.linkContent.is, menuItem.title)
         case MenuItemType.Page => anchor(Locs.CmsLoc.link.createPath(menuItem), menuItem.title)
         case MenuItemType.Manage => anchor(Locs.ManageLoc.link.createPath(()), menuItem.title)
-        case _ => Text(menuItem.title)
+        case _ => anchor("", menuItem.title)
       }
     }
 

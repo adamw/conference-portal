@@ -1,6 +1,11 @@
 package pl.softwaremill.model
 
 import net.liftweb.mapper._
+import net.liftweb.common._
+import net.liftweb.http._
+
+import SHtml._
+import S._
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -13,6 +18,19 @@ class Registration extends LongKeyedMapper[Registration] with IdPK {
   object conference extends LongMappedMapper[Registration, Conference](this, Conference)
 
   object confirmed extends MappedBoolean(this)
+
+  object source extends MappedText(this) {
+    val options = List("WJUG", "Blogi", "Lista dyskusyjna", "Inne", "Koledzy")
+
+    override def _toForm = {
+      val opts = options.map { opt => (opt, opt) }.toList
+      Full(selectObj[String](opts, Empty, source(_)))
+    }
+
+    override def displayName = ?("registration.source")
+  }
+
+  object confirmationCode extends MappedUniqueId(this, 10)
 }
 
 object Registration extends Registration with LongKeyedMetaMapper[Registration]

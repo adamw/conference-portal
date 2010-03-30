@@ -14,11 +14,15 @@ import SHtml._
 
 import dispatch._
 
+import ModelTools._
+
 object User extends User with MetaMegaProtoUser[User] {
   override def dbTableName = "users" // define the DB table name
   override def screenWrap = Full(<lift:surround with="default" at="content"><lift:bind /></lift:surround>)
 
-  override def signupFields = firstName :: lastName :: email :: password :: mappedSex :: bio :: Nil
+  override def signupFields = firstName :: lastName :: email :: password :: mappedSex :: homeTown :: bio :: Nil
+
+  def registerFields = firstName :: lastName :: email :: mappedSex :: homeTown :: Nil
 
   // define the order fields will appear in forms and output
   override def fieldOrder = List(id, firstName, lastName, email, locale, timezone, password, bio)
@@ -117,31 +121,6 @@ object User extends User with MetaMegaProtoUser[User] {
         </table>
       </form>
     </span>
-
-  def checkCaptcha(challenge: String, response: String): Boolean = {
-    val http = new Http
-    val req = :/("api-verify.recaptcha.net") / "verify"
-    val remoteAddress = S.request.map(_.request.remoteAddress) openOr ""
-    val postParams = Map("privatekey" -> "6LfLawsAAAAAAN0cK1scWz9osc6wHP6E_O2HroAH",
-      "remoteip" -> remoteAddress,
-      "challenge" -> challenge,
-      "response" -> response)
-
-    val rform = req << postParams
-    http(rform >~ { s => { s.getLine(1) == "true" } })
-  }
-
-  def validateSignup(theUser: User): List[FieldError] = {
-    def wrongCaptcha = List(FieldError(id, Text(?("captcha.wrong"))))
-
-    (for (captchaChallenge <- S.param("recaptcha_challenge_field");
-          captchaResponse <- S.param("recaptcha_response_field")) yield {
-      if (!checkCaptcha(captchaChallenge, captchaResponse))
-        wrongCaptcha
-      else
-        theUser.validate
-    }) openOr wrongCaptcha
-  }
   
   // TODO: remove after Lift supports a validate signup method
   override def signup = {
@@ -149,7 +128,7 @@ object User extends User with MetaMegaProtoUser[User] {
     val theName = signUpPath.mkString("")
 
     def testSignup() {
-      validateSignup(theUser) match {
+      validateCaptchaAndEntity(id, theUser) match {
         case Nil =>
           actionsAfterSignup(theUser)
           S.redirectTo(homePage)
@@ -164,6 +143,12 @@ object User extends User with MetaMegaProtoUser[User] {
 
     innerSignup
   }
+
+  // validating that first and last names are not empty
+  override def validation = ((u: User) => valRequired(firstName)(u.firstName.is)) ::
+            ((u: User) => valRequired(lastName)(u.lastName.is)) ::
+            super.validation
+
 }
 
 class User extends MegaProtoUser[User] { user =>
@@ -186,6 +171,11 @@ class User extends MegaProtoUser[User] { user =>
       case null => NodeSeq.Empty
       case s => TextileParser.parse(s, None).map(_.toHtml).getOrElse(NodeSeq.Empty)
     }
+  }
+
+  object homeTown extends MappedText(this) {
+    override def validations = valRequired(homeTown) _ :: super.validations
+    override def displayName = ?("user.home_town")
   }
 
   object mappedSex extends MappedInt(this) {
