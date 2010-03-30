@@ -20,7 +20,7 @@ class Registration extends LongKeyedMapper[Registration] with IdPK {
   object confirmed extends MappedBoolean(this)
 
   object source extends MappedString(this, 128) {
-    val options = List("WJUG", "Blogi", "Lista dyskusyjna", "Inne", "Koledzy")
+    val options = List("WJUG", "Blogi", "Lista dyskusyjna", "Koledzy", "Inne")
 
     override def _toForm = {
       val opts = options.map { opt => (opt, opt) }.toList
