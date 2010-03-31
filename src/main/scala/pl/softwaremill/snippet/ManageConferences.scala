@@ -86,7 +86,7 @@ class ManageConferences  {
       showIf(true, StatisticsLoc, "conference.statistics") ++
       showIf(true, CmsAdminLoc, "conference.cms_admin") ++
       showIf(conf.state == ConferenceState.Schedule || conf.state == ConferenceState.Finalize, CreateScheduleLoc, "conference.create_schedule") ++
-      showIf(conf.state == ConferenceState.Accept, AcceptRejectLoc, "conference.accept_reject")
+      showIf(true, AcceptRejectLoc, "conference.accept_reject")
     }
 
     def doList(itemTemplate: NodeSeq): NodeSeq = {

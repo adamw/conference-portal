@@ -65,7 +65,7 @@ object PaperSnippetTools {
       def rows(rowTemplate: NodeSeq): NodeSeq = paperListWithSingleRowRerender(rowTemplate, config.papers, Full(reDrawSelectionsLeft _),
         (paper, cellsTemplate, reDraw) => {
           val selected = config.isSelected(paper)
-          def selectionBlocked = config.maxSelections == config.selectedCount
+          def selectionBlocked = config.maxSelections <= config.selectedCount
 
           def selectDeselectLink = a(() => {
             val selectionBlockedBefore = selectionBlocked
