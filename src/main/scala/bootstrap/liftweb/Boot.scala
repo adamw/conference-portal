@@ -19,6 +19,7 @@ import pl.softwaremill.comet.{Update, TweetsUpdater}
 import pl.softwaremill.services.{UpdateSpec, ExternalMarkupUpdater, FileService}
 
 import javax.mail._
+import pl.softwaremill.snippet.CurrentConference
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -33,7 +34,7 @@ class Boot {
           Props.get("db.user"), Props.get("db.password")))
 
     Schemifier.schemify(true, Log.infoF _, User, Conference, Room, Slot, Paper, UserInterested, Configuration,
-      Registration, pl.softwaremill.model.MenuItem, File)
+      Registration, pl.softwaremill.model.MenuItem, File, SourceOptions)
 
     // where to search snippet
     LiftRules.addToPackages("pl.softwaremill")
@@ -46,7 +47,7 @@ class Boot {
             // View CMS pages
             Menu(Locs.CmsLoc) ::
             // Home
-            Menu(Loc("Home", List("index"), ?("menu.home"), Hidden)) ::
+            Menu(Loc("Home", List("index"), Configuration.is.activeConference.map(_.name.is) openOr ?("menu.home"), Hidden)) ::
             // Tweets
             Menu(Locs.TweetsLoc) ::
             // Conferences management
@@ -93,6 +94,8 @@ class Boot {
     configMailer(Props.get("mail.smtp.host") openOr "localhost",
       Props.get("mail.smtp.username") openOr "",
       Props.get("mail.smtp.password") openOr "")
+
+    LiftRules.liftCoreResourceName = "lift_core"
   }
 
   private def currentUserLocale: Box[Locale] = {

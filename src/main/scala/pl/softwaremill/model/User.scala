@@ -151,6 +151,14 @@ object User extends User with MetaMegaProtoUser[User] {
             ((u: User) => valRequired(lastName)(u.lastName.is)) ::
             super.validation
 
+  // TODO
+  override def logout = {
+    try {
+      super.logout
+    } finally {
+      notice(?("user.loggedout"))
+    }
+  }
 }
 
 class User extends MegaProtoUser[User] { user =>

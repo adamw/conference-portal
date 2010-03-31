@@ -20,7 +20,7 @@ class Registration extends LongKeyedMapper[Registration] with IdPK {
   object confirmed extends MappedBoolean(this)
 
   object source extends MappedString(this, 128) {
-    val options = List("WJUG", "Blogi", "Lista dyskusyjna", "Koledzy", "Inne")
+    val options = SourceOptions.findAll(OrderBy(SourceOptions.id, Ascending)).map(_.value.is)
 
     override def _toForm = {
       val opts = options.map { opt => (opt, opt) }.toList
@@ -34,3 +34,11 @@ class Registration extends LongKeyedMapper[Registration] with IdPK {
 }
 
 object Registration extends Registration with LongKeyedMetaMapper[Registration]
+
+class SourceOptions extends LongKeyedMapper[SourceOptions] with IdPK {
+  def getSingleton = SourceOptions
+
+  object value extends MappedString(this, 128)
+}
+
+object SourceOptions extends SourceOptions with LongKeyedMetaMapper[SourceOptions]
