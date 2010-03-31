@@ -24,6 +24,8 @@ object User extends User with MetaMegaProtoUser[User] {
 
   def registerFields = firstName :: lastName :: email :: mappedSex :: homeTown :: Nil
 
+  def requiredFields = password :: registerFields
+
   // define the order fields will appear in forms and output
   override def fieldOrder = List(id, firstName, lastName, email, locale, timezone, password, bio)
 
@@ -100,7 +102,7 @@ object User extends User with MetaMegaProtoUser[User] {
       <hr class="clear"/>
       <form method="post" action={S.uri} enctype="multipart/form-data">
         <table>
-          {localForm(user, true)}
+          {localForm2(user, true)}
           {faceRow(user)}
           <tr><td>&nbsp;</td><td><user:submit/></td></tr>
         </table>
@@ -113,7 +115,7 @@ object User extends User with MetaMegaProtoUser[User] {
       <hr class="clear"/>
       <form method="post" action={S.uri} enctype="multipart/form-data">
         <table>
-          {localForm(user, false)}
+          {localForm2(user, false)}
           {faceRow(user)}
 
           <tr><td>&nbsp;</td><td><user:submit/></td></tr>
@@ -153,10 +155,22 @@ object User extends User with MetaMegaProtoUser[User] {
     innerSignup
   }
 
-  // validating that first and last names are not empty
-  override def validation = ((u: User) => valRequired(firstName)(u.firstName.is)) ::
-            ((u: User) => valRequired(lastName)(u.lastName.is)) ::
+  // validating required fields
+  override def validation =
+    requiredFields.map(field => ((u: User) => valRequired(field)(User.getActualBaseField(u, field).is.toString))) :::
             super.validation
+
+  private def isRequiredField(f: BaseOwnedMappedField[User]) = requiredFields.exists(_.name == f.name)
+
+  protected def localForm2(user: User, ignorePassword: Boolean): NodeSeq = {
+    signupFields.
+            map(fi => getSingleton.getActualBaseField(user, fi)).
+            filter(f => !ignorePassword || (f match {
+      case f: MappedPassword[User] => false
+      case _ => true
+    })).flatMap(f => f.toForm.toList.map(form =>
+      (<tr><td>{f.displayName} {if (isRequiredField(f)) <span class="required">(*)</span> else NodeSeq.Empty}</td><td>{form}</td></tr>) ) )
+  }
 
   // TODO
   override def logout = {
