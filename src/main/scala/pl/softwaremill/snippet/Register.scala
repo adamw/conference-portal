@@ -34,7 +34,7 @@ class Register {
           <tr><td>{f.displayName}</td><td>{User.getActualBaseField(user, f).toForm openOr NodeSeq.Empty}</td></tr>),
         "source" -> <tr><td>{Registration.source.displayName}</td><td>{ongoingRegistration.registration.source.toForm openOr NodeSeq.Empty}</td></tr>,
         "submit" -> submit(?("register.do.text"), () => {
-          validateCaptchaAndEntity(user.id, user) match {
+          user.validate match {
             case Nil => registrationService.register(ongoingRegistration); notice(?("register.do.successfull")); User.logUserIn(user)
             case xs => S.error(xs); OngoingRegistrationData(ongoingRegistration)
           }

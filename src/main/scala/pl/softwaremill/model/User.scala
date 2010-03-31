@@ -28,7 +28,7 @@ object User extends User with MetaMegaProtoUser[User] {
   override def fieldOrder = List(id, firstName, lastName, email, locale, timezone, password, bio)
 
   // comment this line out to require email validations
-  override def skipEmailValidation = true
+  //override def skipEmailValidation = true
 
   // templates
   override def loginXhtml =
@@ -115,14 +115,21 @@ object User extends User with MetaMegaProtoUser[User] {
         <table>
           {localForm(user, false)}
           {faceRow(user)}
-          <tr>
-            <td>&nbsp;</td>
-            <td><lift:embed what="recaptcha" /></td>
-          </tr>
+
           <tr><td>&nbsp;</td><td><user:submit/></td></tr>
         </table>
       </form>
     </span>
+
+  /*
+  To enable recaptcha:
+          <tr>
+            <td>&nbsp;</td>
+            <td><lift:embed what="recaptcha" /></td>
+          </tr>
+
+          validateCaptchaAndEntity(id, theUser)
+   */
   
   // TODO: remove after Lift supports a validate signup method
   override def signup = {
@@ -130,7 +137,7 @@ object User extends User with MetaMegaProtoUser[User] {
     val theName = signUpPath.mkString("")
 
     def testSignup() {
-      validateCaptchaAndEntity(id, theUser) match {
+      theUser.validate match {
         case Nil =>
           actionsAfterSignup(theUser)
           S.redirectTo(homePage)
