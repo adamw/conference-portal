@@ -1,7 +1,7 @@
 package pl.softwaremill.services
 
-import net.liftweb.mapper.{In, By}
 import pl.softwaremill.model.{User, Registration, Conference, Sex}
+import net.liftweb.mapper.{PreCache, In, By}
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -11,6 +11,7 @@ trait StatisticsService {
   def registered(conf: Conference, sex: Sex.Value): Long
   def confirmed(conf: Conference): Long
   def madeSchedulePreferences(conf: Conference): Long
+  def all(conf: Conference): List[(User, Registration)]
 }
 
 class StatisticsServiceImpl extends StatisticsService {
@@ -28,5 +29,10 @@ class StatisticsServiceImpl extends StatisticsService {
 
   def madeSchedulePreferences(conf: Conference): Long = {
     0
+  }
+
+  def all(conf: Conference): List[(User, Registration)] = {
+    Registration.findAll(By(Registration.conference, conf), PreCache(Registration.user, true))
+            .map(r => (r.user.obj.open_!, r))
   }
 }

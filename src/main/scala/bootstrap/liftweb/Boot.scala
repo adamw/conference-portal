@@ -71,7 +71,7 @@ class Boot {
 
     LiftRules.loggedInTest = Full(() => User.loggedIn_?)
 
-    LiftRules.resourceNames = "conference" :: Nil
+    LiftRules.resourceNames = "conference" :: "lift_core" :: Nil
 
     val defaultLocale = new Locale("pl")
     Locale.setDefault(defaultLocale)
