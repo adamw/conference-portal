@@ -172,13 +172,9 @@ object User extends User with MetaMegaProtoUser[User] {
       (<tr><td>{f.displayName} {if (isRequiredField(f)) <span class="required">(*)</span> else NodeSeq.Empty}</td><td>{form}</td></tr>) ) )
   }
 
-  // TODO
   override def logout = {
-    try {
-      super.logout
-    } finally {
-      notice(?("user.loggedout"))
-    }
+    logoutCurrentUser
+    S.redirectTo("/content/logout")
   }
 }
 

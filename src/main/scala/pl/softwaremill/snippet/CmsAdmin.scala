@@ -126,6 +126,7 @@ class CmsAdmin {
       menuItem.menuItemType match {
         case MenuItemType.Link => bindRow("menuitem.link", menuItem.linkContent.toForm, template)
         case MenuItemType.Page => bindRow("menuitem.page", menuItem.pageContent.toForm, template)
+        case MenuItemType.Special => bindRow("menuitem.page", menuItem.pageContent.toForm, template)
         case _ => NodeSeq.Empty
       }
     }

@@ -1,5 +1,11 @@
 <lift:surround with="default" at="content">
-    <h1 class="tytul"></h1>
+    <h1 class="tytul"><lift:MenuItemSpecialPage.title name="index" /></h1>
     <hr class="clear"/>
+
+    <div>
+        <lift:MenuItemSpecialPage.content name="index" />
+    </div>
+
+    <br />
 </lift:surround>
         

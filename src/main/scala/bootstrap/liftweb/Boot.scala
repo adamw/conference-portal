@@ -84,11 +84,11 @@ class Boot {
     S.addAround(DB.buildLoanWrapper)
 
     // Starting tweet and markup updates
-    TweetsUpdater ! Update()
+    //TweetsUpdater ! Update()
 
     ExternalMarkupUpdater ! UpdateSpec("http://javarsovia.pl", ("id", "srodkowa_kolumna") :: ("id", "prawa_kolumna") :: Nil)
 
-    LiftRules.unloadHooks.append(() => TweetsUpdater ! Shutdown())
+    //LiftRules.unloadHooks.append(() => TweetsUpdater ! Shutdown())
     LiftRules.unloadHooks.append(() => ExternalMarkupUpdater ! Shutdown())
 
     configMailer(Props.get("mail.smtp.host") openOr "localhost",

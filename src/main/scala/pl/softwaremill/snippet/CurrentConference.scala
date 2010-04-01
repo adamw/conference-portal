@@ -79,6 +79,7 @@ class ActiveConference {
     def visible(menuItem: MenuItem): Boolean = {
       menuItem.menuItemType match {
         case MenuItemType.Manage => testAccessFor(Locs.ManageLoc)
+        case MenuItemType.Special => false
         case _ => true
       }
     }
@@ -133,4 +134,22 @@ class CurrentMenuItemPage {
   def title(ignore: NodeSeq): NodeSeq = Text(CurrentMenuItemPage.is.title)
 
   def content(ignore: NodeSeq): NodeSeq = Unparsed(CurrentMenuItemPage.is.pageContent)
+}
+
+class MenuItemSpecialPage {
+  private def specialMenuItem: Box[MenuItem] = {
+    println(S.attr("name"))
+    (for (name <- S.attr("name");
+          activeConf <- Configuration.is.activeConference;
+          rootMenuItem <- activeConf.mainMenuItem.obj) yield {
+      (rootMenuItem, name :: Nil) match {
+        case MenuItemPath(menuItem) => Full(menuItem)
+        case _ => Empty
+      }
+    }) openOr Empty
+  }
+
+  def title(ignore: NodeSeq): NodeSeq = Text(specialMenuItem.map(_.title.is) openOr "")
+
+  def content(ignore: NodeSeq): NodeSeq = Unparsed(specialMenuItem.map(_.pageContent.is) openOr "")
 }

@@ -75,6 +75,7 @@ object MenuItemType extends Enumeration {
   val Conference = Value("menuitemtype.conference")
   val User = Value("menuitemtype.user")
   val Manage = Value("menuitemtype.manage")
+  val Special = Value("menuitemtype.special")
 }
 
 object MenuItemPath {
@@ -92,7 +93,7 @@ object MenuItemPath {
   def unapply(rootAndPaths: (MenuItem, List[String])): Option[MenuItem] = {
     def find(parent: MenuItem, path: List[String]): Box[MenuItem] = {
       path match {
-        case Nil => if (parent.menuItemType == MenuItemType.Page) Full(parent) else Empty
+        case Nil => if (parent.menuItemType == MenuItemType.Page || parent.menuItemType == MenuItemType.Special) Full(parent) else Empty
         case head :: tail => parent.children.find(_.pagePath.is == head).flatMap(find(_, tail))
       }
     }
