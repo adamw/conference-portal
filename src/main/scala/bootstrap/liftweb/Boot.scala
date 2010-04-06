@@ -93,7 +93,8 @@ class Boot {
 
     configMailer(Props.get("mail.smtp.host") openOr "localhost",
       Props.get("mail.smtp.username") openOr "",
-      Props.get("mail.smtp.password") openOr "")
+      Props.get("mail.smtp.password") openOr "",
+      Props.get("mail.smtp.auth") openOr "")
 
     LiftRules.liftCoreResourceName = "lift_core"
   }
@@ -104,10 +105,10 @@ class Boot {
     }
   }
 
-  private def configMailer(host: String, user: String, password: String) {
+  private def configMailer(host: String, user: String, password: String, auth: String) {
     System.setProperty("mail.smtp.starttls.enable","true");
     System.setProperty("mail.smtp.host", host)
-    System.setProperty("mail.smtp.auth", "true")
+    System.setProperty("mail.smtp.auth", auth)
     Mailer.authenticator = Full(new Authenticator {
       override def getPasswordAuthentication =
         new PasswordAuthentication(user, password)
