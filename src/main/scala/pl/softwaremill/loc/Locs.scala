@@ -202,6 +202,50 @@ object Locs {
     def text = new LinkText(ignore => Text(?("menu.register")))
   }
 
+  class RegisterValidateLocBase extends PrefixLoc[String] {
+    private val RegisterValidatePath0 = "register"
+    private val RegisterValidatePath1 = "validate"
+
+    protected val PathList = RegisterValidatePath0 :: RegisterValidatePath1 :: Nil
+    protected def default: String = null
+
+    override def params: List[Loc.LocParam[String]] = Hidden :: Nil
+
+    def name = "RegisterValidate"
+
+    override def link = new Link[String](PathList) {
+      override def pathList(code: String): List[String] = super.pathList(code) ++ List(code)
+    }
+
+    def text = new LinkText(ignore => Text(?("menu.register.validate")))
+
+    protected def doRewrite(request: RewriteRequest): (RewriteResponse, String) = {
+      request match {
+        case RewriteRequest(parsePath @ ParsePath(RegisterValidatePath0 :: RegisterValidatePath1 :: code :: Nil, _, _, _), _, httpRequest) => {
+          val registrationService = D.inject_![RegistrationService]
+          val registration = registrationService.validateRegister(code)
+
+          registration match {
+            case Full(reg) => (RewriteResponse("info" :: Nil, Map(infoMessageParam -> ?("register.validation.successfull",
+              reg.conference.obj.open_!.name.is))), null)
+            case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("register.validation.unsuccessfull"))), null)
+          }
+        }
+        case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("register.nocode"))), null)
+      }
+    }
+
+    override def rewrite = Full({
+      // Accepting any paths which start with "register/validate"
+      case request @ RewriteRequest(ParsePath(RegisterValidatePath0 :: RegisterValidatePath1 :: _, _, _, _), _, _) => {
+        doRewrite(request)
+      }
+    })
+  }
+
+  val RegisterValidateLoc = new RegisterValidateLocBase with ActiveConferenceLoc[String] {
+  }
+
   val TweetsLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with ActiveConferenceLoc[Unit] {
     protected val PathList = "tweets" :: Nil
     protected def default = ()
@@ -263,6 +307,7 @@ object Menus {
           Menu(ViewScheduleLoc) ::
           // Register
           Menu(RegisterLoc) ::
+          Menu(RegisterValidateLoc) ::
           // C4P
           c4pMenu ::
           // Schedule preferences

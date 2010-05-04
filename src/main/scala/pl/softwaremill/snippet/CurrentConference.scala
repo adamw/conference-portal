@@ -138,7 +138,6 @@ class CurrentMenuItemPage {
 
 class MenuItemSpecialPage {
   private def specialMenuItem: Box[MenuItem] = {
-    println(S.attr("name"))
     (for (name <- S.attr("name");
           activeConf <- Configuration.is.activeConference;
           rootMenuItem <- activeConf.mainMenuItem.obj) yield {

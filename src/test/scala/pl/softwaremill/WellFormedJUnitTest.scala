@@ -51,7 +51,6 @@ class WellFormedJUnitTest extends TestCase("wellFormed") {
     if (numFails > 0) {
       val fileStr = if (numFails == 1) "file" else "files"
       val msg = "Malformed XML in " + numFails + " " + fileStr + ": " + failed.mkString(", ")
-      println(msg)
       fail(msg)
     }
   }

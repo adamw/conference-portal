@@ -44,6 +44,7 @@ class Boot {
     val entries =
             // Misc hidden
             Menu(Loc("Error", List("error"), "Error", Hidden)) ::
+            Menu(Loc("Info", List("info"), "Info", Hidden)) ::
             // View CMS pages
             Menu(Locs.CmsLoc) ::
             // Home

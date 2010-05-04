@@ -19,6 +19,8 @@ class Registration extends LongKeyedMapper[Registration] with IdPK {
 
   object confirmed extends MappedBoolean(this)
 
+  object validated extends MappedBoolean(this)
+
   object source extends MappedString(this, 128) {
     val options = SourceOptions.findAll(OrderBy(SourceOptions.id, Ascending)).map(_.value.is)
 

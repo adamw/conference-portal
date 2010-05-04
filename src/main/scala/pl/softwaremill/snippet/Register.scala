@@ -42,10 +42,10 @@ class Register {
     }
 
     val isRegistered = registrationService.isRegistered(OngoingRegistrationData.is.user, conf)
-    val isNewUser = OngoingRegistrationData.is.user.saved_?
+    val isExistingUser = OngoingRegistrationData.is.user.saved_?
 
     if (isRegistered) Text(?("register.registered", conf.name.is))
-    else if (!isNewUser)
+    else if (!isExistingUser)
       bind("register", template,
         "info" -> ?("register.nouser.info", conf.name.is),
         "do" -> doRegisterNewUser _

@@ -39,7 +39,6 @@ class CreateSchedule {
     def generateButton = if (conf.slots.size == paperService.acceptedConferencePapers(conf).size) {
       ajaxButton(?("createschedule.generate"), () => {
         val result = conferenceService.generateSchedule(conf)
-        println(result)
         SetHtml("generated", createScheduleTable(result.assigments)) &
                 SetHtml("generatedScore", Text(?("createschedule.generated", result.violated)))
       })

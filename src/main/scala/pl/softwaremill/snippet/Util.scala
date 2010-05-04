@@ -25,6 +25,12 @@ class Util {
     )
   }
 
+  def info(infoTemplate: NodeSeq) = {
+    bind("info", infoTemplate,
+      "message" -> (S.param(Util.infoMessageParam) openOr "")
+    )
+  }
+
   def unavailable(unavailableTemplate: NodeSeq) = {
     bind("unavailable", unavailableTemplate,
       "message" -> (?(Util.UnavailableMessageKey.is))
@@ -33,6 +39,7 @@ class Util {
 }
 
 object Util {
-  val errorMessageParam = "message";
+  val errorMessageParam = "errorMessage";
+  val infoMessageParam = "infoMessage";
   object UnavailableMessageKey extends RequestVar("")
 }

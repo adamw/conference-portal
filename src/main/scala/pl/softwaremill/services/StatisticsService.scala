@@ -16,15 +16,17 @@ trait StatisticsService {
 
 class StatisticsServiceImpl extends StatisticsService {
   def registered(conf: Conference): Long = {
-    Registration.count(By(Registration.conference, conf))
+    Registration.count(By(Registration.conference, conf), By(Registration.validated, true))
   }
 
   def registered(conf: Conference, sex: Sex.Value): Long = {
-    Registration.count(By(Registration.conference, conf), In(Registration.user, User.id, By(User.mappedSex, sex.id)))
+    Registration.count(By(Registration.conference, conf), By(Registration.validated, true),
+      In(Registration.user, User.id, By(User.mappedSex, sex.id)))
   }
 
   def confirmed(conf: Conference): Long = {
-    Registration.count(By(Registration.conference, conf), By(Registration.confirmed, true))
+    Registration.count(By(Registration.conference, conf), By(Registration.validated, true),
+      By(Registration.confirmed, true))
   }
 
   def madeSchedulePreferences(conf: Conference): Long = {
@@ -32,7 +34,7 @@ class StatisticsServiceImpl extends StatisticsService {
   }
 
   def all(conf: Conference): List[(User, Registration)] = {
-    Registration.findAll(By(Registration.conference, conf), PreCache(Registration.user, true))
-            .map(r => (r.user.obj.open_!, r))
+    Registration.findAll(By(Registration.conference, conf), By(Registration.validated, true),
+      PreCache(Registration.user, true)).map(r => (r.user.obj.open_!, r))
   }
 }
