@@ -127,14 +127,19 @@ object Locs {
       request match {
         case RewriteRequest(parsePath @ ParsePath(AuthorPath :: userId :: Nil, _, _, _), _, httpRequest) => {
           val userService = D.inject_![UserService]
-          val userBox: Box[User] = userService.findAcceptedAuthor(CurrentConference.is, userId)
+          // If the user is an admin, we allow him to see all authors, not only with accepted papaers
+          val userBox: Box[User] = if (User.superUser_?) {
+            userService.find(userId)
+          } else {
+            userService.findAcceptedAuthor(CurrentConference.is, userId)
+          }
 
           userBox match {
             case Full(user) => {
               CurrentAuthor(user);
               (finalResponse(AuthorPath :: Nil), user)
             }
-            case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("author.unknown"))), null)
+            case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("author.unknown", userId))), null)
           }
         }
         case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("author.unknown.noid"))), null)
@@ -150,7 +155,7 @@ object Locs {
   }
 
   val AuthorLoc = new AuthorLocBase with AcceptableConferenceLoc[User] with ActiveConferenceLoc[User] {
-    protected def conferenceAcceptable(conf: Conference) = conf.conferenceAfterAcceptReject
+    protected def conferenceAcceptable(conf: Conference) = conf.conferenceAfterAcceptReject || User.superUser_?
   }
 
   val SchedulePreferencesLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with AcceptableConferenceLoc[Unit] with ActiveConferenceLoc[Unit]

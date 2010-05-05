@@ -12,6 +12,7 @@ import pl.softwaremill.lib.D
 import pl.softwaremill.model._
 import pl.softwaremill.services.PaperService
 import pl.softwaremill.loc.ViewPaperLoc
+import pl.softwaremill.loc.Locs.AuthorLoc
 
 import SnippetTools._
 import PaperSnippetTools._
@@ -48,7 +49,7 @@ class AcceptRejectPapers {
     def bindCells(paper: Paper, cellsTemplate: NodeSeq): NodeSeq = {
       bind("cell", cellsTemplate,
         "title" -> paper.title,
-        "author" -> paper.author,
+        "author" -> anchor(AuthorLoc.link.createPath(paper.user.obj.open_!), paper.author),
         "status" -> ?(paper.status.toString),
         "desc" -> paper.shortDescription.toHtml,
         "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view"))
