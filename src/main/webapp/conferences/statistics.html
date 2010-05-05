@@ -24,43 +24,49 @@
                 <td><lift:loc>statistics.users_made_schedule_preferences</lift:loc>:</td>
                 <td><stats:madeSchedulePreferences /></td>
             </tr>
+        </table>
 
-            <p>
-                <lift:loc>statistics.all_participants</lift:loc>:
-            </p>
+        <p>
+            <stats:sendConfirmations />
+        </p>
 
-            <table id="tablesorter" class="tablesorter">
-                <thead>
+        <p>
+            <lift:loc>statistics.all_participants</lift:loc>:
+        </p>
+
+        <table id="tablesorter" class="tablesorter">
+            <thead>
+            <tr>
+                <th><lift:loc>first.name</lift:loc></th>
+                <th><lift:loc>last.name</lift:loc></th>
+                <th><lift:loc>email.address</lift:loc></th>
+                <th><lift:loc>user.sex</lift:loc></th>
+                <th><lift:loc>user.home_town</lift:loc></th>
+                <th><lift:loc>registration.source.short</lift:loc></th>
+                <th><lift:loc>registration.confirmed</lift:loc></th>
+                <th><lift:loc>registration.confirmationSent</lift:loc></th>
+            </tr>
+            </thead>
+            <tbody>
+            <stats:allParticipants>
                 <tr>
-                    <th><lift:loc>first.name</lift:loc></th>
-                    <th><lift:loc>last.name</lift:loc></th>
-                    <th><lift:loc>email.address</lift:loc></th>
-                    <th><lift:loc>user.sex</lift:loc></th>
-                    <th><lift:loc>user.home_town</lift:loc></th>
-                    <th><lift:loc>registration.source.short</lift:loc></th>
-                    <th><lift:loc>registration.confirmed</lift:loc></th>
+                    <td><participant:firstName /></td>
+                    <td><participant:lastName /></td>
+                    <td><participant:email /></td>
+                    <td><participant:sex /></td>
+                    <td><participant:homeTown /></td>
+                    <td><participant:source /></td>
+                    <td><participant:confirmed /></td>
+                    <td><participant:confirmationSent /></td>
                 </tr>
-                </thead>
-                <tbody>
-                <stats:allParticipants>
-                    <tr>
-                        <td><participant:firstName /></td>
-                        <td><participant:lastName /></td>
-                        <td><participant:email /></td>
-                        <td><participant:sex /></td>
-                        <td><participant:homeTown /></td>
-                        <td><participant:source /></td>
-                        <td><participant:confirmed /></td>
-                    </tr>
-                </stats:allParticipants>
-                </tbody>
-            </table>
+            </stats:allParticipants>
+            </tbody>
         </table>
     </lift:Statistics>
 
     <script type="text/javascript">
-	$(document).ready(function() {
-        $("#tablesorter").tablesorter( {sortList: [[0,0], [1,0]]} );
-    });
-	</script>
+        $(document).ready(function() {
+            $("#tablesorter").tablesorter( {sortList: [[0,0], [1,0]]} );
+        });
+    </script>
 </lift:surround>

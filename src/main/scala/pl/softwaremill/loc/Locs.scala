@@ -202,33 +202,33 @@ object Locs {
     def text = new LinkText(ignore => Text(?("menu.register")))
   }
 
-  class RegisterValidateLocBase extends PrefixLoc[String] {
-    private val RegisterValidatePath0 = "register"
-    private val RegisterValidatePath1 = "validate"
+  abstract class RegisterWithCodeLocBase extends PrefixLoc[String] {
+    private val RegisterWithCodePath0 = "register"
+    protected val RegisterWithCodePath1: String
 
-    protected val PathList = RegisterValidatePath0 :: RegisterValidatePath1 :: Nil
+    protected val PathList = RegisterWithCodePath0 :: RegisterWithCodePath1 :: Nil
     protected def default: String = null
 
     override def params: List[Loc.LocParam[String]] = Hidden :: Nil
-
-    def name = "RegisterValidate"
 
     override def link = new Link[String](PathList) {
       override def pathList(code: String): List[String] = super.pathList(code) ++ List(code)
     }
 
-    def text = new LinkText(ignore => Text(?("menu.register.validate")))
+    def doCheckCode(code: String): Box[Registration]
+
+    val errorMessageKey: String
+    val infoMessageKey: String
 
     protected def doRewrite(request: RewriteRequest): (RewriteResponse, String) = {
       request match {
-        case RewriteRequest(parsePath @ ParsePath(RegisterValidatePath0 :: RegisterValidatePath1 :: code :: Nil, _, _, _), _, httpRequest) => {
-          val registrationService = D.inject_![RegistrationService]
-          val registration = registrationService.validateRegister(code)
+        case RewriteRequest(parsePath @ ParsePath(RegisterWithCodePath0 :: RegisterWithCodePath1 :: code :: Nil, _, _, _), _, httpRequest) => {
+          val registration = doCheckCode(code)
 
           registration match {
-            case Full(reg) => (RewriteResponse("info" :: Nil, Map(infoMessageParam -> ?("register.validation.successfull",
+            case Full(reg) => (RewriteResponse("info" :: Nil, Map(infoMessageParam -> ?(infoMessageKey,
               reg.conference.obj.open_!.name.is))), null)
-            case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("register.validation.unsuccessfull"))), null)
+            case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?(errorMessageKey))), null)
           }
         }
         case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("register.nocode"))), null)
@@ -236,15 +236,41 @@ object Locs {
     }
 
     override def rewrite = Full({
-      // Accepting any paths which start with "register/validate"
-      case request @ RewriteRequest(ParsePath(RegisterValidatePath0 :: RegisterValidatePath1 :: _, _, _, _), _, _) => {
+      // Accepting any paths which start with "register/xxx"
+      case request @ RewriteRequest(ParsePath(RegisterWithCodePath0 :: RegisterWithCodePath1 :: _, _, _, _), _, _) => {
         doRewrite(request)
       }
     })
   }
 
-  val RegisterValidateLoc = new RegisterValidateLocBase with ActiveConferenceLoc[String] {
+  class RegisterValidateLocBase extends RegisterWithCodeLocBase {
+    protected val RegisterWithCodePath1 = "validate"
+
+    def name = "RegisterValidate"
+
+    def text = new LinkText(ignore => Text(?("menu.register.validate")))
+
+    def doCheckCode(code: String): Box[Registration] = D.inject_![RegistrationService].validateRegister(code)
+
+    val errorMessageKey = "register.validation.unsuccessfull"
+    val infoMessageKey = "register.validation.successfull"
   }
+
+  class RegisterConfirmLocBase extends RegisterWithCodeLocBase {
+    protected val RegisterWithCodePath1 = "confirm"
+
+    def name = "RegisterConfirm"
+
+    def text = new LinkText(ignore => Text(?("menu.register.confirm")))
+
+    def doCheckCode(code: String): Box[Registration] = D.inject_![RegistrationService].confirmRegistration(code)
+
+    val errorMessageKey = "register.confirmation.unsuccessfull"
+    val infoMessageKey = "register.confirmation.successfull"
+  }
+
+  val RegisterValidateLoc = new RegisterValidateLocBase with ActiveConferenceLoc[String]
+  val RegisterConfirmLoc = new RegisterConfirmLocBase with ActiveConferenceLoc[String]
 
   val TweetsLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with ActiveConferenceLoc[Unit] {
     protected val PathList = "tweets" :: Nil
@@ -308,6 +334,7 @@ object Menus {
           // Register
           Menu(RegisterLoc) ::
           Menu(RegisterValidateLoc) ::
+          Menu(RegisterConfirmLoc) ::
           // C4P
           c4pMenu ::
           // Schedule preferences

@@ -19,8 +19,9 @@ trait RegistrationService {
   def newRegisterData(conf: Conference): RegisterData
   def register(data: RegisterData)
   def isRegistered(user: User, conf: Conference): Boolean
-  def confirmRegistration(code: String): Boolean
+  def confirmRegistration(code: String): Box[Registration]
   def validateRegister(code: String): Box[Registration]
+  def sendConfirmations(conf: Conference): Int
 }
 
 class RegistrationServiceImpl extends RegistrationService {
@@ -97,8 +98,31 @@ class RegistrationServiceImpl extends RegistrationService {
       PlainPlusBodyType(body, "UTF-8"))
   }
 
+  def sendConfirmations(conf: Conference) = {
+    var sent = 0
+    for (reg <- Registration.findAll(By(Registration.conference, conf),
+      By(Registration.validated, true), By(Registration.confirmationEmailSent, false))) {
+      val email = reg.user.obj.open_!.email
+      val confName = conf.name.is
+      val confirmationLink = S.hostAndPath + Locs.RegisterConfirmLoc.link.createPath(reg.confirmationCode)
+      sendEmail(email, ?("register.confirm.mail.subject", confName),
+        ?("register.confirm.mail.body", confName, confirmationLink,
+          confName))
+      reg.confirmationEmailSent(true).save
+
+      sent = sent + 1
+    }
+
+    sent
+  }
+
   def confirmRegistration(code: String) = {
-    false
+    Registration.find(By(Registration.confirmationCode, code)).map({ reg =>
+      // Confirming the registration
+      reg.confirmed(true).save
+
+      reg
+    })
   }
 }
 

@@ -6,16 +6,24 @@ import net.liftweb.util.Helpers._
 import net.liftweb.http._
 
 import S._
+import SHtml._
+
+import net.liftweb.http.js.JsCmds._
 
 import pl.softwaremill.lib.D
-import pl.softwaremill.services.StatisticsService
 import pl.softwaremill.model.{User, Sex}
+import pl.softwaremill.services.{RegistrationService, StatisticsService}
+
+import SnippetTools._
+
+import xml._
 
 /**
  * @author Adam Warski (adam at warski dot org)
  */
 class Statistics {
   lazy val statsService = D.inject_![StatisticsService]
+  lazy val registrationService = D.inject_![RegistrationService]
 
   def render(template: NodeSeq) = {
     val conf = CurrentConference.is
@@ -29,7 +37,8 @@ class Statistics {
           "sex" -> ?(user.sex.toString),
           "homeTown" -> user.homeTown,
           "source" -> reg.source,
-          "confirmed" -> reg.confirmed.toString
+          "confirmed" -> reg.confirmed.toString,
+          "confirmationSent" -> reg.confirmationEmailSent.toString
           )
       } })
     }
@@ -40,7 +49,12 @@ class Statistics {
       "femaleRegistered" -> statsService.registered(conf, Sex.Female),
       "maleRegistered" -> statsService.registered(conf, Sex.Male),
       "madeSchedulePreferences" -> statsService.madeSchedulePreferences(conf),
-      "allParticipants" -> bindAllParticipantsRow _
+      "allParticipants" -> bindAllParticipantsRow _,
+      "sendConfirmations" -> a(() => {
+        val sent = registrationService.sendConfirmations(conf)
+        notice(?("register.sendconfirm.sent", sent))
+        _Noop
+      }, Text(?("register.sendconfirm")), confirmAttr(?("register.sendconfirm.confirm")))
       )
   }
 }
