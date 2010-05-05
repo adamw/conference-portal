@@ -22,7 +22,7 @@ object FileService {
   }
 
   def serveFile(file: File, req: Req): Box[LiftResponse] = {
-    if (req.testIfModifiedSince(file.saveTime.is+1)) {
+    if (!req.testIfModifiedSince(file.saveTime.is+1)) {
       Full(InMemoryResponse(
         new Array[Byte](0),
         List("Last-Modified" -> toInternetDate(file.saveTime.is)),
