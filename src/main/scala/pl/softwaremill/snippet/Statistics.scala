@@ -38,7 +38,8 @@ class Statistics {
           "homeTown" -> user.homeTown,
           "source" -> reg.source,
           "confirmed" -> reg.confirmed.toString,
-          "confirmationSent" -> reg.confirmationEmailSent.toString
+          "confirmationSent" -> reg.confirmationEmailSent.toString,
+          "agreedToMarketing" -> user.agreedToMarketing.toString
           )
       } })
     }

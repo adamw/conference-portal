@@ -28,15 +28,28 @@ class Register {
     def doRegisterNewUser(template: NodeSeq) = {
       val ongoingRegistration = OngoingRegistrationData.is
       val user = ongoingRegistration.user
+      var checked = false
 
       bind("do", template,
         "registerFields" -> User.registerFields.flatMap(f =>
           <tr><td>{f.displayName}</td><td>{User.getActualBaseField(user, f).toForm openOr NodeSeq.Empty}</td></tr>),
         "source" -> <tr><td>{Registration.source.displayName}</td><td>{ongoingRegistration.registration.source.toForm openOr NodeSeq.Empty}</td></tr>,
+        "processing" -> <tr colspan="2"><td>
+          {checkbox(false, checked = _ )}
+          {?("register.do.processing")}
+        </td></tr>,
+        "marketing" -> <tr colspan="2"><td>
+          {user.agreedToMarketing.toForm.open_!}
+          {?("register.do.marketing")}
+        </td></tr>,
         "submit" -> submit(?("register.do.text"), () => {
-          user.validate match {
-            case Nil => registrationService.register(ongoingRegistration); notice(?("register.do.successfull")); User.logUserIn(user)
-            case xs => S.error(xs); OngoingRegistrationData(ongoingRegistration)
+          if (!checked) {
+            S.error(?("register.do.processing.notagreed")); OngoingRegistrationData(ongoingRegistration)
+          } else {
+            user.validate match {
+              case Nil => registrationService.register(ongoingRegistration); notice(?("register.do.successfull")); User.logUserIn(user)
+              case xs => S.error(xs); OngoingRegistrationData(ongoingRegistration)
+            }
           }
         }))
     }

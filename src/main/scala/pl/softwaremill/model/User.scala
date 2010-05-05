@@ -215,6 +215,8 @@ class User extends MegaProtoUser[User] { user =>
       Full(selectObj[Sex.Value](options, Full(sex), sex(_)))
     }
   }
+  
+  object agreedToMarketing extends MappedBoolean(this)
 
   object face extends LongMappedMapper[User, File](this, File) with FullCascade[User, File] {
     override def displayName = ?("user.face")
