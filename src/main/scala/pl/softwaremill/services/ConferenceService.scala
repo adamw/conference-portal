@@ -14,6 +14,7 @@ import pl.softwaremill.solver.domain.Preference
 trait ConferenceService {
   def allConferences: List[Conference]
   def conferencesInState(state: ConferenceState.Value): List[Conference]
+  def hasConferencesInC4P(): Boolean
   def find(id: String): Box[Conference]
   def generateSchedule(conf: Conference): GenerateScheduleResult
 }
@@ -25,6 +26,10 @@ class ConferenceServiceImpl extends ConferenceService {
 
   def conferencesInState(state: ConferenceState.Value): List[Conference] = {
     Conference.findAll(By(Conference.mappedState, state.id), OrderBy(Conference.name, Ascending))
+  }
+
+  def hasConferencesInC4P(): Boolean = {
+    Conference.count(By(Conference.mappedState, ConferenceState.C4P.id)) > 0
   }
 
   def find(id: String): Box[Conference] = {

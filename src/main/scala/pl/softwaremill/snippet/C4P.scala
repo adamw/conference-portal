@@ -21,10 +21,10 @@ class C4P {
   lazy val paperService = D.inject_![PaperService]
 
   def newLink(newLinkTemplate: NodeSeq): NodeSeq = {
-    val confs = D.inject_![ConferenceService].conferencesInState(ConferenceState.C4P);
-    confs match {
-      case Nil  => NodeSeq.Empty
-      case _    => link("edit.html", () => (), newLinkTemplate)
+    if (D.inject_![ConferenceService].hasConferencesInC4P) {
+      link("edit.html", () => (), newLinkTemplate)
+    } else {
+      NodeSeq.Empty
     }
   }
 

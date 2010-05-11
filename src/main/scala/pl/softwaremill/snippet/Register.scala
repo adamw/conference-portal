@@ -21,6 +21,7 @@ class Register {
   lazy val registrationService = D.inject_![RegistrationService]
 
   object OngoingRegistrationData extends RequestVar(registrationService.newRegisterData(CurrentConference.is))
+  object AgreedToProcessing extends RequestVar(false)
 
   def render(template: NodeSeq) = {
     val conf = CurrentConference.is
@@ -28,14 +29,13 @@ class Register {
     def doRegisterNewUser(template: NodeSeq) = {
       val ongoingRegistration = OngoingRegistrationData.is
       val user = ongoingRegistration.user
-      var checked = false
 
       bind("do", template,
         "registerFields" -> User.registerFields.flatMap(f =>
           <tr><td>{f.displayName}</td><td>{User.getActualBaseField(user, f).toForm openOr NodeSeq.Empty}</td></tr>),
         "source" -> <tr><td>{Registration.source.displayName}</td><td>{ongoingRegistration.registration.source.toForm openOr NodeSeq.Empty}</td></tr>,
         "processing" -> <tr colspan="2"><td>
-          {checkbox(false, checked = _ )}
+          {checkbox(AgreedToProcessing.is, AgreedToProcessing(_) )}
           {?("register.do.processing")}
         </td></tr>,
         "marketing" -> <tr colspan="2"><td>
@@ -43,7 +43,7 @@ class Register {
           {?("register.do.marketing")}
         </td></tr>,
         "submit" -> submit(?("register.do.text"), () => {
-          if (!checked) {
+          if (!AgreedToProcessing.is) {
             S.error(?("register.do.processing.notagreed")); OngoingRegistrationData(ongoingRegistration)
           } else {
             user.validate match {

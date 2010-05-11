@@ -15,6 +15,10 @@ import SHtml._
 import dispatch._
 
 import ModelTools._
+import net.liftweb.sitemap._
+import net.liftweb.sitemap.Loc._
+import pl.softwaremill.lib.D
+import pl.softwaremill.services.ConferenceService
 
 object User extends User with MetaMegaProtoUser[User] {
   override def dbTableName = "users" // define the DB table name
@@ -43,7 +47,9 @@ object User extends User with MetaMegaProtoUser[User] {
           <tr><td>{S.??("password")}</td><td><user:password /></td></tr>
           <tr><td>&nbsp;</td><td><user:submit /></td></tr>
           <tr><td>&nbsp;</td><td><a href={lostPasswordPath.mkString("/", "/", "")}>{S.??("recover.password")}</a></td></tr>
-          <tr><td>&nbsp;</td><td><a href={signUpPath.mkString("/", "/", "")}>{S.??("sign.up")}</a></td></tr>
+          <tr><td>&nbsp;</td><td>{if (showSignupLink)
+            <a href={signUpPath.mkString("/", "/", "")}>{S.??("sign.up")}</a>
+            else <span>&nbsp;</span>}</td></tr>
         </table>
       </form>
     </span>
@@ -176,6 +182,16 @@ object User extends User with MetaMegaProtoUser[User] {
     logoutCurrentUser
     S.redirectTo("/content/logout")
   }
+
+  override def createUserMenuLoc = {
+    Full(Menu(Loc("CreateUser", signUpPath,
+      S.??("sign.up"),
+      Template(() => wrapIt(signupFunc.map(_()) openOr signup)),
+      If(notLoggedIn_? _, S.??("logout.first")),
+      If(showSignupLink _, S.??("logout.first")))))
+  }
+
+  def showSignupLink = D.inject_![ConferenceService].hasConferencesInC4P
 }
 
 class User extends MegaProtoUser[User] { user =>
@@ -201,7 +217,6 @@ class User extends MegaProtoUser[User] { user =>
   }
 
   object homeTown extends MappedText(this) {
-    override def validations = valRequired(homeTown) _ :: super.validations
     override def displayName = ?("user.home_town")
   }
 
