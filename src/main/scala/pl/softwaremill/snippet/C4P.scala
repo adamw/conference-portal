@@ -9,10 +9,10 @@ import S._
 
 import pl.softwaremill.lib.D
 import pl.softwaremill.model._
-import pl.softwaremill.services.PaperService
 import pl.softwaremill.loc.ViewPaperLoc
 
 import SnippetTools._
+import pl.softwaremill.services.{ConferenceService, PaperService}
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -21,7 +21,11 @@ class C4P {
   lazy val paperService = D.inject_![PaperService]
 
   def newLink(newLinkTemplate: NodeSeq): NodeSeq = {
-    link("edit.html", () => (), newLinkTemplate)
+    val confs = D.inject_![ConferenceService].conferencesInState(ConferenceState.C4P);
+    confs match {
+      case Nil  => NodeSeq.Empty
+      case _    => link("edit.html", () => (), newLinkTemplate)
+    }
   }
 
   def edit(editTemplate: NodeSeq): NodeSeq = {
