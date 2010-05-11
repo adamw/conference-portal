@@ -9,7 +9,7 @@
             <table>
                 <tr>
                     <th><lift:loc>paper.title</lift:loc></th>
-                    <th><lift:loc>paper.author</lift:loc></th>
+                    <th><lift:loc>paper.author</lift:loc> / <lift:loc>email.address</lift:loc> / <lift:loc>user.home_town</lift:loc></th>
                     <th><lift:loc>paper.status</lift:loc></th>
                     <th><lift:loc>paper.short_description</lift:loc></th>
                     <th><lift:loc>paper.operations</lift:loc></th>
@@ -18,7 +18,7 @@
                     <tr paper:rowId="">
                         <paper:cells>
                             <td class="title"><cell:title /></td>
-                            <td><cell:author /></td>
+                            <td><cell:author /><br/><cell:email /><br /><cell:town /></td>
                             <td><cell:status /></td>
                             <td>
                                 <div style="display: none;"><cell:desc /></div>

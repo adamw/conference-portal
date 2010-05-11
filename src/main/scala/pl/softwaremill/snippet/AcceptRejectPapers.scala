@@ -47,14 +47,21 @@ class AcceptRejectPapers {
     def selectionsLeftText(left: Int): String = ?("acceptreject.selections_left", left, maxSelections)
 
     def bindCells(paper: Paper, cellsTemplate: NodeSeq): NodeSeq = {
+      val author = paper.user.obj.open_!
+      val email = author.email.is
+      val mailto = "mailto:" + email
       bind("cell", cellsTemplate,
         "title" -> paper.title,
-        "author" -> anchor(AuthorLoc.link.createPath(paper.user.obj.open_!), paper.author),
+        "author" -> anchor(AuthorLoc.link.createPath(author), paper.author),
+        "email" -> <a href={mailto}>{email}</a>,
+        "town" -> convNull(author.homeTown.is),
         "status" -> ?(paper.status.toString),
         "desc" -> paper.shortDescription.toHtml,
         "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view"))
         )
     }
+
+    def convNull(s: String) = if (s == null) "" else s
   }
 
   object AcceptRejectSelectionConfig extends BaseAcceptRejectSelectionConfig {
