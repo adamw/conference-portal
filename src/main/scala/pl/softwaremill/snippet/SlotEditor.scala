@@ -29,23 +29,24 @@ class SlotEditor {
   def addSlotSpan = slotSpans += new SlotSpan
   def deleteSlotSpan(idx: Int) = slotSpans.remove(idx)
 
+  def noticeIfFailure[T](b: Box[T]) = b match {
+    case Failure(msg, _, _) => S.error(msg)
+    case Empty => S.error("Unknown")
+    case _ =>
+  }
+
+  def checkAndSave {
+    val conf = CurrentConference.is
+    conf.validate match {
+      case Nil  => conf.save(); S.notice(S.?("common.saved", conf.name))
+      case xs   => xs.map { i => S.error(i.msg); }
+    }
+  }
+
+  def reDrawGrid = SetHtml("slot_grid", slotGrid(NodeSeq.Empty))
+
   def slotsTimes(slotTimesTemplate: NodeSeq): NodeSeq = {
-    def noticeIfFailure[T](b: Box[T]) = b match {
-      case Failure(msg, _, _) => S.error(msg)
-      case Empty => S.error("Unknown")
-      case _ =>
-    }
-
-    def checkAndSave {
-      val conf = CurrentConference.is
-      conf.validate match {
-        case Nil  => conf.save(); S.notice(S.?("common.saved", conf.name))
-        case xs   => xs.map { i => S.error(i.msg); }
-      }
-    }
-
     def reDrawForm = SetHtml("slot_times", slotsTimes(slotTimesTemplate))
-    def reDrawGrid = SetHtml("slot_grid", slotGrid(NodeSeq.Empty))
     def reDraw = CmdPair(reDrawForm, reDrawGrid)
 
     def slotTime(slotSpanTimeTemplate: NodeSeq): NodeSeq = {
@@ -77,6 +78,6 @@ class SlotEditor {
       room => Text(room.name.is),
       slotSpan => Text(?("slot.span.from_to", slotSpan.startTime, slotSpan.endTime)),
       () => EntityRef("nbsp"),
-      slot => Text("#"))
+      slot => Text("# ") ++ a(() => { CurrentConference.slots -= slot; checkAndSave; reDrawGrid }, Text("X")))
   }
 }
