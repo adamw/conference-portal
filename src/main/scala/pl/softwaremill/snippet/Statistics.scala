@@ -17,6 +17,7 @@ import pl.softwaremill.services.{RegistrationService, StatisticsService}
 import SnippetTools._
 
 import xml._
+import pl.softwaremill.loc.StatisticsLoc
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -51,7 +52,7 @@ class Statistics {
       "maleRegistered" -> statsService.registered(conf, Sex.Male),
       "madeSchedulePreferences" -> statsService.madeSchedulePreferences(conf),
       "allParticipants" -> bindAllParticipantsRow _,
-      "sendConfirmations" -> a(() => {
+      "sendConfirmations" -> link(StatisticsLoc.link.createPath(CurrentConference.is), () => {
         val sent = registrationService.sendConfirmations(conf)
         notice(?("register.sendconfirm.sent", sent))
         _Noop
