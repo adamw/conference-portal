@@ -68,15 +68,22 @@ object PaperSnippetTools {
           def selectionBlocked = config.maxSelections <= config.selectedCount
 
           def selectDeselectLink = a(() => {
+            config.reloadData
             val selectionBlockedBefore = selectionBlocked
-            config.select(paper, !selected)
-            val selectionBlockedAfter = selectionBlocked
+            // Only allowing to select if still possible
+            if ((!selected && !selectionBlockedBefore) || selected) {
+              config.select(paper, !selected)
+              val selectionBlockedAfter = selectionBlocked
 
-            // Doing a full-redraw if the selection has been blocked or unblocked to hide/show all select links
-            if (selectionBlockedBefore != selectionBlockedAfter) {
+              // Doing a full-redraw if the selection has been blocked or unblocked to hide/show all select links
+              if (selectionBlockedBefore != selectionBlockedAfter) {
+                CmdPair(reDrawSelectionsLeft, SetHtml("paper_list", doList))
+              } else reDraw()
+            } else {
+              // Redrawing everything
               CmdPair(reDrawSelectionsLeft, SetHtml("paper_list", doList))
-            } else reDraw() },
-            Text(if (selected) config.deselectLinkText else config.selectLinkText))
+            }
+          }, Text(if (selected) config.deselectLinkText else config.selectLinkText))
 
           bind("cell", config.bindCells(paper, cellsTemplate),
             "select" -> (if (selectionBlocked && !selected) NodeSeq.Empty else selectDeselectLink)
@@ -103,5 +110,7 @@ object PaperSnippetTools {
     def selectionsLeftNode = Text(selectionsLeftText(maxSelections - selectedCount))
 
     def bindCells(paper: Paper, cellsTemplate: NodeSeq): NodeSeq
+
+    def reloadData
   }
 }

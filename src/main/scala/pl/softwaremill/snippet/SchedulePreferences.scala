@@ -55,6 +55,8 @@ class SchedulePreferences {
         "view" -> anchor(ViewPaperLoc.link.createPath(paper), ?("common.view"))
         )
     }
+
+    def reloadData = initInterestedInPapers
   }
 
   def list(listTemplate: NodeSeq): NodeSeq = {

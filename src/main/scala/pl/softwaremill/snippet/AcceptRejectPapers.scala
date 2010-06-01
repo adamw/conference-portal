@@ -62,6 +62,8 @@ class AcceptRejectPapers {
     }
 
     def convNull(s: String) = if (s == null) "" else s
+
+    def reloadData = initAcceptedPapers
   }
 
   object AcceptRejectSelectionConfig extends BaseAcceptRejectSelectionConfig {

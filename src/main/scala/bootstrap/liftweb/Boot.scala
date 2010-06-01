@@ -65,6 +65,9 @@ class Boot {
     LiftRules.ajaxStart = Full(() => LiftRules.jsArtifacts.show("ajax-loader").cmd)
     LiftRules.ajaxEnd = Full(() => LiftRules.jsArtifacts.hide("ajax-loader").cmd)
 
+    LiftRules.maxConcurrentRequests = 1
+    LiftRules.ajaxPostTimeout = 60000
+
     LiftRules.early.append(_.setCharacterEncoding("UTF-8"))
 
     LiftRules.jsArtifacts = JQuery14Artifacts
