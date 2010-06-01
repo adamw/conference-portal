@@ -19,6 +19,7 @@ trait PaperService {
   def updateUserInterestedInPaper(user: User, paper: Paper, interested: Boolean)
   def interestingPapersByUser(conf: Conference): Map[User, List[Paper]]
   def interestsForConference(conf: Conference): List[UserInterested]
+  def papersPopularity(conf: Conference): List[(String, Long)]
 }
 
 class PaperServiceImpl extends PaperService {
@@ -77,5 +78,16 @@ class PaperServiceImpl extends PaperService {
     UserInterested.findAll.filter(ui => {
       (for (paper <- ui.paper.obj; paperConf <- paper.conference.obj) yield paperConf == conf) openOr false
     })
+  }
+
+  def papersPopularity(conf: Conference): List[(String, Long)] = {
+    val sql = """select p.title, count(ui.id) from userinterested ui
+	join paper p on ui.paper = p.id
+	where p.conference = ? and p.status = 1
+	group by p.id
+	order by count(ui.id) desc"""
+
+    val result = DB.runQuery(sql, List(conf.id.toString))
+    for (row <- result._2) yield (row(0), row(1).toLong)    
   }
 }

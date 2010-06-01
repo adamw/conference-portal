@@ -15,4 +15,19 @@
         <div id="generatedScore">            
         </div>
     </lift:CreateSchedule>
+
+    <table>
+        <thead>
+            <tr>
+                <th><lift:loc>paper.title</lift:loc></th>
+                <th><lift:loc>paper.votes</lift:loc></th>
+            </tr>
+        </thead>
+        <lift:CreateSchedule.mostPopular>
+            <tr>
+                <td><paper:title /></td>
+                <td><paper:votes /></td>
+            </tr>
+        </lift:CreateSchedule.mostPopular>
+    </table>
 </lift:surround>

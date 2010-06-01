@@ -48,4 +48,9 @@ class CreateSchedule {
       "numberOfPreferences" -> ?("createschedule.number_of_preferences", allInterestsSize),
       "generate" -> generateButton)
   }
+
+  def mostPopular(template: NodeSeq): NodeSeq = {
+    (for ((title, votes) <- paperService.papersPopularity(CurrentConference.is)) yield
+      bind("paper", template, "title" -> title, "votes" -> votes)).flatMap((x: NodeSeq) => x)
+  }
 }
