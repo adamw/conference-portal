@@ -16,10 +16,9 @@ import java.text.SimpleDateFormat
 import java.util.{Date, Locale}
 import pl.softwaremill.lib._
 import pl.softwaremill.comet.{Update, TweetsUpdater}
-import pl.softwaremill.services.{UpdateSpec, ExternalMarkupUpdater, FileService}
-
 import javax.mail._
 import pl.softwaremill.snippet.CurrentConference
+import pl.softwaremill.services.{CustomMailer, UpdateSpec, ExternalMarkupUpdater, FileService}
 
 /**
  * A class that's instantiated early and run.  It allows the application
@@ -110,7 +109,7 @@ class Boot {
     System.setProperty("mail.smtp.starttls.enable","true");
     System.setProperty("mail.smtp.host", host)
     System.setProperty("mail.smtp.auth", auth)
-    Mailer.authenticator = Full(new Authenticator {
+    CustomMailer.authenticator = Full(new Authenticator {
       override def getPasswordAuthentication =
         new PasswordAuthentication(user, password)
     })

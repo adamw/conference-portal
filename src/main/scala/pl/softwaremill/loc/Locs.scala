@@ -24,7 +24,7 @@ import Util._
  */
 object Locs {
   trait PrefixLoc[T] extends Loc[T] {
-    protected val PathList: List[String]
+    private[loc] val PathList: List[String]
     protected def doRewrite(request: RewriteRequest): (RewriteResponse, T)
 
     protected def default: T
@@ -110,7 +110,7 @@ object Locs {
   class AuthorLocBase extends PrefixLoc[User] {
     private val AuthorPath = "author"
 
-    protected val PathList = AuthorPath :: Nil
+    private[loc] val PathList = AuthorPath :: Nil
     protected def default: User = null
 
     override def params: List[Loc.LocParam[User]] = Hidden :: Nil
@@ -160,7 +160,7 @@ object Locs {
 
   val SchedulePreferencesLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with AcceptableConferenceLoc[Unit] with ActiveConferenceLoc[Unit]
           with RequiresLoginLoc[Unit] {
-    protected val PathList = "schedule_preferences" :: Nil
+    private[loc] val PathList = "schedule_preferences" :: Nil
     protected def default = ()
     protected def conferenceAcceptable(conf: Conference) = conf.state == ConferenceState.Schedule
 
@@ -169,7 +169,7 @@ object Locs {
   }
 
   val ViewConferenceLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with UnavailableConferenceLoc[Unit] with ActiveConferenceLoc[Unit] {
-    protected val PathList = "conference" :: Nil
+    private[loc] val PathList = "conference" :: Nil
     protected def default = ()
     protected def conferenceAvailable(conf: Conference) = conf.conferenceAfterAcceptReject
     protected def unavailableKey = "papers.available_after_c4p"
@@ -179,7 +179,7 @@ object Locs {
   }
 
   val AuthorsLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with UnavailableConferenceLoc[Unit] with ActiveConferenceLoc[Unit] {
-    protected val PathList = "authors" :: Nil
+    private[loc] val PathList = "authors" :: Nil
     protected def default = ()
     protected def conferenceAvailable(conf: Conference) = conf.conferenceAfterAcceptReject
     protected def unavailableKey = "authors.available_after_c4p"
@@ -189,7 +189,7 @@ object Locs {
   }
 
   val ViewScheduleLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with UnavailableConferenceLoc[Unit] with ActiveConferenceLoc[Unit] {
-    protected val PathList = "schedule" :: Nil
+    private[loc] val PathList = "schedule" :: Nil
     protected def default = ()
     protected def conferenceAvailable(conf: Conference) = conf.state == ConferenceState.Finalize
     protected def unavailableKey = "schedule.available_after_c4p"
@@ -199,7 +199,7 @@ object Locs {
   }
 
   val RegisterLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with AcceptableConferenceLoc[Unit] with ActiveConferenceLoc[Unit] {
-    protected val PathList = "register" :: Nil
+    private[loc] val PathList = "register" :: Nil
     protected def default = ()
     protected def conferenceAcceptable(conf: Conference) = conf.state != ConferenceState.Prepare
 
@@ -211,7 +211,7 @@ object Locs {
     private val RegisterWithCodePath0 = "register"
     protected val RegisterWithCodePath1: String
 
-    protected val PathList = RegisterWithCodePath0 :: RegisterWithCodePath1 :: Nil
+    private[loc] val PathList = RegisterWithCodePath0 :: RegisterWithCodePath1 :: Nil
     protected def default: String = null
 
     override def params: List[Loc.LocParam[String]] = Hidden :: Nil
@@ -225,14 +225,16 @@ object Locs {
     val errorMessageKey: String
     val infoMessageKey: String
 
+    def infoResponse(reg: Registration) = (RewriteResponse("info" :: Nil, Map(infoMessageParam -> ?(infoMessageKey,
+      reg.conference.obj.open_!.name.is))), null)
+
     protected def doRewrite(request: RewriteRequest): (RewriteResponse, String) = {
       request match {
         case RewriteRequest(parsePath @ ParsePath(RegisterWithCodePath0 :: RegisterWithCodePath1 :: code :: Nil, _, _, _), _, httpRequest) => {
           val registration = doCheckCode(code)
 
           registration match {
-            case Full(reg) => (RewriteResponse("info" :: Nil, Map(infoMessageParam -> ?(infoMessageKey,
-              reg.conference.obj.open_!.name.is))), null)
+            case Full(reg) => infoResponse(reg)
             case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?(errorMessageKey))), null)
           }
         }
@@ -259,6 +261,12 @@ object Locs {
 
     val errorMessageKey = "register.validation.unsuccessfull"
     val infoMessageKey = "register.validation.successfull"
+
+    override def infoResponse(reg: Registration) = {
+      notice(?(infoMessageKey, reg.conference.obj.open_!.name.is))
+      User.logUserIn(reg.user.obj.open_!)
+      (RewriteResponse(SchedulePreferencesLoc.PathList), null)
+    }      
   }
 
   class RegisterConfirmLocBase extends RegisterWithCodeLocBase {
@@ -278,7 +286,7 @@ object Locs {
   val RegisterConfirmLoc = new RegisterConfirmLocBase with ActiveConferenceLoc[String]
 
   val TweetsLoc = new SinglePathLoc[Unit] with FinalResponseSinglePathLoc[Unit] with ActiveConferenceLoc[Unit] {
-    protected val PathList = "tweets" :: Nil
+    private[loc] val PathList = "tweets" :: Nil
     protected def default = ()
 
     def name = "Tweets"
@@ -288,7 +296,7 @@ object Locs {
   class CmsLocBase extends PrefixLoc[MenuItem] {
     private val ContentPath = "content"
 
-    protected val PathList = ContentPath :: Nil
+    private[loc] val PathList = ContentPath :: Nil
     protected def default: MenuItem = null
 
     def name = "Content"
@@ -324,6 +332,55 @@ object Locs {
   val CmsLoc = new CmsLocBase with ActiveConferenceLoc[MenuItem]
 
   val ManageLoc = Loc("Conferences", new Link("conferences" :: "index" :: Nil), ?("menu.conferences"), User.testSuperUser)
+
+  abstract class AutoLoginLocBase extends PrefixLoc[User] {
+    protected val Path0: String
+
+    private[loc] val PathList = Path0 :: Nil
+    protected def default: User = null
+
+    override def params: List[Loc.LocParam[User]] = Hidden :: Nil
+
+    override def link = new Link[User](PathList) {
+      override def pathList(user: User): List[String] = super.pathList(user) ++ List(user.uniqueId)
+    }
+
+    protected val RedirectTo: List[String]
+
+    protected def doRewrite(request: RewriteRequest): (RewriteResponse, User) = {
+      request match {
+        case RewriteRequest(parsePath @ ParsePath(Path0 :: code :: Nil, _, _, _), _, httpRequest) => {
+          val userBox = D.inject_![UserService].autologin(code)
+
+          userBox match {
+            case Full(user) => {
+              User.logUserIn(user)
+              (RewriteResponse(RedirectTo), null)
+            }
+            case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("autologin.invalidcode"))), null)
+          }
+        }
+        case _ => (RewriteResponse("error" :: Nil, Map(errorMessageParam -> ?("autologin.nocode"))), null)
+      }
+    }
+
+    override def rewrite = Full({
+      // Accepting any paths which start with "path0/xxx"
+      case request @ RewriteRequest(ParsePath(Path0 :: _, _, _, _), _, _) => {
+        doRewrite(request)
+      }
+    })
+  }
+
+  val AutoLoginSchedulePreferencesLoc = new AutoLoginLocBase with ActiveConferenceLoc[User] {
+    protected val Path0 = "auto_login_schedule_preferences"
+
+    protected val RedirectTo = SchedulePreferencesLoc.PathList
+
+    def name = "AutoLoginSchedulePreferences"
+    
+    def text = new LinkText(ignore => Text(?("menu.schedule_preferences")))
+  }
 }
 
 object Menus {
@@ -344,6 +401,7 @@ object Menus {
           c4pMenu ::
           // Schedule preferences
           Menu(SchedulePreferencesLoc) ::
+          Menu(AutoLoginSchedulePreferencesLoc) :: 
           // View papers
           Menu(ViewPaperLoc) ::
           // View author

@@ -5,7 +5,7 @@ import net.liftweb.mapper._
 import pl.softwaremill.model._
 
 import net.liftweb.util.Mailer
-import Mailer._
+import CustomMailer._
 
 import net.liftweb.http.S._
 import net.liftweb.http.S
@@ -62,7 +62,7 @@ class RegistrationServiceImpl extends RegistrationService {
       val validationLink = S.hostAndPath + Locs.RegisterValidateLoc.link.createPath(data.registration.confirmationCode)
       val bodyText = ?("register.validate.mail.body", confName, validationLink, confName)
 
-      sendEmail(data.user.email, ?("register.validate.mail.subject", confName), bodyText)
+      sendEmail(data.user.email, ?("register.validate.mail.subject", confName), bodyText, () => ())
     }
   }
 
@@ -76,24 +76,27 @@ class RegistrationServiceImpl extends RegistrationService {
       reg.validated(true).save
 
       // Sending a "registered" e-mail
-      val email = reg.user.obj.open_!.email
+      val user = reg.user.obj.open_!
+      val email = user.email
       val confName = reg.conference.obj.open_!.name.is
+      val schedulePreferencesLoginLink = S.hostAndPath + Locs.AutoLoginSchedulePreferencesLoc.link.createPath(user)
       val bodyText = if (sendGeneratedPassword) {
-        ?("register.registered.mail.body", confName, confName, email, reg.confirmationCode, confName)
+        ?("register.registered.mail.body", confName, schedulePreferencesLoginLink, email, reg.confirmationCode, confName)
       } else {
-        ?("register.registered.mail.body.nopassword", confName, confName)
+        ?("register.registered.mail.body.nopassword", confName, schedulePreferencesLoginLink)
       }
 
-      sendEmail(email, ?("register.registered.mail.subject", confName), bodyText)
+      sendEmail(email, ?("register.registered.mail.subject", confName), bodyText, () => ())
 
       reg
     })
   }
 
-  private def sendEmail(to: String, subject: String, body: String) {
-    Mailer.sendMail(
+  private def sendEmail(to: String, subject: String, body: String, afterSend: () => Unit) {
+    CustomMailer.sendMail(
       From("do-not-reply@javarsovia.pl"),
       Subject(subject),
+      afterSend,
       To(to),
       PlainPlusBodyType(body, "UTF-8"))
   }
@@ -107,8 +110,7 @@ class RegistrationServiceImpl extends RegistrationService {
       val confirmationLink = S.hostAndPath + Locs.RegisterConfirmLoc.link.createPath(reg.confirmationCode)
       sendEmail(email, ?("register.confirm.mail.subject", confName),
         ?("register.confirm.mail.body", confName, confirmationLink,
-          confName))
-      reg.confirmationEmailSent(true).save
+          confName), () => { reg.confirmationEmailSent(true).save })
 
       sent = sent + 1
     }

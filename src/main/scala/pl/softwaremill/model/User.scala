@@ -24,14 +24,14 @@ object User extends User with MetaMegaProtoUser[User] {
   override def dbTableName = "users" // define the DB table name
   override def screenWrap = Full(<lift:surround with="default" at="content"><lift:bind /></lift:surround>)
 
-  override def signupFields = firstName :: lastName :: email :: password :: mappedSex :: homeTown :: bio :: Nil
+  override def signupFields = firstName :: lastName :: email :: password :: mappedSex :: homeTown :: tshirtSize :: bio :: Nil
 
-  def registerFields = firstName :: lastName :: email :: mappedSex :: homeTown :: Nil
+  def registerFields: List[MappedField[_, User]] = firstName :: lastName :: email :: mappedSex :: homeTown :: tshirtSize :: Nil
 
-  def requiredFields = password :: registerFields
+  def requiredFields: List[MappedField[_, User]] = password :: registerFields
 
   // define the order fields will appear in forms and output
-  override def fieldOrder = List(id, firstName, lastName, email, locale, timezone, password, bio)
+  override def fieldOrder = List(id, firstName, lastName, email, locale, timezone, password, tshirtSize, bio)
 
   // comment this line out to require email validations
   //override def skipEmailValidation = true
@@ -253,6 +253,17 @@ class User extends MegaProtoUser[User] { user =>
         case _ => ()
       })
     )}
+  }
+
+  object tshirtSize extends MappedString(this, 2) {
+    override def defaultValue = "L"
+    override def dbColumnName = "tshirt"
+    override def displayName = ?("user.tshirtSize")
+
+    override def _toForm = {
+      val options = List(("S", "S"), ("M", "M"), ("L", "L"), ("XL", "XL"))
+      Full(selectObj[String](options, Full(tshirtSize), tshirtSize(_)))
+    }
   }
 
   def faceImageHtml = face.obj.map(_.imageHtml) openOr NodeSeq.Empty

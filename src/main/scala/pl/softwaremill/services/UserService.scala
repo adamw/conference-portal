@@ -13,6 +13,7 @@ trait UserService {
   def find(id: String): Box[User]
   def findAcceptedAuthor(conf: Conference, id: String): Box[User]
   def acceptedAuthors(conf: Conference): List[User]
+  def autologin(code: String): Box[User]
 }
 
 class UserServiceImpl extends UserService {
@@ -34,5 +35,9 @@ class UserServiceImpl extends UserService {
 
   def acceptedAuthors(conf: Conference): List[User] = {
     paperService.acceptedConferencePapers(conf).flatMap(_.user.obj)
+  }
+
+  def autologin(code: String): Box[User] =  {
+    User.find(By(User.uniqueId, code))
   }
 }

@@ -38,10 +38,6 @@ class Register {
           {checkbox(AgreedToProcessing.is, AgreedToProcessing(_) )}
           {?("register.do.processing")}
         </td></tr>,
-        "marketing" -> <tr colspan="2"><td>
-          {user.agreedToMarketing.toForm.open_!}
-          {?("register.do.marketing")}
-        </td></tr>,
         "submit" -> submit(?("register.do.text"), () => {
           if (!AgreedToProcessing.is) {
             S.error(?("register.do.processing.notagreed")); OngoingRegistrationData(ongoingRegistration)
