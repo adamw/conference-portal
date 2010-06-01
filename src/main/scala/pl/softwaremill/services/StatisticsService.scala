@@ -1,7 +1,7 @@
 package pl.softwaremill.services
 
 import pl.softwaremill.model.{User, Registration, Conference, Sex}
-import net.liftweb.mapper.{PreCache, In, By}
+import net.liftweb.mapper.{DB, PreCache, In, By}
 
 /**
  * @author Adam Warski (adam at warski dot org)
@@ -30,7 +30,13 @@ class StatisticsServiceImpl extends StatisticsService {
   }
 
   def madeSchedulePreferences(conf: Conference): Long = {
-    0
+    val sql = """select count(distinct ui.user_c) from userinterested ui
+	join paper p on ui.paper = p.id
+	join conference c on p.conference = c.id
+	where c.id = ?"""
+
+    val result = DB.runQuery(sql, List(conf.id.toString))
+    (result._2)(0)(0).toLong
   }
 
   def all(conf: Conference): List[(User, Registration)] = {
