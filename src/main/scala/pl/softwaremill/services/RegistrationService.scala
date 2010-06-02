@@ -72,21 +72,23 @@ class RegistrationServiceImpl extends RegistrationService {
 
   private def validateRegister(code: String, sendGeneratedPassword: Boolean) = {
     Registration.find(By(Registration.confirmationCode, code)).map({ reg =>
-      // Validating the registration
-      reg.validated(true).save
+      if (!reg.validated) {
+        // Validating the registration
+        reg.validated(true).save
 
-      // Sending a "registered" e-mail
-      val user = reg.user.obj.open_!
-      val email = user.email
-      val confName = reg.conference.obj.open_!.name.is
-      val schedulePreferencesLoginLink = S.hostAndPath + Locs.AutoLoginSchedulePreferencesLoc.link.createPath(user)
-      val bodyText = if (sendGeneratedPassword) {
-        ?("register.registered.mail.body", confName, schedulePreferencesLoginLink, email, reg.confirmationCode, confName)
-      } else {
-        ?("register.registered.mail.body.nopassword", confName, schedulePreferencesLoginLink)
+        // Sending a "registered" e-mail
+        val user = reg.user.obj.open_!
+        val email = user.email
+        val confName = reg.conference.obj.open_!.name.is
+        val schedulePreferencesLoginLink = S.hostAndPath + Locs.AutoLoginSchedulePreferencesLoc.link.createPath(user)
+        val bodyText = if (sendGeneratedPassword) {
+          ?("register.registered.mail.body", confName, schedulePreferencesLoginLink, email, reg.confirmationCode, confName)
+        } else {
+          ?("register.registered.mail.body.nopassword", confName, schedulePreferencesLoginLink)
+        }
+
+        sendEmail(email, ?("register.registered.mail.subject", confName), bodyText, () => ())
       }
-
-      sendEmail(email, ?("register.registered.mail.subject", confName), bodyText, () => ())
 
       reg
     })
